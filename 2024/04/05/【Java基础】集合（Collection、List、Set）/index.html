@@ -14,7 +14,7 @@
 <meta property="og:description" content="集合分类 单列集合（Collection）。元素是一个一个的。 双列集合（Map）。元素是一对一的。  单列集合（Collection）Collection集合体系 子接口List。 实现类ArrayList。 实现类LinkedList。   子接口Set。 实现类HashSet。 LinkedHashSet。   实现类TreeSet。    学习时要掌握的：  有什么特点？ 是否有特有功能？">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-04-05T07:59:05.000Z">
-<meta property="article:modified_time" content="2024-04-06T07:41:47.836Z">
+<meta property="article:modified_time" content="2024-04-06T08:21:17.290Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
   
@@ -393,6 +393,28 @@
 <li>使用迭代器遍历集合，但用<strong>迭代器自己的删除方法</strong>删除数据即可。</li>
 <li>如果能用for循环遍历时：可以倒着遍历并删除；或者从前往后遍历，但删除元素后做i–操作。</li>
 </ul>
+<h1 id="Collection集合其他知识"><a href="#Collection集合其他知识" class="headerlink" title="Collection集合其他知识"></a>Collection集合其他知识</h1><h2 id="可变参数"><a href="#可变参数" class="headerlink" title="可变参数"></a>可变参数</h2><p>就是一种特殊形参，定义在方法、构造器的形参列表里，格式是：<strong>数据类型…参数名称</strong>。</p>
+<p>可变参数的特点和好处</p>
+<ul>
+<li>特点：可以不传数据给它；可以传一个或者同时传多个数据给它；也可以传一个数组给它。</li>
+<li>好处：常常用来灵活的接收数据。</li>
+</ul>
+<p>可变参数的注意事项</p>
+<ul>
+<li>可变参数<strong>在方法内部就是一个数组</strong>。</li>
+<li><strong>一个形参列表中可变参数只能有一个</strong>。</li>
+<li>可变参数<strong>必须放在形参列表的最后面</strong>。</li>
+</ul>
+<h2 id="Collections"><a href="#Collections" class="headerlink" title="Collections"></a>Collections</h2><p>一个用来操作集合的工具类。</p>
+<p>提供的静态方法</p>
+<ol>
+<li>public static <T> boolean addAll(Collection&lt;? super T&gt; c, T… elements)。给集合批量添加元素。</li>
+<li>public static void shuffle(List&lt;?&gt; list) 。打乱List集合中的元素顺序。</li>
+<li>public static <T> void sort(List<T> list)。对List集合中的元素进行升序排序。</li>
+<li>public static <T> void sort(List<T> list，Comparator&lt;? super T&gt; c)。对List集合中元素，按照比较器对象指定的规则进行排序。</li>
+</ol>
+<p>后两个是排序方法，3可以直接对自定义类型的List集合排序，但自定义类型必须实现了Comlarable接口，指定了比较规则才可以。</p>
+<h2 id="综合案例"><a href="#综合案例" class="headerlink" title="综合案例"></a>综合案例</h2><p>斗地主。</p>
 
       
     </div>
@@ -457,7 +479,7 @@
       <ul>
         
           <li>
-            <a href="/2024/04/06/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E9%9B%86%E5%90%88%EF%BC%88Collections%E3%80%81Map%E3%80%81Stream%E6%B5%81%EF%BC%89/">【Java基础】集合（Collections、Map、Stream流）</a>
+            <a href="/2024/04/06/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E9%9B%86%E5%90%88%EF%BC%88Map%E3%80%81Stream%E6%B5%81%EF%BC%89/">【Java基础】集合（Map、Stream流）</a>
           </li>
         
           <li>
