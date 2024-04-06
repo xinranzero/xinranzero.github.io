@@ -14,7 +14,7 @@
 <meta property="og:description" content="集合分类 单列集合（Collection）。元素是一个一个的。 双列集合（Map）。元素是一对一的。  单列集合（Collection）Collection集合体系 子接口List。 实现类ArrayList。 实现类LinkedList。   子接口Set。 实现类HashSet。 LinkedHashSet。   实现类TreeSet。    学习时要掌握的：  有什么特点？ 是否有特有功能？">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-04-05T07:59:05.000Z">
-<meta property="article:modified_time" content="2024-04-06T07:06:11.720Z">
+<meta property="article:modified_time" content="2024-04-06T07:08:07.214Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
   
@@ -294,30 +294,22 @@
 </ul>
 <blockquote>
 <p>补充二叉树：</p>
-<ul>
-<li>每个结点包含的内容：父节点地址、值、左子结点地址、右子结点地址。</li>
-<li>度：每个结点的子结点数量。在二叉树中，任意节点的度&lt;&#x3D;2。</li>
-<li>树高：树的总层数。</li>
-<li>根结点：最顶层的结点。</li>
-<li>左子结点。</li>
-<li>右子结点。</li>
-<li>左子树。</li>
-<li>右子树。</li>
-<li>在应用中用得比较多的是二叉查找树（排序树）。<ul>
-<li>规则：小的存左边，大的存右边，一样的不存。</li>
-<li>问题：当数据已经是排好序的，导致查询性能和单链表一样，查询速度变慢。</li>
-</ul>
-</li>
-<li>平衡二叉树。<ul>
-<li>在满足查找二叉树的大小规则下，让树尽可能矮小，以此提高查数据的性能。（一般左子树和右子树的深度之差不超过1。）</li>
-</ul>
-</li>
-<li>红黑树。<ul>
-<li><strong>自平衡</strong>的二叉树。</li>
-<li>一种增删改查数据性能相对都较好的结构。</li>
-</ul>
-</li>
-</ul>
+<p>每个结点包含的内容：父节点地址、值、左子结点地址、右子结点地址。</p>
+<p>度：每个结点的子结点数量。在二叉树中，任意节点的度&lt;&#x3D;2。</p>
+<p>树高：树的总层数。</p>
+<p>根结点：最顶层的结点。</p>
+<p>左子结点。</p>
+<p>右子结点。</p>
+<p>左子树。</p>
+<p>右子树。</p>
+<p>在应用中用得比较多的是二叉查找树（排序树）。</p>
+<p>（1）规则：小的存左边，大的存右边，一样的不存。</p>
+<p>（2）问题：当数据已经是排好序的，导致查询性能和单链表一样，查询速度变慢。</p>
+<p>平衡二叉树。</p>
+<p>（1）在满足查找二叉树的大小规则下，让树尽可能矮小，以此提高查数据的性能。（一般左子树和右子树的深度之差不超过1。）</p>
+<p>红黑树。</p>
+<p>（1）<strong>自平衡</strong>的二叉树。</p>
+<p>（2）一种增删改查数据性能相对都较好的结构。</p>
 </blockquote>
 <h2 id="深入理解HashSet集合去重的机制"><a href="#深入理解HashSet集合去重的机制" class="headerlink" title="深入理解HashSet集合去重的机制"></a>深入理解HashSet集合去重的机制</h2><p>注意：HashSet集合默认不能对内容一样的两个不同对象去重复！（因为不同对象哈希值不一样，因此存储位置不同，就会被认为不是重复的。）</p>
 <p>如何让HashSet集合能够实现对内容一样的两个不同对象也能去重复？？？</p>
