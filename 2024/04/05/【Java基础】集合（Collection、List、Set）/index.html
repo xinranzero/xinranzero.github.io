@@ -14,7 +14,7 @@
 <meta property="og:description" content="集合分类 单列集合（Collection）。元素是一个一个的。 双列集合（Map）。元素是一对一的。  单列集合（Collection）Collection集合体系 子接口List。 实现类ArrayList。 实现类LinkedList。   子接口Set。 实现类HashSet。 LinkedHashSet。   实现类TreeSet。    学习时要掌握的：  有什么特点？ 是否有特有功能？">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-04-05T07:59:05.000Z">
-<meta property="article:modified_time" content="2024-04-05T14:36:55.162Z">
+<meta property="article:modified_time" content="2024-04-06T03:40:38.048Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
   
@@ -173,8 +173,8 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">Collection&lt;String&gt; c = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">c.add(<span class="string">&quot;赵敏&quot;</span>);</span><br><span class="line">c.add(<span class="string">&quot;小昭&quot;</span>);</span><br><span class="line">c.add(<span class="string">&quot;素素&quot;</span>);</span><br><span class="line">c.add(<span class="string">&quot;灭绝&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//调用forEach方法</span></span><br><span class="line"><span class="comment">//由于参数是一个Consumer接口，所以可以传递匿名内部类</span></span><br><span class="line">c.forEach(<span class="keyword">new</span> <span class="title class_">Consumer</span>&lt;String&gt;&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">accept</span><span class="params">(String s)</span>&#123;</span><br><span class="line">        System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">//也可以使用lambda表达式对匿名内部类进行简化</span></span><br><span class="line">c.forEach((String s) -&gt;</span><br><span class="line">        System.out.println(s);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">c.forEach(s -&gt;</span><br><span class="line">        System.out.println(s);</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">c.forEach(s -&gt; System.out.println(s));</span><br><span class="line"></span><br><span class="line">c.forEach(System.out::println); <span class="comment">//[赵敏, 小昭, 素素, 灭绝]</span></span><br></pre></td></tr></table></figure>
 
 <p>lambda表达式遍历Collection集合不算简洁，之后遍历Map才是简洁。</p>
-<h1 id="List集合"><a href="#List集合" class="headerlink" title="List集合"></a>List集合</h1><p>ArrayList、LinkedList有序、可重复、有索引。但是<strong>底层数据结构不同</strong>（数据结构：存储、组织数据的方式），<strong>应用场景也不同</strong>。继承了Collection的功能。</p>
-<p>创建：</p>
+<h1 id="一-List集合"><a href="#一-List集合" class="headerlink" title="(一)List集合"></a>(一)List集合</h1><p>ArrayList、LinkedList有序、可重复、有索引。但是<strong>底层数据结构不同</strong>（数据结构：存储、组织数据的方式），<strong>应用场景也不同</strong>。继承了Collection的功能。</p>
+<p>创建（List是接口，所以需要指定具体的类）：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();<span class="comment">//经典代码，多态</span></span><br></pre></td></tr></table></figure>
 
 <h2 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h2><p>List集合因为支持索引，所以多了很多索引相关的方法：</p>
@@ -192,7 +192,7 @@
 </ol>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="string">&quot;蜘蛛精&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;至尊宝&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;糖宝宝&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//1.普通for循环</span></span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i&lt; list.size(); i++)&#123;</span><br><span class="line">    <span class="comment">//i = 0, 1, 2</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">e</span> <span class="operator">=</span> list.get(i);</span><br><span class="line">    System.out.println(e);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//2.增强for遍历</span></span><br><span class="line"><span class="keyword">for</span>(String s : list)&#123;</span><br><span class="line">    System.out.println(s);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//3.迭代器遍历</span></span><br><span class="line">Iterator&lt;String&gt; it = list.iterator();</span><br><span class="line"><span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> it.next();</span><br><span class="line">    System.out.println(s);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//4.lambda表达式遍历</span></span><br><span class="line">list.forEach(s-&gt;System.out.println(s));</span><br></pre></td></tr></table></figure>
 
-<h2 id="ArrayList集合的底层原理"><a href="#ArrayList集合的底层原理" class="headerlink" title="ArrayList集合的底层原理"></a>ArrayList集合的底层原理</h2><p>基于<strong>数组</strong>实现的。</p>
+<h2 id="1-ArrayList集合的底层原理"><a href="#1-ArrayList集合的底层原理" class="headerlink" title="(1)ArrayList集合的底层原理"></a>(1)ArrayList集合的底层原理</h2><p>基于<strong>数组</strong>实现的。</p>
 <p>特点（查询快、增删慢）：</p>
 <ol>
 <li>查询速度快（根据索引查询数据快）。查询数据通过地址值和索引定位，查询任意数据耗时相同。</li>
@@ -211,7 +211,7 @@
 <li>适合：根据索引查询数据，比如根据随机索引取数据（高效），或者数据量不是很大时。</li>
 <li>不适合：数据量大的同时，又要频繁地进行增删操作。</li>
 </ol>
-<h2 id="LinkList集合的底层原理"><a href="#LinkList集合的底层原理" class="headerlink" title="LinkList集合的底层原理"></a>LinkList集合的底层原理</h2><p>基于<strong>双链表</strong>实现的（Java中大多数情况都使用双向链表）。</p>
+<h2 id="2-LinkList集合的底层原理"><a href="#2-LinkList集合的底层原理" class="headerlink" title="(2)LinkList集合的底层原理"></a>(2)LinkList集合的底层原理</h2><p>基于<strong>双链表</strong>实现的（Java中大多数情况都使用双向链表）。</p>
 <p>什么是链表？</p>
 <ul>
 <li>链表结构是由一个一个的节点组成，一个节点由数据值、下一个元素的地址组成。</li>
@@ -241,7 +241,91 @@
 </ol>
 </li>
 </ol>
+<h1 id="二-Set集合"><a href="#二-Set集合" class="headerlink" title="(二)Set集合"></a>(二)Set集合</h1><p>添加的元素<strong>无</strong>序、<strong>不</strong>重复、<strong>无</strong>索引。</p>
+<ol>
+<li>HashSet。无序、不重复、无索引。</li>
+<li>LinkedHashSet。<strong>有</strong>序、不重复、无索引。（是HashSet的子孙类。）</li>
+<li>TreeSet。<strong>按照大小默认升序排序</strong>、不重复、无索引。</li>
+</ol>
+<p>创建（Set是接口，所以需要指定具体的类）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//一行经典代码</span></span><br><span class="line">Set&lt;Integer&gt; set = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();	<span class="comment">//无序、无索引、不重复（无序是指和添加元素的顺序无关）</span></span><br><span class="line">Set&lt;Integer&gt; set = <span class="keyword">new</span> <span class="title class_">LinkedHashSet</span>&lt;&gt;(); <span class="comment">//有序、无索引、不重复（有序是指和添加元素的顺序有关）</span></span><br><span class="line">Set&lt;Integer&gt; set = <span class="keyword">new</span> <span class="title class_">TreeSet</span>&lt;&gt;(); <span class="comment">//可排序(升序)、无索引、不重复</span></span><br></pre></td></tr></table></figure>
 
+<h2 id="常用方法-1"><a href="#常用方法-1" class="headerlink" title="常用方法"></a>常用方法</h2><p>要用的常用方法，基本上都是其父类Collection提供的。</p>
+<h2 id="1-HashSet集合"><a href="#1-HashSet集合" class="headerlink" title="(1)HashSet集合"></a>(1)HashSet集合</h2><p>需要掌握的：</p>
+<ol>
+<li>为什么添加的元素无序、不重复、无索引？</li>
+<li>增删改查数据有什么特点，适合什么场景？</li>
+</ol>
+<p>哈希值：</p>
+<ul>
+<li>一个int类型的数值，Java中每个对象都有一个哈希值。</li>
+<li>Java中的所有对象，都可以调用Object类提供的hashCode方法，返回该对象自己的哈希值。</li>
+</ul>
+<p>对象哈希值的特点：</p>
+<ul>
+<li>同一个对象多次调用hashCode()方法返回的哈希值是相同的。</li>
+<li>不同的对象，哈希值一般不同，但也有可能相同（哈希碰撞）。</li>
+</ul>
+<h2 id="HashSet集合的底层原理"><a href="#HashSet集合的底层原理" class="headerlink" title="HashSet集合的底层原理"></a>HashSet集合的底层原理</h2><ul>
+<li>基于哈希表实现。</li>
+<li>是一种增删改查性能都较好的数据结构。</li>
+<li>JDK8以前：哈希表 &#x3D; 数组+链表</li>
+<li>JDK8以后：哈希表 &#x3D; 数组+链表+<strong>红黑树</strong></li>
+</ul>
+<p>JDK8以前HashSet集合的底层原理：</p>
+<ol>
+<li>创建一个默认长度为16的数组，默认加载因子为0.75，数组名table；</li>
+<li>使用元素的哈希值对数组的长度求余计算出应存入的位置；</li>
+<li>判断当前位置是否为null，如果是null直接存入；</li>
+<li>如果不为null，表示有元素，则调用equals方法比较相等，则不存；不相等，则存入数据。<ul>
+<li>JDK8以前，新元素存入数组，占用老元素的位置，老元素挂下面；</li>
+<li>JDK8以后，新元素挂在老元素下面。</li>
+</ul>
+</li>
+</ol>
+<p>往HashSet集合中存储元素时，底层调用了元素的两个方法：一个是hashCode方法<strong>获取元素的hashCode值</strong>（哈希值）；另一个是调用了<strong>元素的equals方法</strong>，用来比较新添加的元素和集合中已有的元素是否相同。 </p>
+<ul>
+<li>只有新添加元素的hashCode值和集合中以后元素的hashCode值相同、新添加的元素调用equals方法和集合中已有元素比较结果为true, 才认为元素重复。</li>
+<li>如果hashCode值相同，equals比较不同，则以链表的形式连接在数组的同一个索引为位置。–&gt;导致的问题：如果数组快占满了，链表过长，导致查询性能降低。–&gt;哈希表的扩容机制（占满加载因子0.75*长度就会扩容，扩容成原来数组的两倍）。</li>
+</ul>
+<p>在JDK8以后的优化：</p>
+<ul>
+<li>当链表的长度超过8，且数组长度超过64时，就会自动把链表转换为红黑树。</li>
+</ul>
+<blockquote>
+<p>补充二叉树：</p>
+<ul>
+<li>每个结点包含的内容：父节点地址、值、左子结点地址、右子结点地址。</li>
+<li>度：每个结点的子结点数量。在二叉树中，任意节点的度&lt;&#x3D;2。</li>
+<li>树高：树的总层数。</li>
+<li>根结点：最顶层的结点。</li>
+<li>左子结点。</li>
+<li>右子结点。</li>
+<li>左子树。</li>
+<li>右子树。</li>
+<li>在应用中用得比较多的是二叉查找树（排序树）。<ul>
+<li>规则：小的存左边，大的存右边，一样的不存。</li>
+<li>问题：当数据已经是排好序的，导致查询性能和单链表一样，查询速度变慢。</li>
+</ul>
+</li>
+<li>平衡二叉树。<ul>
+<li>在满足查找二叉树的大小规则下，让树尽可能矮小，以此提高查数据的性能。（一般左子树和右子树的深度之差不超过1。）</li>
+</ul>
+</li>
+<li>红黑树。<ul>
+<li><strong>自平衡</strong>的二叉树。</li>
+<li>一种增删改查数据性能相对都较好的结构。</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h2 id="深入理解HashSet集合去重的机制"><a href="#深入理解HashSet集合去重的机制" class="headerlink" title="深入理解HashSet集合去重的机制"></a>深入理解HashSet集合去重的机制</h2><p>注意：HashSet集合默认不能对内容一样的两个不同对象去重复！（因为不同对象哈希值不一样，因此存储位置不同，就会被认为不是重复的。）</p>
+<p>如何让HashSet集合能够实现对内容一样的两个不同对象也能去重复？？？</p>
+<ul>
+<li>如果希望Set集合认为2个内容一样的对象是重复的，<br>必须重写对象的hashCode()和equals()方法。</li>
+<li>在类中**右键-generate-euqals() and hashCode()**，一路next。这里euqals方法只要两个对象内容一样就返回true，hashCode方法只要两个对象内容一样，返回的哈希值就是一样的。</li>
+</ul>
+<h2 id="2-LinkedHashSet集合"><a href="#2-LinkedHashSet集合" class="headerlink" title="(2)LinkedHashSet集合"></a>(2)LinkedHashSet集合</h2><h2 id="3-TreeSet集合"><a href="#3-TreeSet集合" class="headerlink" title="(3)TreeSet集合"></a>(3)TreeSet集合</h2>
       
     </div>
     <footer class="article-footer">
@@ -305,6 +389,10 @@
       <ul>
         
           <li>
+            <a href="/2024/04/06/%E3%80%90%E8%B5%84%E6%BA%90%E5%B8%96%E3%80%91%E5%AD%A6%E4%B9%A0Java%E5%92%8C%E7%AE%97%E6%B3%95/">【资源帖】学习Java和算法</a>
+          </li>
+        
+          <li>
             <a href="/2024/04/05/%E3%80%90%E4%BC%B4%E8%A1%8C%E9%9D%92%E5%B9%B4%E3%80%91%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E4%BB%BD%E5%8F%97%E6%AC%A2%E8%BF%8E%E7%9A%84%E6%A0%A1%E6%8B%9B%E7%AE%80%E5%8E%86/">【伴行青年】如何写一份受欢迎的校招简历</a>
           </li>
         
@@ -318,10 +406,6 @@
         
           <li>
             <a href="/2024/04/04/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E3%80%81%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8%E3%80%81%E7%AE%97%E6%B3%95%E3%80%81%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">【Java基础】lambda表达式、方法引用、算法、正则表达式</a>
-          </li>
-        
-          <li>
-            <a href="/2024/04/03/%E3%80%90java%E5%9F%BA%E7%A1%80%E3%80%91API%E9%AB%98%E7%BA%A7/">【Java基础】API高级</a>
           </li>
         
       </ul>
