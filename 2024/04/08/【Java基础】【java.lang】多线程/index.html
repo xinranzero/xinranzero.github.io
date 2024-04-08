@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>【Java基础】面向对象进阶：static、继承、单例 | xinranzero</title>
+  <title>【Java基础】【java.lang】多线程 | xinranzero</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="静态（static）修饰成员变量或成员方法。 static修饰成员变量按照有无static修饰，成员变量分为：  有–&gt;类变量（静态变量）。属于类，在计算机中只有一份，被类的全部对象共享。通过类名调用：类名.静态变量。 无–&gt;实例变量。属于每个对象。  static修饰成员方法">
+  <meta name="description" content="概述线程  线程(Thread)是一个程序内部的一条执行流程。 程序中如果只有一条执行流程，那这个程序就是单线程的程序。  多线程  多线程是指从软硬件上实现的多条执行流程的技术（多条线程由CPU负责调度执行）。 例如：买票系统、百度网盘下载、消息通信、淘宝、京东系统都离不开多线程技术。  创建方法Java是通过java.lang.Thread 类的对象来代表线程的。  方式1：继承Thread类">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Java基础】面向对象进阶：static、继承、单例">
-<meta property="og:url" content="http://xinranzero.com/2024/04/04/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BF%9B%E9%98%B6%EF%BC%9Astatic%E3%80%81%E7%BB%A7%E6%89%BF%E3%80%81%E5%8D%95%E4%BE%8B/index.html">
+<meta property="og:title" content="【Java基础】【java.lang】多线程">
+<meta property="og:url" content="http://xinranzero.com/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/index.html">
 <meta property="og:site_name" content="xinranzero">
-<meta property="og:description" content="静态（static）修饰成员变量或成员方法。 static修饰成员变量按照有无static修饰，成员变量分为：  有–&gt;类变量（静态变量）。属于类，在计算机中只有一份，被类的全部对象共享。通过类名调用：类名.静态变量。 无–&gt;实例变量。属于每个对象。  static修饰成员方法">
+<meta property="og:description" content="概述线程  线程(Thread)是一个程序内部的一条执行流程。 程序中如果只有一条执行流程，那这个程序就是单线程的程序。  多线程  多线程是指从软硬件上实现的多条执行流程的技术（多条线程由CPU负责调度执行）。 例如：买票系统、百度网盘下载、消息通信、淘宝、京东系统都离不开多线程技术。  创建方法Java是通过java.lang.Thread 类的对象来代表线程的。  方式1：继承Thread类">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2024-04-04T14:38:21.000Z">
-<meta property="article:modified_time" content="2024-04-04T14:43:47.476Z">
+<meta property="article:published_time" content="2024-04-08T12:36:41.000Z">
+<meta property="article:modified_time" content="2024-04-08T12:52:46.573Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
   
@@ -71,10 +71,10 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-【Java基础】面向对象进阶：static、继承、单例" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-【Java基础】【java.lang】多线程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2024/04/04/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BF%9B%E9%98%B6%EF%BC%9Astatic%E3%80%81%E7%BB%A7%E6%89%BF%E3%80%81%E5%8D%95%E4%BE%8B/" class="article-date">
-  <time class="dt-published" datetime="2024-04-04T14:38:21.000Z" itemprop="datePublished">2024-04-04</time>
+    <a href="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/" class="article-date">
+  <time class="dt-published" datetime="2024-04-08T12:36:41.000Z" itemprop="datePublished">2024-04-08</time>
 </a>
     
   </div>
@@ -85,7 +85,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      【Java基础】面向对象进阶：static、继承、单例
+      【Java基础】【java.lang】多线程
     </h1>
   
 
@@ -93,17 +93,32 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="静态（static）"><a href="#静态（static）" class="headerlink" title="静态（static）"></a>静态（static）</h1><p>修饰成员变量或成员方法。</p>
-<h2 id="static修饰成员变量"><a href="#static修饰成员变量" class="headerlink" title="static修饰成员变量"></a>static修饰成员变量</h2><p>按照有无static修饰，成员变量分为：</p>
-<ol>
-<li>有–&gt;类变量（静态变量）。属于类，在计算机中只有一份，被类的全部对象共享。通过类名调用：<strong>类名.静态变量</strong>。</li>
-<li>无–&gt;实例变量。属于每个对象。</li>
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>线程</p>
+<ul>
+<li>线程(Thread)是一个程序内部的一条执行流程。</li>
+<li>程序中如果只有一条执行流程，那这个程序就是单线程的程序。</li>
+</ul>
+<p>多线程</p>
+<ul>
+<li>多线程是指从软硬件上实现的多条执行流程的技术（多条线程由CPU负责调度执行）。</li>
+<li>例如：买票系统、百度网盘下载、消息通信、淘宝、京东系统都离不开多线程技术。</li>
+</ul>
+<h1 id="创建方法"><a href="#创建方法" class="headerlink" title="创建方法"></a>创建方法</h1><p>Java是通过java.lang.Thread 类的对象来代表线程的。 </p>
+<h2 id="方式1：继承Thread类"><a href="#方式1：继承Thread类" class="headerlink" title="方式1：继承Thread类"></a>方式1：继承Thread类</h2><ol>
+<li>定义一个子类MyThread继承线程类java.lang.Thread，重写run()方法。</li>
+<li>创建MyThread类的对象。</li>
+<li>调用线程对象的start()方法启动线程（启动后还是执行run方法的）。</li>
 </ol>
-<h2 id="static修饰成员方法"><a href="#static修饰成员方法" class="headerlink" title="static修饰成员方法"></a>static修饰成员方法</h2>
+<p>优缺点</p>
+<ul>
+<li>优点：编码简单。</li>
+<li>缺点：线程类已经继承Thread，无法继承其他类，不利于功能的扩展。</li>
+</ul>
+<h2 id="方式2："><a href="#方式2：" class="headerlink" title="方式2："></a>方式2：</h2><h2 id="方式3："><a href="#方式3：" class="headerlink" title="方式3："></a>方式3：</h2>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/04/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BF%9B%E9%98%B6%EF%BC%9Astatic%E3%80%81%E7%BB%A7%E6%89%BF%E3%80%81%E5%8D%95%E4%BE%8B/" data-id="clulckwwa0000asuh48p69dp4" data-title="【Java基础】面向对象进阶：static、继承、单例" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://xinranzero.com/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/" data-id="clur1v70l00000cuhgtan2vux" data-title="【Java基础】【java.lang】多线程" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -113,19 +128,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2024/04/05/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.util%E3%80%91%E9%9B%86%E5%90%88%EF%BC%88Collection%E3%80%81List%E3%80%81Set%EF%BC%89/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/04/08/%E3%80%90LeeCode%E3%80%91%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          【Java基础】集合（Collection、List、Set）
+          【LeeCode】刷题记录.md
         
       </div>
     </a>
   
   
-    <a href="/2024/04/04/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E3%80%81%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8%E3%80%81%E7%AE%97%E6%B3%95%E3%80%81%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E7%89%B9%E6%AE%8A%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6%E3%80%81%E6%97%A5%E5%BF%97%E6%8A%80%E6%9C%AF/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">【Java基础】lambda表达式、方法引用、算法、正则表达式</div>
+      <div class="article-nav-title">【Java基础】特殊文本文件、日志技术</div>
     </a>
   
 </nav>
