@@ -6,15 +6,29 @@
   
   <title>【Java基础】【java.lang.reflect】Junit单元测试、反射 | xinranzero</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="article">
+  <meta name="description" content="单元测试快速入门单元测试  单元测试就是针对最小的功能单元(方法)，编写测试代码对该功能进行正确性测试。  目前测试方法是怎么进行的？ 存在什么问题 ？  只能编写main方法，并在main方法中再去调用其他方法进行测试。 使用起来很不灵活，无法实现自动化测试。 无法得到测试的报告，需要程序员自己去观察测试是否成功。  Junit单元测试框架  JUnit是使用Java语言实现的单元测试框架，它是">
+<meta property="og:type" content="article">
 <meta property="og:title" content="【Java基础】【java.lang.reflect】Junit单元测试、反射">
 <meta property="og:url" content="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/index.html">
 <meta property="og:site_name" content="xinranzero">
+<meta property="og:description" content="单元测试快速入门单元测试  单元测试就是针对最小的功能单元(方法)，编写测试代码对该功能进行正确性测试。  目前测试方法是怎么进行的？ 存在什么问题 ？  只能编写main方法，并在main方法中再去调用其他方法进行测试。 使用起来很不灵活，无法实现自动化测试。 无法得到测试的报告，需要程序员自己去观察测试是否成功。  Junit单元测试框架  JUnit是使用Java语言实现的单元测试框架，它是">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668507501024.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668508226111.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/image-20240410171810088.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668578807439.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668579315586.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668579177901.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668579681294.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668579804732.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668580075962.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668580288930.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668580517173.png">
 <meta property="article:published_time" content="2024-04-10T01:28:55.000Z">
-<meta property="article:modified_time" content="2024-04-10T01:29:31.254Z">
+<meta property="article:modified_time" content="2024-04-10T13:53:48.400Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668507501024.png">
   
     <link rel="alternate" href="/atom.xml" title="xinranzero" type="application/atom+xml">
   
@@ -91,7 +105,198 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        
+        <h1 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h1><h2 id="快速入门"><a href="#快速入门" class="headerlink" title="快速入门"></a>快速入门</h2><p>单元测试</p>
+<ul>
+<li>单元测试就是<strong>针对最小的功能单元</strong>(方法)，编写测试代码对该功能<strong>进行正确性测试</strong>。</li>
+</ul>
+<p>目前测试方法是怎么进行的？ 存在什么问题 ？</p>
+<ul>
+<li>只能编写main方法，并在main方法中再去调用其他方法进行测试。</li>
+<li>使用起来很不灵活，无法实现自动化测试。</li>
+<li>无法得到测试的报告，需要程序员自己去观察测试是否成功。</li>
+</ul>
+<p>Junit单元测试框架</p>
+<ul>
+<li>JUnit是使用Java语言实现的单元测试框架，它是第三方公司开源出来的，很多<strong>开发工具已经集成了Junit框架</strong>，比如IDEA。</li>
+</ul>
+<p>优点</p>
+<ul>
+<li>编写的测试代码很灵活，<strong>可以指某个测试方法执行测试，也支持一键完成自动化测试</strong>。</li>
+<li>不需要程序员去分析测试的结果，会<strong>自动生成测试报告</strong>出来。</li>
+<li>提供了更强大的测试能力。</li>
+</ul>
+<p>需求</p>
+<ul>
+<li>某个系统，有多个业务方法，请使用Junit框架完成对这些方法的单元测试。</li>
+</ul>
+<p>具体步骤</p>
+<ol>
+<li>将Junit框架的jar包导入到项目中（注意：IDEA集成了Junit框架，不需要我们自己手工导入了）。</li>
+<li><strong>编写测试类、测试类方法</strong>（注意：<strong>测试方法必须是公共的，无参数，无返回值的非静态方法</strong>）。</li>
+<li>【灵魂】<strong>必须在测试方法上使用@Test注解</strong>（标注该方法是一个测试方法）。（在报错的地方使用alt+enter，导入JUnit4。这个是经典版本，但是版本5可读性更好。）</li>
+<li>在测试方法中，编写程序调用被测试的方法即可。（测试某个方法直接右键该方法启动测试。测试全部方法，可以选择类或者模块启动。）</li>
+<li>选中测试方法，右键选择“JUnit运行” ，如果测试<strong>通过</strong>则是<strong>绿色</strong>；如果测试<strong>失败</strong>，则是<strong>红色</strong>。</li>
+</ol>
+<p>先准备一个类，假设写了一个StringUtil工具类，代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringUtil</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">printNumber</span><span class="params">(String name)</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;名字长度：&quot;</span>+name.length());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，写一个测试类，测试StringUtil工具类中的方法能否正常使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringUtilTest</span>&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testPrintNumber</span><span class="params">()</span>&#123;</span><br><span class="line">        StringUtil.printNumber(<span class="string">&quot;admin&quot;</span>);</span><br><span class="line">        StringUtil.printNumber(<span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写完代码之后，我们会发现测试方法左边，会有一个绿色的三角形按钮。点击这个按钮，就可以运行测试方法。</p>
+<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668507501024.png" alt="1668507501024"></p>
+<h2 id="单元测试断言"><a href="#单元测试断言" class="headerlink" title="单元测试断言"></a>单元测试断言</h2><p>断言：意思是程序员可以预测程序的运行结果，检查程序的运行结果是否与预期一致。**</p>
+<p>我们在StringUtil类中新增一个测试方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">getMaxIndex</span><span class="params">(String data)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(data == <span class="literal">null</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> data.length();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们在StringUtilTest类中写一个测试方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringUtilTest</span>&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetMaxIndex</span><span class="params">()</span>&#123;</span><br><span class="line">       <span class="type">int</span> <span class="variable">index1</span> <span class="operator">=</span> StringUtil.getMaxIndex(<span class="literal">null</span>);</span><br><span class="line">       System.out.println(index1);</span><br><span class="line">        </span><br><span class="line">       <span class="type">int</span> <span class="variable">index2</span> <span class="operator">=</span> StringUtil.getMaxIndex(<span class="string">&quot;admin&quot;</span>);</span><br><span class="line">       System.out.println(index2);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//断言机制：预测index2的结果</span></span><br><span class="line">        Assert.assertEquals(<span class="string">&quot;方法内部有Bug&quot;</span>,<span class="number">4</span>,index2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行测试方法，结果如下图所示，表示我们预期值与实际值不一致</p>
+<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668508226111.png" alt="1668508226111"></p>
+<h2 id="Junit框架的常见注解"><a href="#Junit框架的常见注解" class="headerlink" title="Junit框架的常见注解"></a>Junit框架的常见注解</h2><p>常见注解(Junit 4.xxxx版本)</p>
+<ol>
+<li>@Test。测试方法。</li>
+<li>@Before。用来修饰一个实例方法，该方法会在每一个测试方法执行之前执行一次。</li>
+<li>@After。用来修饰一个实例方法，该方法会在每一个测试方法执行之后执行一次。</li>
+<li>@BeforeClass。用来修饰一个静态方法，该方法会在所有测试方法之前只执行一次。</li>
+<li>@AfterClass。用来修饰一个静态方法，该方法会在所有测试方法之后只执行一次。</li>
+</ol>
+<p>特点如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>被<span class="meta">@BeforeClass</span>标记的方法,执行在所有方法之前</span><br><span class="line"><span class="number">2.</span>被<span class="meta">@AfterCalss</span>标记的方法，执行在所有方法之后</span><br><span class="line"><span class="number">3.</span>被<span class="meta">@Before</span>标记的方法，执行在每一个<span class="meta">@Test</span>方法之前</span><br><span class="line"><span class="number">4.</span>被<span class="meta">@After</span>标记的方法，执行在每一个<span class="meta">@Test</span>方法之后</span><br></pre></td></tr></table></figure>
+
+<p>常见注解(Junit 5.xxxx版本)</p>
+<ol>
+<li>@Test。测试方法。</li>
+<li>@BeforeEach。用来修饰一个实例方法，该方法会在每一个测试方法执行之前执行一次。</li>
+<li>@AfterEach。用来修饰一个实例方法，该方法会在每一个测试方法执行之后执行一次。</li>
+<li>@BeforeAll。用来修饰一个静态方法，该方法会在所有测试方法之前只执行一次。</li>
+<li>@AfterAll。用来修饰一个静态方法，该方法会在所有测试方法之后只执行一次。</li>
+</ol>
+<ul>
+<li>开始执行的方法:初始化资源。</li>
+<li>执行完之后的方法:释放资源。</li>
+</ul>
+<p>作用？应用场景？</p>
+<p>假设我想在每个测试方法中使用Socket对象，并且用完之后，需要把Socket关闭。代码就可以按照下面的结构来设计</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringUtilTest</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Socket socket;</span><br><span class="line">    <span class="meta">@Before</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">test1</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;--&gt; test1 Before 执行了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@BeforeClass</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">test11</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;--&gt; test11 BeforeClass 执行了&quot;</span>);</span><br><span class="line">        <span class="comment">//初始化Socket对象</span></span><br><span class="line">        socket = <span class="keyword">new</span> <span class="title class_">Socket</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@After</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">test2</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;--&gt; test2 After 执行了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@AfterCalss</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">test22</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;--&gt; test22 AfterCalss 执行了&quot;</span>);</span><br><span class="line">         <span class="comment">//关闭Socket</span></span><br><span class="line">        socket.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h1><h2 id="认识反射Reflection"><a href="#认识反射Reflection" class="headerlink" title="认识反射Reflection"></a>认识反射Reflection</h2><p>【核心思想】得到编译以后的class文件对象。</p>
+<ul>
+<li>反射指的是<strong>允许以编程方式访问已加载类的成分（成员变量、方法、构造器等）</strong>。</li>
+<li>在java.lang.reflect包中。</li>
+<li>主要是用来做框架的。好理解一点，我们在写代码的时候，IDEA给我们提示的可以调用的方法。</li>
+</ul>
+<p>反射学什么？</p>
+<ol>
+<li><strong>加载类，获取类的字节码</strong>：Class对象。<ol>
+<li>反射第一步：获取类：Class。</li>
+<li>获取类的构造器：Constructor。</li>
+<li>获取类的成员变量：Field。</li>
+<li>获取类的成员方法：Method。</li>
+</ol>
+</li>
+<li>获取类的构造器：Constructor对象。</li>
+<li>获取类的成员变量：Field对象。</li>
+<li>获取类的成员方法：Method对象。</li>
+</ol>
+<p>之后再看反射的应用场景。</p>
+<h2 id="获取类"><a href="#获取类" class="headerlink" title="获取类"></a>获取类</h2><p>反射第一步，获取Class类的对象。（3种方式。）</p>
+<ol>
+<li>Class c1 &#x3D; 类名.class。</li>
+<li>调用Class提供的方法：public static Class.forName(String package)。</li>
+<li>Object提供的方法：public Class getClass()。</li>
+</ol>
+<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/image-20240410171810088.png" alt="image-20240410171810088"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test1Class</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        <span class="type">Class</span> <span class="variable">c1</span> <span class="operator">=</span> Student.class;</span><br><span class="line">        System.out.println(c1.getName()); <span class="comment">//获取全类名</span></span><br><span class="line">        System.out.println(c1.getSimpleName()); <span class="comment">//获取简单类名</span></span><br><span class="line">        </span><br><span class="line">        <span class="type">Class</span> <span class="variable">c2</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;com.itheima.d2_reflect.Student&quot;</span>);</span><br><span class="line">        System.out.println(c1 == c2); <span class="comment">//true</span></span><br><span class="line">        </span><br><span class="line">        <span class="type">Student</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>();</span><br><span class="line">        <span class="type">Class</span> <span class="variable">c3</span> <span class="operator">=</span> s.getClass();</span><br><span class="line">        System.out.println(c2 == c3); <span class="comment">//true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="获取类的构造器"><a href="#获取类的构造器" class="headerlink" title="获取类的构造器"></a>获取类的构造器</h2><h3 id="Class类提供的几个方法"><a href="#Class类提供的几个方法" class="headerlink" title="Class类提供的几个方法"></a>Class类提供的几个方法</h3><ol>
+<li>Constructor&lt;?&gt;[] getConstructors()。返回所有构造器对象的数组（<strong>只能拿public的</strong>）。</li>
+<li>Constructor&lt;?&gt;[] getDeclaredConstructors()。返回所有构造器对象的数组，<strong>存在就能拿到</strong>。</li>
+<li>Constructor<T> getConstructor(Class&lt;?&gt;… parameterTypes)。<strong>返回单个构造器对象</strong>（只能拿<strong>public</strong>的）。</T></li>
+<li>Constructor<T> getDeclaredConstructor(Class&lt;?&gt;… parameterTypes)。返回单个构造器对象，存在就能拿到。</T></li>
+</ol>
+<p>方便记忆：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">get:获取</span><br><span class="line">Declared: 有这个单词表示可以获取任意一个，没有这个单词表示只能获取一个<span class="keyword">public</span>修饰的</span><br><span class="line">Constructor: 构造方法的意思</span><br><span class="line">后缀s: 表示可以获取多个，没有后缀s只能获取一个</span><br></pre></td></tr></table></figure>
+
+<p>假设现在有一个Cat类，里面有几个构造方法，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Cat</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Cat</span><span class="params">()</span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Cat</span><span class="params">(String name, <span class="type">int</span> age)</span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们写一个测试方法，来测试获取类中所有的构造器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test2Constructor</span>()&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetConstructors</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">//1、反射第一步：必须先得到这个类的Class对象</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Cat.class;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//2、获取类的全部构造器</span></span><br><span class="line">        Constructor[] constructors = c.getDeclaredConstructors();</span><br><span class="line">        <span class="comment">//3、遍历数组中的每一个构造器对象。</span></span><br><span class="line">        <span class="keyword">for</span>(Constructor constructor: constructors)&#123;</span><br><span class="line">            System.out.println(constructor.getName()+<span class="string">&quot;---&gt; 参数个数：&quot;</span>+constructor.getParameterCount());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>刚才的是获取Cat类中所有的构造器，接下来试一试单个构造器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test2Constructor</span>()&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetConstructor</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">//1、反射第一步：必须先得到这个类的Class对象</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Cat.class;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//2、获取类public修饰的空参数构造器</span></span><br><span class="line">        <span class="type">Constructor</span> <span class="variable">constructor1</span> <span class="operator">=</span> c.getConstructor();</span><br><span class="line">        System.out.println(constructor1.getName()+<span class="string">&quot;---&gt; 参数个数：&quot;</span>+constructor1.getParameterCount());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//3、获取private修饰的有两个参数的构造器，第一个参数String类型，第二个参数int类型</span></span><br><span class="line">        <span class="type">Constructor</span> <span class="variable">constructor2</span> <span class="operator">=</span> </span><br><span class="line">            c.getDeclaredConstructor(String.class,<span class="type">int</span>.class);</span><br><span class="line">        </span><br><span class="line">        System.out.println(constructor2.getName()+<span class="string">&quot;---&gt; 参数个数：&quot;</span>+constructor1.getParameterCount());</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取类构造器的作用"><a href="#获取类构造器的作用" class="headerlink" title="获取类构造器的作用"></a>获取类构造器的作用</h3><p>初始化对象返回。注意：这两个方法时属于Constructor的，需要用Constructor对象来调用。 </p>
+<ol>
+<li>T newInstance(Object… initargs)。根据指定的构造器创建对象。（反射后的构造器依然是创建对象的。）</li>
+<li>public void  setAccessible(boolean flag)。设置为true,表示取消访问检查，进行暴力反射。（–&gt;反射会破坏封装性，私有的也可以执行了。）</li>
+</ol>
+<h3 id="代码演示"><a href="#代码演示" class="headerlink" title="代码演示"></a>代码演示</h3><p>constructor1和constructor2分别表示Cat类中的两个构造器。现在我要把这两个构造器执行起来</p>
+<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668578807439.png" alt="1668578807439"></p>
+<p>由于构造器是private修饰的，先需要调用<code>setAccessible(true)</code> 表示禁止检查访问控制，然后再调用<code>newInstance(实参列表)</code> 就可以执行构造器，完成对象的初始化了。</p>
+<p>代码如下：为了看到构造器真的执行， 故意在两个构造器中分别加了两个打印语句</p>
+<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668579315586.png" alt="1668579315586"></p>
+<p>代码的执行结果如下图所示：</p>
+<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668579177901.png" alt="1668579177901"></p>
+<p>注意：上面这种代码风格，看起来没什么必要，可以先稍微记一记，以后学习框架的时候有用。</p>
+<h2 id="获取类的成员变量-使用"><a href="#获取类的成员变量-使用" class="headerlink" title="获取类的成员变量&amp;使用"></a>获取类的成员变量&amp;使用</h2><h3 id="Class类中提供的获取成员变量的方法"><a href="#Class类中提供的获取成员变量的方法" class="headerlink" title="Class类中提供的获取成员变量的方法"></a>Class类中提供的获取成员变量的方法</h3><ol>
+<li>Field[] getFields()。返回所有成员变量对象的<strong>数组</strong>（只<strong>能拿public</strong>的）。</li>
+<li>Field[] getDeclaredFields()。返回所有成员变量对象的<strong>数组</strong>，<strong>存在就能拿到</strong>。</li>
+<li>Field getField(String name)。返回<strong>单个</strong>成员变量对象（只能拿<strong>public</strong>的）。</li>
+<li>Field getDeclaredField(String name)。返回<strong>单个</strong>成员变量对象，<strong>存在就能拿到</strong>。</li>
+</ol>
+<p>记忆规则</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">get:获取</span><br><span class="line">Declared: 有这个单词表示可以获取任意一个，没有这个单词表示只能获取一个<span class="keyword">public</span>修饰的</span><br><span class="line">Field: 成员变量的意思</span><br><span class="line">后缀s: 表示可以获取多个，没有后缀s只能获取一个</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取成员变量的作用"><a href="#获取成员变量的作用" class="headerlink" title="获取成员变量的作用"></a>获取成员变量的<strong>作用</strong></h3><p>依然是<strong>在某个对象中取值、赋值</strong>。</p>
+<h3 id="Field类中用于取值、赋值的方法"><a href="#Field类中用于取值、赋值的方法" class="headerlink" title="Field类中用于取值、赋值的方法"></a>Field类中用于取值、赋值的方法</h3><ol>
+<li>void set(Object obj, Object value)。赋值。</li>
+<li>Object get(Object obj)。获取值。</li>
+<li>setAccessible(boolean)。如果某成员变量是非public的，需要打开权限（暴力反射），然后再取值、赋值。</li>
+</ol>
+<h3 id="代码演示-1"><a href="#代码演示-1" class="headerlink" title="代码演示"></a>代码演示</h3><ul>
+<li>设有一个Cat类它有若干个成员变量，用Class类提供 的方法将成员变量的对象获取出来。</li>
+</ul>
+<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668579681294.png" alt="1668579681294"></p>
+<p>执行完上面的代码之后，我们可以看到控制台上打印输出了，每一个成员变量的名称和它的类型。</p>
+<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668579804732.png" alt="1668579804732"></p>
+<ul>
+<li>获取到成员变量的对象之后该如何使用呢？</li>
+</ul>
+<p>在Filed类中提供给给成员变量赋值和获取值的方法，如下图所示。</p>
+<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668580075962.png" alt="1668580075962"></p>
+<p>再次强调一下设置值、获取值的方法时Filed类的需要用Filed类的对象来调用，而且不管是设置值、还是获取值，都需要依赖于该变量所属的对象。代码如下</p>
+<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668580288930.png" alt="1668580288930"></p>
+<p>执行代码，控制台会有如下的打印</p>
+<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668580517173.png" alt="1668580517173"></p>
+<h2 id="获取类的成员方法"><a href="#获取类的成员方法" class="headerlink" title="获取类的成员方法"></a>获取类的成员方法</h2><p>使用反射技术获取方法对象并使用</p>
+<ul>
+<li>反射的第一步是先得到类对象，然后从类对象中获取类的成分对象。</li>
+</ul>
+<p>Class类中用于获取成员方法的方法</p>
+<ol>
+<li>Method[] getMethods()。返回所有成员方法对象的<strong>数组</strong>（只能拿<strong>public</strong>的）。</li>
+<li>Method[] getDeclaredMethods()。返回所有成员方法对象的<strong>数组</strong>，<strong>存在就能拿到</strong>。</li>
+<li>Method getMethod(String name, Class&lt;?&gt;… parameterTypes)。返回<strong>单个</strong>成员方法对象（只能拿<strong>public</strong>的）。</li>
+<li>Method getDeclaredMethod(String name, Class&lt;?&gt;… parameterTypes)。返回<strong>单个</strong>成员方法对象，<strong>存在就能拿到</strong>。</li>
+</ol>
+<p>使用反射技术获取方法对象并使用</p>
+<ul>
+<li>获取成员方法的<strong>作用依然是在某个对象中进行执行此方法</strong>。</li>
+</ul>
+<p>Method类中用于触发执行的方法</p>
+<ol>
+<li>Object invoke(Object obj, Object… args)。<ul>
+<li>参数一：用obj对象调用该方法</li>
+<li>参数二：调用方法的传递的参数（如果没有就不写）</li>
+<li>返回值：方法的返回值（如果没有就不写）</li>
+</ul>
+</li>
+<li>setAccessible(boolean)。如果某成员方法是非public的，需要打开权限（暴力反射），然后再触发执行。</li>
+</ol>
+<h2 id="作用、应用场景"><a href="#作用、应用场景" class="headerlink" title="作用、应用场景"></a>作用、应用场景</h2><h1 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h1><h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1>
       
     </div>
     <footer class="article-footer">
