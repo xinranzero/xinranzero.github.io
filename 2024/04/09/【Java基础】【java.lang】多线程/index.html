@@ -9,20 +9,20 @@
   <meta name="description" content="概述线程  线程(Thread)是一个程序内部的一条执行流程。 程序中如果只有一条执行流程，那这个程序就是单线程的程序。  多线程  多线程是指从软硬件上实现的多条执行流程的技术（多条线程由CPU负责调度执行）。 例如：买票系统、百度网盘下载、消息通信、淘宝、京东系统都离不开多线程技术。  创建方法Java是通过java.lang.Thread 类的对象来代表线程的。  注意main方法由一条默认">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Java基础】【java.lang】多线程">
-<meta property="og:url" content="http://xinranzero.com/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/index.html">
+<meta property="og:url" content="http://xinranzero.com/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/index.html">
 <meta property="og:site_name" content="xinranzero">
 <meta property="og:description" content="概述线程  线程(Thread)是一个程序内部的一条执行流程。 程序中如果只有一条执行流程，那这个程序就是单线程的程序。  多线程  多线程是指从软硬件上实现的多条执行流程的技术（多条线程由CPU负责调度执行）。 例如：买票系统、百度网盘下载、消息通信、淘宝、京东系统都离不开多线程技术。  创建方法Java是通过java.lang.Thread 类的对象来代表线程的。  注意main方法由一条默认">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://xinranzero.com/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409162613513.png">
-<meta property="og:image" content="http://xinranzero.com/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/1668067745116.png">
-<meta property="og:image" content="http://xinranzero.com/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/1668067964048.png">
-<meta property="og:image" content="http://xinranzero.com/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409192641654.png">
-<meta property="og:image" content="http://xinranzero.com/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409194225380.png">
-<meta property="article:published_time" content="2024-04-08T12:36:41.000Z">
-<meta property="article:modified_time" content="2024-04-09T11:44:32.025Z">
+<meta property="og:image" content="http://xinranzero.com/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409162613513.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/1668067745116.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/1668067964048.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409192641654.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409194225380.png">
+<meta property="article:published_time" content="2024-04-09T12:36:41.000Z">
+<meta property="article:modified_time" content="2024-04-10T01:25:15.070Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://xinranzero.com/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409162613513.png">
+<meta name="twitter:image" content="http://xinranzero.com/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409162613513.png">
   
     <link rel="alternate" href="/atom.xml" title="xinranzero" type="application/atom+xml">
   
@@ -79,8 +79,8 @@
       <div class="outer">
         <section id="main"><article id="post-【Java基础】【java.lang】多线程" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/" class="article-date">
-  <time class="dt-published" datetime="2024-04-08T12:36:41.000Z" itemprop="datePublished">2024-04-08</time>
+    <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/" class="article-date">
+  <time class="dt-published" datetime="2024-04-09T12:36:41.000Z" itemprop="datePublished">2024-04-09</time>
 </a>
     
   </div>
@@ -384,7 +384,7 @@
 <li>参数七：handler：指定线程池的任务拒绝策略（线程都在忙，任务队列也满了的时候，新任务来了该怎么处理）。</li>
 </ol>
 <p>理解</p>
-<p><img src="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409162613513.png" alt="image-20240409162613513"></p>
+<p><img src="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409162613513.png" alt="image-20240409162613513"></p>
 <p>用构造器创建线程池对象的代码</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ExecutorService</span> <span class="variable">pool</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">    <span class="number">3</span>,	<span class="comment">//核心线程数有3个</span></span><br><span class="line">    <span class="number">5</span>,  <span class="comment">//最大线程数有5个。   临时线程数=最大线程数-核心线程数=5-3=2</span></span><br><span class="line">    <span class="number">8</span>,	<span class="comment">//临时线程存活的时间8秒。 意思是临时线程8秒没有任务执行，就会被销毁掉。</span></span><br><span class="line">    TimeUnit.SECONDS,<span class="comment">//时间单位（秒）</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(<span class="number">4</span>), <span class="comment">//任务阻塞队列，没有来得及执行的任务在，任务队列中等待</span></span><br><span class="line">    Executors.defaultThreadFactory(), <span class="comment">//用于创建线程的工厂对象</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy() <span class="comment">//拒绝策略</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 
@@ -421,7 +421,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ExecutorService</span> <span class="variable">pool</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">    <span class="number">3</span>,	<span class="comment">//核心线程数有3个</span></span><br><span class="line">    <span class="number">5</span>,  <span class="comment">//最大线程数有5个。   临时线程数=最大线程数-核心线程数=5-3=2</span></span><br><span class="line">    <span class="number">8</span>,	<span class="comment">//临时线程存活的时间8秒。 意思是临时线程8秒没有任务执行，就会被销毁掉。</span></span><br><span class="line">    TimeUnit.SECONDS,<span class="comment">//时间单位（秒）</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(<span class="number">4</span>), <span class="comment">//任务阻塞队列，没有来得及执行的任务在，任务队列中等待</span></span><br><span class="line">    Executors.defaultThreadFactory(), <span class="comment">//用于创建线程的工厂对象</span></span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy() <span class="comment">//拒绝策略</span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="type">Runnable</span> <span class="variable">target</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyRunnable</span>();</span><br><span class="line">pool.execute(target); <span class="comment">// 线程池会自动创建一个新线程，自动处理这个任务，自动执行的！</span></span><br><span class="line">pool.execute(target); <span class="comment">// 线程池会自动创建一个新线程，自动处理这个任务，自动执行的！</span></span><br><span class="line">pool.execute(target); <span class="comment">// 线程池会自动创建一个新线程，自动处理这个任务，自动执行的！</span></span><br><span class="line"><span class="comment">//下面4个任务在任务队列里排队</span></span><br><span class="line">pool.execute(target);</span><br><span class="line">pool.execute(target);</span><br><span class="line">pool.execute(target);</span><br><span class="line">pool.execute(target);</span><br><span class="line"></span><br><span class="line"><span class="comment">//下面2个任务，会被临时线程的创建时机了</span></span><br><span class="line">pool.execute(target);</span><br><span class="line">pool.execute(target);</span><br><span class="line"><span class="comment">// 到了新任务的拒绝时机了！</span></span><br><span class="line">pool.execute(target);</span><br></pre></td></tr></table></figure>
 
 <p>执行上面的代码，结果输出如下</p>
-<p><img src="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/1668067745116.png" alt="1668067745116"></p>
+<p><img src="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/1668067745116.png" alt="1668067745116"></p>
 <h2 id="线程池处理Callable任务"><a href="#线程池处理Callable任务" class="headerlink" title="线程池处理Callable任务"></a>线程池处理Callable任务</h2><p>Callable任务与Runnable任务最大的不同：执行完毕后可以返回结果。</p>
 <p>上一小节提到的submit()方法。</p>
 <p>先准备一个Callable线程任务</p>
@@ -431,7 +431,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadPoolTest2</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">// 1、通过ThreadPoolExecutor创建一个线程池对象。</span></span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">pool</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">            <span class="number">3</span>,</span><br><span class="line">            <span class="number">5</span>,</span><br><span class="line">            <span class="number">8</span>,</span><br><span class="line">            TimeUnit.SECONDS, </span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(<span class="number">4</span>),</span><br><span class="line">            Executors.defaultThreadFactory(),</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2、使用线程处理Callable任务。</span></span><br><span class="line">        Future&lt;String&gt; f1 = pool.submit(<span class="keyword">new</span> <span class="title class_">MyCallable</span>(<span class="number">100</span>));</span><br><span class="line">        Future&lt;String&gt; f2 = pool.submit(<span class="keyword">new</span> <span class="title class_">MyCallable</span>(<span class="number">200</span>));</span><br><span class="line">        Future&lt;String&gt; f3 = pool.submit(<span class="keyword">new</span> <span class="title class_">MyCallable</span>(<span class="number">300</span>));</span><br><span class="line">        Future&lt;String&gt; f4 = pool.submit(<span class="keyword">new</span> <span class="title class_">MyCallable</span>(<span class="number">400</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3、执行完Callable任务后，需要获取返回结果。</span></span><br><span class="line">        System.out.println(f1.get());</span><br><span class="line">        System.out.println(f2.get());</span><br><span class="line">        System.out.println(f3.get());</span><br><span class="line">        System.out.println(f4.get());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>执行后，结果如下图所示</p>
-<p><img src="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/1668067964048.png" alt="1668067964048"></p>
+<p><img src="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/1668067964048.png" alt="1668067964048"></p>
 <p>说明线程2复用了。</p>
 <h2 id="Executors工具类实现线程池"><a href="#Executors工具类实现线程池" class="headerlink" title="Executors工具类实现线程池"></a>Executors工具类实现线程池</h2><p>是一个线程池的工具类，提供了很多静态方法用于返回不同特点的线程池对象。 </p>
 <p>常用方法：</p>
@@ -450,7 +450,7 @@
 <p>【Executors使用可能存在的陷阱】</p>
 <ul>
 <li>大型并发系统环境中使用Executors如果不注意可能会出现系统风险。（小的系统也最好不要用，容易留安全隐患。）</li>
-<li><img src="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409192641654.png" alt="image-20240409192641654"></li>
+<li><img src="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409192641654.png" alt="image-20240409192641654"></li>
 </ul>
 <h1 id="其他细节知识：并发、并行"><a href="#其他细节知识：并发、并行" class="headerlink" title="其他细节知识：并发、并行"></a>其他细节知识：并发、并行</h1><h2 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h2><ul>
 <li>正在运行的程序（软件）就是一个独立的进程。</li>
@@ -512,12 +512,12 @@
 <td>因为run方法正常退出而死亡，或者因为没有捕获的异常终止了run方法而死亡。</td>
 </tr>
 </tbody></table>
-<h3 id="线程的6种状态互相转换"><a href="#线程的6种状态互相转换" class="headerlink" title="线程的6种状态互相转换"></a>线程的6种状态互相转换</h3><p><img src="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409194225380.png" alt="image-20240409194225380"></p>
+<h3 id="线程的6种状态互相转换"><a href="#线程的6种状态互相转换" class="headerlink" title="线程的6种状态互相转换"></a>线程的6种状态互相转换</h3><p><img src="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/image-20240409194225380.png" alt="image-20240409194225380"></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/" data-id="clur1v70l00000cuhgtan2vux" data-title="【Java基础】【java.lang】多线程" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://xinranzero.com/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/" data-id="clur1v70l00000cuhgtan2vux" data-title="【Java基础】【java.lang】多线程" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -527,19 +527,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2024/04/08/%E3%80%90LeeCode%E3%80%91%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          【LeeCode】刷题记录.md
+          【Java基础】【java.lang.reflect】Junit单元测试、反射
         
       </div>
     </a>
   
   
-    <a href="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E7%89%B9%E6%AE%8A%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6%E3%80%81%E6%97%A5%E5%BF%97%E6%8A%80%E6%9C%AF/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.net%E3%80%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">【Java基础】特殊文本文件、日志技术</div>
+      <div class="article-nav-title">【Java基础】【java.net】网络编程</div>
     </a>
   
 </nav>
@@ -577,23 +577,23 @@
       <ul>
         
           <li>
+            <a href="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/">【Java基础】【java.lang.reflect】Junit单元测试、反射</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/">【Java基础】【java.lang】多线程</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.net%E3%80%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">【Java基础】【java.net】网络编程</a>
+          </li>
+        
+          <li>
             <a href="/2024/04/08/%E3%80%90LeeCode%E3%80%91%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/">【LeeCode】刷题记录.md</a>
           </li>
         
           <li>
-            <a href="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/">【Java基础】【java.lang】多线程</a>
-          </li>
-        
-          <li>
             <a href="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E7%89%B9%E6%AE%8A%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6%E3%80%81%E6%97%A5%E5%BF%97%E6%8A%80%E6%9C%AF/">【Java基础】特殊文本文件、日志技术</a>
-          </li>
-        
-          <li>
-            <a href="/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java-io%E3%80%91io%E6%B5%81/">【Java基础】java.io包下的常用API-io流</a>
-          </li>
-        
-          <li>
-            <a href="/2024/04/06/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.util%E3%80%91%E9%9B%86%E5%90%88%EF%BC%88Map%E3%80%81Stream%E6%B5%81%EF%BC%89/">【Java基础】集合（Map、Stream流）</a>
           </li>
         
       </ul>

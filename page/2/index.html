@@ -69,6 +69,123 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-【Java基础】面向对象进阶：static、继承、单例" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/04/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BF%9B%E9%98%B6%EF%BC%9Astatic%E3%80%81%E7%BB%A7%E6%89%BF%E3%80%81%E5%8D%95%E4%BE%8B/" class="article-date">
+  <time class="dt-published" datetime="2024-04-04T14:38:21.000Z" itemprop="datePublished">2024-04-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/04/04/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BF%9B%E9%98%B6%EF%BC%9Astatic%E3%80%81%E7%BB%A7%E6%89%BF%E3%80%81%E5%8D%95%E4%BE%8B/">【Java基础】面向对象进阶：static、继承、单例</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="静态（static）"><a href="#静态（static）" class="headerlink" title="静态（static）"></a>静态（static）</h1><p>修饰成员变量或成员方法。</p>
+<h2 id="static修饰成员变量"><a href="#static修饰成员变量" class="headerlink" title="static修饰成员变量"></a>static修饰成员变量</h2><p>按照有无static修饰，成员变量分为：</p>
+<ol>
+<li>有–&gt;类变量（静态变量）。属于类，在计算机中只有一份，被类的全部对象共享。通过类名调用：<strong>类名.静态变量</strong>。</li>
+<li>无–&gt;实例变量。属于每个对象。</li>
+</ol>
+<h2 id="static修饰成员方法"><a href="#static修饰成员方法" class="headerlink" title="static修饰成员方法"></a>static修饰成员方法</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://xinranzero.com/2024/04/04/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BF%9B%E9%98%B6%EF%BC%9Astatic%E3%80%81%E7%BB%A7%E6%89%BF%E3%80%81%E5%8D%95%E4%BE%8B/" data-id="clulckwwa0000asuh48p69dp4" data-title="【Java基础】面向对象进阶：static、继承、单例" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-【Java基础】【java.lang】lambda表达式、方法引用、算法、正则表达式" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/04/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E3%80%81%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8%E3%80%81%E7%AE%97%E6%B3%95%E3%80%81%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" class="article-date">
+  <time class="dt-published" datetime="2024-04-04T08:37:16.000Z" itemprop="datePublished">2024-04-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/04/04/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E3%80%81%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8%E3%80%81%E7%AE%97%E6%B3%95%E3%80%81%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/">【Java基础】lambda表达式、方法引用、算法、正则表达式</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Arrays类（了解）"><a href="#Arrays类（了解）" class="headerlink" title="Arrays类（了解）"></a>Arrays类（了解）</h1><p>操作数组的一个工具类。</p>
+<p>常见方法：</p>
+<ol>
+<li>public static String toString(类型[] arr)。可以接收任意类型的数据，返回数组的内容。</li>
+<li>public static 类型[] copyOfRange(类型[] arr, 起始索引, 结束索引)。拷贝数组（指定范围，包前不包后）。</li>
+<li>public static copyOf(类型[] arr, int newLength)。拷贝数组。通常用作数组扩容。</li>
+<li>public static setAll(double[] array, IntToDoubleFunction generator)。把数组中的原数据改为新数据。注意 IntToDoubleFunction generator程序可以自动帮忙重写，重写时的参数value就是数组的索引。</li>
+<li>public static void sort(类型[] arr)。对数组进行排序(默认是升序排序)。<ol>
+<li>如果数组是对象数组。直接调用sort会报错。需要指定排序规则。</li>
+<li>方式1：让该<strong>对象的类实现Comparable(比较规则)接口，然后重写compareTo方法</strong>，自己来制定比较规则。<strong>官方约定</strong>：①左边对象大于右边对象，返回正整数，②小于，负整数，③等于，返回0。可以用if+else语句，或者直接返回this.x-0.x（前提是int类型）。</li>
+<li>方式2：使用下面这个sort方法，<strong>创建Comparator比较器接口</strong>的匿名内部类对象，然后自己制定比较规则。public static <T> void sort(T[] arr, Comparator&lt;? super T&gt; c) ：对数组进行排序(支持自定义排序规则）。<ol>
+<li>接收参数1：需要排序的数组；</li>
+<li>接受参数2：Comparator比较器对象（用来指定对象的比较规则）。程序可以自动帮忙写。对象为o1、o2。约定和实现方法方式1中一样。补充一点，如果是Double类型的比较，可以返回Double.compare(o1.getxx(), o2.getxx())。</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h1 id="JDK8新特性：Lambda表达式"><a href="#JDK8新特性：Lambda表达式" class="headerlink" title="JDK8新特性：Lambda表达式"></a>JDK8新特性：Lambda表达式</h1><p>Lambda表达式是JDK 8开始新增的一种语法形式。</p>
+<ul>
+<li>作用：用于<strong>简化匿名内部类</strong>的代码写法。</li>
+<li>格式：（被重写方法的形参列表）-&gt;{被重写方法的方法体代码}。</li>
+<li>注意：Lambda表达式并不能简化全部匿名内部类的写法，只能简化<strong>函数式接口</strong>的匿名内部类。</li>
+</ul>
+<p>什么是函数式接口？</p>
+<ul>
+<li><strong>有且只有一个抽象方法的接口</strong>。</li>
+<li>注意：将来我们见到的大部分函数式接口，上面都可能会有一个@FunctionalInterface的注解，有该注解的接口就必定是函数式接口。</li>
+</ul>
+<p>Lambda表达式的省略规则：</p>
+<ul>
+<li>参数类型可以省略不写。</li>
+<li>如果只有一个参数，参数类型可以省略，同时()也可以省略。</li>
+<li>如果Lambda表达式中的方法体代码只有一行代码，可以省略大括号不写，同时要省略分号！此时，如果这行代码是return语句，也必须去掉return不写。</li>
+</ul>
+<h1 id="JDK8新特性：方法引用"><a href="#JDK8新特性：方法引用" class="headerlink" title="JDK8新特性：方法引用"></a>JDK8新特性：方法引用</h1>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://xinranzero.com/2024/04/04/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E3%80%81%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8%E3%80%81%E7%AE%97%E6%B3%95%E3%80%81%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" data-id="cluo501tg00011cuh4ie1guyo" data-title="【Java基础】lambda表达式、方法引用、算法、正则表达式" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-【java基础】【java.lang】【java.util】Object类、数学、时间等" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2024/04/03/%E3%80%90java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E3%80%90java.util%E3%80%91Object%E7%B1%BB%E3%80%81%E6%95%B0%E5%AD%A6%E3%80%81%E6%97%B6%E9%97%B4%E7%AD%89/" class="article-date">
@@ -495,23 +612,23 @@
       <ul>
         
           <li>
+            <a href="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/">【Java基础】【java.lang.reflect】Junit单元测试、反射</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/">【Java基础】【java.lang】多线程</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.net%E3%80%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">【Java基础】【java.net】网络编程</a>
+          </li>
+        
+          <li>
             <a href="/2024/04/08/%E3%80%90LeeCode%E3%80%91%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/">【LeeCode】刷题记录.md</a>
           </li>
         
           <li>
-            <a href="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/">【Java基础】【java.lang】多线程</a>
-          </li>
-        
-          <li>
             <a href="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E7%89%B9%E6%AE%8A%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6%E3%80%81%E6%97%A5%E5%BF%97%E6%8A%80%E6%9C%AF/">【Java基础】特殊文本文件、日志技术</a>
-          </li>
-        
-          <li>
-            <a href="/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java-io%E3%80%91io%E6%B5%81/">【Java基础】java.io包下的常用API-io流</a>
-          </li>
-        
-          <li>
-            <a href="/2024/04/06/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.util%E3%80%91%E9%9B%86%E5%90%88%EF%BC%88Map%E3%80%81Stream%E6%B5%81%EF%BC%89/">【Java基础】集合（Map、Stream流）</a>
           </li>
         
       </ul>

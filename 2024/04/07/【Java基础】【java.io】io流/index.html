@@ -9,16 +9,16 @@
   <meta name="description" content="File类之前学习的变量、数组、对象和集合都是内存中的数据容器，它们记住的数据在断电或者程序终止时会丢失。 如果想长期保存数据，应该怎么做？  文件是非常重要的存储方式，在计算机硬盘中。 即便断电，或者程序终止了，存储在硬盘文件中的数据也不会丢失。  (1)File类 File是java.io.包下的类， File类的对象，用于代表当前操作系统的文件（可以是文件、或文件夹）。 常见功能  获取文件">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【Java基础】java.io包下的常用API-io流">
-<meta property="og:url" content="http://xinranzero.com/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java-io%E3%80%91io%E6%B5%81/index.html">
+<meta property="og:url" content="http://xinranzero.com/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.io%E3%80%91io%E6%B5%81/index.html">
 <meta property="og:site_name" content="xinranzero">
 <meta property="og:description" content="File类之前学习的变量、数组、对象和集合都是内存中的数据容器，它们记住的数据在断电或者程序终止时会丢失。 如果想长期保存数据，应该怎么做？  文件是非常重要的存储方式，在计算机硬盘中。 即便断电，或者程序终止了，存储在硬盘文件中的数据也不会丢失。  (1)File类 File是java.io.包下的类， File类的对象，用于代表当前操作系统的文件（可以是文件、或文件夹）。 常见功能  获取文件">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://xinranzero.com/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java-io%E3%80%91io%E6%B5%81/IO%E6%B5%81%E4%BD%93%E7%B3%BB.jpg">
+<meta property="og:image" content="http://xinranzero.com/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.io%E3%80%91io%E6%B5%81/IO%E6%B5%81%E4%BD%93%E7%B3%BB.jpg">
 <meta property="article:published_time" content="2024-04-07T02:00:00.000Z">
 <meta property="article:modified_time" content="2024-04-08T11:21:52.878Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://xinranzero.com/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java-io%E3%80%91io%E6%B5%81/IO%E6%B5%81%E4%BD%93%E7%B3%BB.jpg">
+<meta name="twitter:image" content="http://xinranzero.com/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.io%E3%80%91io%E6%B5%81/IO%E6%B5%81%E4%BD%93%E7%B3%BB.jpg">
   
     <link rel="alternate" href="/atom.xml" title="xinranzero" type="application/atom+xml">
   
@@ -73,9 +73,9 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-【Java基础】【java-io】io流" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-【Java基础】【java.io】io流" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java-io%E3%80%91io%E6%B5%81/" class="article-date">
+    <a href="/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.io%E3%80%91io%E6%B5%81/" class="article-date">
   <time class="dt-published" datetime="2024-04-07T02:00:00.000Z" itemprop="datePublished">2024-04-07</time>
 </a>
     
@@ -283,7 +283,7 @@
 </ul>
 </li>
 </ul>
-<p><img src="/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java-io%E3%80%91io%E6%B5%81/IO%E6%B5%81%E4%BD%93%E7%B3%BB.jpg"></p>
+<p><img src="/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.io%E3%80%91io%E6%B5%81/IO%E6%B5%81%E4%BD%93%E7%B3%BB.jpg"></p>
 <h2 id="FileInputStream文件字节输入流"><a href="#FileInputStream文件字节输入流" class="headerlink" title="FileInputStream文件字节输入流"></a>FileInputStream文件字节输入流</h2><p>以内存为基准，可以把磁盘文件中的数据以字节的形式读入到内存中去。</p>
 <h3 id="构造器"><a href="#构造器" class="headerlink" title="构造器"></a>构造器</h3><ol>
 <li>public FileInputStream(File file)。创建字节输入流管道与源文件接通。</li>
@@ -636,7 +636,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java-io%E3%80%91io%E6%B5%81/" data-id="cluo501tb00001cuh831u1nwh" data-title="【Java基础】java.io包下的常用API-io流" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://xinranzero.com/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.io%E3%80%91io%E6%B5%81/" data-id="cluthi17o0000mguhh0avgbbu" data-title="【Java基础】java.io包下的常用API-io流" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -696,23 +696,23 @@
       <ul>
         
           <li>
+            <a href="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/">【Java基础】【java.lang.reflect】Junit单元测试、反射</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/">【Java基础】【java.lang】多线程</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.net%E3%80%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">【Java基础】【java.net】网络编程</a>
+          </li>
+        
+          <li>
             <a href="/2024/04/08/%E3%80%90LeeCode%E3%80%91%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/">【LeeCode】刷题记录.md</a>
           </li>
         
           <li>
-            <a href="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/">【Java基础】【java.lang】多线程</a>
-          </li>
-        
-          <li>
             <a href="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E7%89%B9%E6%AE%8A%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6%E3%80%81%E6%97%A5%E5%BF%97%E6%8A%80%E6%9C%AF/">【Java基础】特殊文本文件、日志技术</a>
-          </li>
-        
-          <li>
-            <a href="/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java-io%E3%80%91io%E6%B5%81/">【Java基础】java.io包下的常用API-io流</a>
-          </li>
-        
-          <li>
-            <a href="/2024/04/06/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.util%E3%80%91%E9%9B%86%E5%90%88%EF%BC%88Map%E3%80%81Stream%E6%B5%81%EF%BC%89/">【Java基础】集合（Map、Stream流）</a>
           </li>
         
       </ul>
