@@ -130,7 +130,6 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringUtilTest</span>&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testPrintNumber</span><span class="params">()</span>&#123;</span><br><span class="line">        StringUtil.printNumber(<span class="string">&quot;admin&quot;</span>);</span><br><span class="line">        StringUtil.printNumber(<span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>写完代码之后，我们会发现测试方法左边，会有一个绿色的三角形按钮。点击这个按钮，就可以运行测试方法。</p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668507501024.png" alt="1668507501024"></p>
 <h2 id="单元测试断言"><a href="#单元测试断言" class="headerlink" title="单元测试断言"></a>单元测试断言</h2><p>断言：意思是程序员可以预测程序的运行结果，检查程序的运行结果是否与预期一致。**</p>
 <p>我们在StringUtil类中新增一个测试方法</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">getMaxIndex</span><span class="params">(String data)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(data == <span class="literal">null</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> data.length();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -138,8 +137,7 @@
 <p>接下来，我们在StringUtilTest类中写一个测试方法</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringUtilTest</span>&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetMaxIndex</span><span class="params">()</span>&#123;</span><br><span class="line">       <span class="type">int</span> <span class="variable">index1</span> <span class="operator">=</span> StringUtil.getMaxIndex(<span class="literal">null</span>);</span><br><span class="line">       System.out.println(index1);</span><br><span class="line">        </span><br><span class="line">       <span class="type">int</span> <span class="variable">index2</span> <span class="operator">=</span> StringUtil.getMaxIndex(<span class="string">&quot;admin&quot;</span>);</span><br><span class="line">       System.out.println(index2);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//断言机制：预测index2的结果</span></span><br><span class="line">        Assert.assertEquals(<span class="string">&quot;方法内部有Bug&quot;</span>,<span class="number">4</span>,index2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>运行测试方法，结果如下图所示，表示我们预期值与实际值不一致</p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668508226111.png" alt="1668508226111"></p>
+<p>运行测试方法，结果预期值与实际值不一致。</p>
 <h2 id="Junit框架的常见注解"><a href="#Junit框架的常见注解" class="headerlink" title="Junit框架的常见注解"></a>Junit框架的常见注解</h2><p>常见注解(Junit 4.xxxx版本)</p>
 <ol>
 <li>@Test。测试方法。</li>
@@ -220,13 +218,10 @@
 <li>public void  setAccessible(boolean flag)。设置为true,表示取消访问检查，进行暴力反射。（–&gt;反射会破坏封装性，私有的也可以执行了。）</li>
 </ol>
 <h3 id="代码演示"><a href="#代码演示" class="headerlink" title="代码演示"></a>代码演示</h3><p>constructor1和constructor2分别表示Cat类中的两个构造器。现在我要把这两个构造器执行起来</p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668578807439.png" alt="1668578807439"></p>
 <p>由于构造器是private修饰的，先需要调用<code>setAccessible(true)</code> 表示禁止检查访问控制，然后再调用<code>newInstance(实参列表)</code> 就可以执行构造器，完成对象的初始化了。</p>
 <p>代码如下：为了看到构造器真的执行， 故意在两个构造器中分别加了两个打印语句</p>
 <p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668579315586.png" alt="1668579315586"></p>
-<p>代码的执行结果如下图所示：</p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668579177901.png" alt="1668579177901"></p>
-<p>注意：上面这种代码风格，看起来没什么必要，可以先稍微记一记，以后学习框架的时候有用。</p>
+<p>注意：上面这种代码风格，看起来没什么必要，可以先稍微记一记，以后学习<strong>框架</strong>的时候有用。</p>
 <h2 id="获取类的成员变量-使用"><a href="#获取类的成员变量-使用" class="headerlink" title="获取类的成员变量&amp;使用"></a>获取类的成员变量&amp;使用</h2><h3 id="Class类中提供的获取成员变量的方法"><a href="#Class类中提供的获取成员变量的方法" class="headerlink" title="Class类中提供的获取成员变量的方法"></a>Class类中提供的获取成员变量的方法</h3><ol>
 <li>Field[] getFields()。返回所有成员变量对象的<strong>数组</strong>（只<strong>能拿public</strong>的）。</li>
 <li>Field[] getDeclaredFields()。返回所有成员变量对象的<strong>数组</strong>，<strong>存在就能拿到</strong>。</li>
@@ -251,12 +246,14 @@
 <ul>
 <li>获取到成员变量的对象之后该如何使用呢？</li>
 </ul>
-<p>在Filed类中提供给给成员变量赋值和获取值的方法，如下图所示。</p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668580075962.png" alt="1668580075962"></p>
+<p>在Filed类中提供给给成员变量赋值和获取值的方法：</p>
+<ol>
+<li>void set(object obj,Object value)。赋值。</li>
+<li>object get(object obj)。取值。</li>
+<li>public voidsetAccessible(boolean flag)。设置为true，表示禁止检查访问控制(暴力反射)。</li>
+</ol>
 <p>再次强调一下设置值、获取值的方法时Filed类的需要用Filed类的对象来调用，而且不管是设置值、还是获取值，都需要依赖于该变量所属的对象。代码如下</p>
 <p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668580288930.png" alt="1668580288930"></p>
-<p>执行代码，控制台会有如下的打印</p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668580517173.png" alt="1668580517173"></p>
 <h2 id="获取类的成员方法"><a href="#获取类的成员方法" class="headerlink" title="获取类的成员方法"></a>获取类的成员方法</h2><p>使用反射技术获取方法对象并使用</p>
 <ul>
 <li>反射的第一步是先得到类对象，然后从类对象中获取类的成分对象。</li>
@@ -285,8 +282,6 @@
 <p>把<code>run()</code>方法和<code>eat(String name)</code>方法执行起来。看分割线之下的代码</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test3Method</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        <span class="comment">//1、反射第一步：先获取到Class对象</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Cat.class;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//2、获取类中的全部成员方法</span></span><br><span class="line">        Method[] methods = c.getDecalaredMethods();</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//3、遍历这个数组中的每一个方法对象</span></span><br><span class="line">        <span class="keyword">for</span>(Method method : methods)&#123;</span><br><span class="line">            System.out.println(method.getName()+<span class="string">&quot;--&gt;&quot;</span>+method.getParameterCount()+<span class="string">&quot;--&gt;&quot;</span>+method.getReturnType());</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        System.out.println(<span class="string">&quot;-----------------------&quot;</span>);</span><br><span class="line">        <span class="comment">//4、获取private修饰的run方法，得到Method对象</span></span><br><span class="line">        <span class="type">Method</span> <span class="variable">run</span> <span class="operator">=</span> c.getDecalaredMethod(<span class="string">&quot;run&quot;</span>);</span><br><span class="line">        <span class="comment">//执行run方法,在执行前需要取消权限检查</span></span><br><span class="line">        <span class="type">Cat</span> <span class="variable">cat</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Cat</span>();</span><br><span class="line">        run.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">rs1</span> <span class="operator">=</span> run.invoke(cat);</span><br><span class="line">        System.out.println(rs1)</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//5、获取private 修饰的eat(String name)方法，得到Method对象</span></span><br><span class="line">        <span class="type">Method</span> <span class="variable">eat</span> <span class="operator">=</span> c.getDeclaredMethod(<span class="string">&quot;eat&quot;</span>,String.class);</span><br><span class="line">        eat.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">rs2</span> <span class="operator">=</span> eat.invoke(cat,<span class="string">&quot;鱼儿&quot;</span>);</span><br><span class="line">        System.out.println(rs2)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>打印结果如下图所示：run()方法执行后打印<code>猫跑得贼快~~</code>，返回<code>null</code>； eat()方法执行完，直接返回<code>猫最爱吃:鱼儿</code></p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668582519455.png" alt="1668582519455"></p>
 <h2 id="作用、应用场景"><a href="#作用、应用场景" class="headerlink" title="作用、应用场景"></a>作用、应用场景</h2><h3 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h3><ol>
 <li>基本作用：得到一个类的全部成分然后操作；</li>
 <li>破坏封装性；</li>
@@ -308,8 +303,6 @@
 <p>创建一个测试类，在测试中类创建一个Student对象，创建一个Teacher对象，用ObjectFrame的方法把这两个对象所有的属性名和属性值写到文件中去。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test5Frame</span>&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">save</span><span class="params">()</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">Student</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;黑马吴彦祖&quot;</span>,<span class="number">45</span>, <span class="string">&#x27;男&#x27;</span>, <span class="number">185.3</span>, <span class="string">&quot;篮球，冰球，阅读&quot;</span>);</span><br><span class="line">        <span class="type">Teacher</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Teacher</span>(<span class="string">&quot;播妞&quot;</span>,<span class="number">999.9</span>);</span><br><span class="line">        </span><br><span class="line">        ObjectFrame.save(s1);</span><br><span class="line">        ObjectFrame.save(s2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>打开data.txt文件，内容如下图所示，说明框架的功能已经实现了。</p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1668584556229.png" alt="1668584556229"></p>
 <h1 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h1><h2 id="认识注解-定义注解"><a href="#认识注解-定义注解" class="headerlink" title="认识注解&amp;定义注解"></a>认识注解&amp;定义注解</h2><ul>
 <li>Java 注解（Annotation）又称 Java 标注，是 JDK5.0 引入的一种注释机制。</li>
 <li>Java 语言中的类、构造器、方法、成员变量、参数等都可以被注解进行标注。</li>
@@ -346,7 +339,6 @@
 <p>想要搞清楚注解本质是什么东西，我们可以把注解的字节码进行反编译，使用XJad工具进行反编译。经过对MyTest1注解字节码反编译我们会发现：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>MyTest1注解本质上是接口，每一个注解接口都继承子Annotation接口</span><br><span class="line"><span class="number">2.</span>MyTest1注解中的属性本质上是抽象方法</span><br><span class="line"><span class="number">3.</span><span class="meta">@MyTest1</span>实际上是作为MyTest接口的实现类对象</span><br><span class="line"><span class="number">4.</span><span class="meta">@MyTest1(aaa=&quot;孙悟空&quot;,bbb=false,ccc=&#123;&quot;Python&quot;,&quot;前端&quot;,&quot;Java&quot;&#125;)</span>里面的属性值，可以通过调用aaa()、bbb()、ccc()方法获取到。 【别着急，继续往下看，再解析注解时会用到】</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1669604928912.png" alt="1669604928912"></p>
 <h2 id="元注解"><a href="#元注解" class="headerlink" title="元注解"></a>元注解</h2><p>元注解：注解注解的注解。 </p>
 <p>元注解有两个：</p>
 <ul>
@@ -360,13 +352,11 @@
 <h3 id="Target元注解的使用："><a href="#Target元注解的使用：" class="headerlink" title="@Target元注解的使用："></a>@Target元注解的使用：</h3><p>比如定义一个MyTest3注解，并添加@Target注解用来声明MyTest3的使用位置</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(ElementType.TYPE)</span>	<span class="comment">//声明@MyTest3注解只能用在类上</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyTest3&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>接下来，我们把@MyTest3用来类上观察是否有错，再把@MyTest3用在方法上、变量上再观察是否有错</p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1669606261919.png" alt="1669606261919"></p>
+<p>接下来，把@MyTest3用来类上观察是否有错，再把@MyTest3用在方法上、变量上再观察是否有错。</p>
 <p>如果我们定义MyTest3注解时，使用@Target注解属性值写成下面样子</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//声明@MyTest3注解只能用在类上和方法上</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.TYPE,ElementType.METHOD&#125;)</span>	</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyTest3&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>再观察，@MyTest用在类上、方法上、变量上是否有错</p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1669606451308.png" alt="1669606451308"></p>
+<p>再观察，@MyTest用在类上、方法上、变量上是否有错。</p>
 <h3 id="Retetion元注解的使用"><a href="#Retetion元注解的使用" class="headerlink" title="@Retetion元注解的使用"></a>@Retetion元注解的使用</h3><p>定义MyTest3注解时，给MyTest3注解添加@Retetion注解来<strong>声明MyTest3注解保留的时期</strong>。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Retetion</span>是用来声明注解保留周期，比如：源代码时期、字节码时期、运行时期</span><br><span class="line">	<span class="meta">@Retetion(RetetionPloicy.SOURCE)</span>: 注解保留到源代码时期、字节码中就没有了</span><br><span class="line">	<span class="meta">@Retetion(RetetionPloicy.CLASS)</span>: 注解保留到字节码中、运行时注解就没有了</span><br><span class="line">	<span class="meta">@Retetion(RetetionPloicy.RUNTIME)</span>：注解保留到运行时期</span><br><span class="line">	【自己写代码时，比较常用的是保留到运行时期】</span><br></pre></td></tr></table></figure>
 
@@ -379,10 +369,26 @@
 <p>解析注解套路如下</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>如果注解在类上，先获取类的字节码对象，再获取类上的注解</span><br><span class="line"><span class="number">2.</span>如果注解在方法上，先获取方法对象，再获取方法上的注解</span><br><span class="line"><span class="number">3.</span>如果注解在成员变量上，先获取成员变量对象，再获取变量上的注解</span><br><span class="line">总之：注解在谁身上，就先获取谁，再用谁获取谁身上的注解</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1669607820853.png" alt="1669607820853"></p>
-<p>解析来看一个案例，来演示解析注解的代码编写</p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1669607882128.png" alt="1669607882128"></p>
-<p>按照需求要求一步一步完成</p>
+<p>Class 、Method、Field,Constructor、都实现了AnnotatedElement接口，它们都拥有解析注解的能力。</p>
+<ol>
+<li>public Annotation[]getDeclaredAnnotations()。获取当前对象上面的注解。</li>
+<li>public TgetDeclaredAnnotation(Class<T>annotationClass)。获取指定的注解对象。</T></li>
+<li>public boolean isAnnotationPresent(class<Annotation> annotationclass)。判断当前对象上是否存在某个注解。</Annotation></li>
+</ol>
+<p>案例需求</p>
+<ol>
+<li>定义注解MyTest4，要求如<ul>
+<li>包含属性:String value()。</li>
+<li>包含属性:double aaa()，默认值为 100。</li>
+<li>包含属性:Stringllbbb()。</li>
+<li>限制注解使用的位置:类和成员方法上。</li>
+<li>指定注解的有效范围:一直到运行时。</li>
+</ul>
+</li>
+<li>定义一个类叫:Demo，在类中定义一个test1方法，并在该类和其方法上使用MyTest4注解。</li>
+<li>定义AnnotationTest3测试类，解析Demo类中的全部注解。</li>
+</ol>
+<p>代码：</p>
 <p>① 先定义一个MyTest4注解</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//声明@MyTest4注解只能用在类上和方法上</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.TYPE,ElementType.METHOD&#125;)</span>	</span><br><span class="line"><span class="comment">//控制使用了@MyTest4注解的代码中，@MyTest4保留到运行时期</span></span><br><span class="line"><span class="meta">@Retetion(RetetionPloicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyTest4&#123;</span><br><span class="line">    String <span class="title function_">value</span><span class="params">()</span>;</span><br><span class="line">    <span class="type">double</span> <span class="title function_">aaa</span><span class="params">()</span> <span class="keyword">default</span> <span class="number">100</span>;</span><br><span class="line">    String[] bbb();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -424,8 +430,6 @@
 <p>调用我们写好的ProxyUtil工具类，为BigStar对象生成代理对象</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">BigStar</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BigStar</span>(<span class="string">&quot;杨超越&quot;</span>);</span><br><span class="line">        <span class="type">Star</span> <span class="variable">starProxy</span> <span class="operator">=</span> ProxyUtil.createProxy(s);</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> starProxy.sing(<span class="string">&quot;好日子&quot;</span>);</span><br><span class="line">        System.out.println(rs);</span><br><span class="line"></span><br><span class="line">        starProxy.dance();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>运行测试类，结果如下：</p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1669621045622.png" alt="1669621045622"></p>
 <h2 id="通过代理对象调用方法，执行流程？"><a href="#通过代理对象调用方法，执行流程？" class="headerlink" title="通过代理对象调用方法，执行流程？"></a>通过代理对象调用方法，执行流程？</h2><ul>
 <li>先走向代理。</li>
 <li>代理中可以真正触发被代理对象的方法执行。</li>
@@ -450,10 +454,8 @@
 <p>本案例存在哪些问题？</p>
 <ul>
 <li>答：业务对象的的每个方法都要进行性能统计，存在大量重复的代码。</li>
+<li>每一个方法中计算耗时的代码都是重复的，这些重复的代码并不属于UserSerivce的主要业务代码。接下来打算把计算每一个方法的耗时操作交给代理对象来做。</li>
 </ul>
-<p>每一个方法中计算耗时的代码都是重复的，这些重复的代码并不属于UserSerivce的主要业务代码。</p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1669621335888.png" alt="1669621335888"></p>
-<p>接下来打算把计算每一个方法的耗时操作交给代理对象来做。</p>
 <p>优化的关键步骤</p>
 <ol>
 <li>必须有接口，实现类要实现接口（代理通常是基于接口实现的）。</li>
@@ -468,8 +470,6 @@
 <p>在测试类中为UserService创建代理对象</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 目标：使用动态代理解决实际问题，并掌握使用代理的好处。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="comment">// 1、创建用户业务对象。</span></span><br><span class="line">        <span class="type">UserService</span> <span class="variable">userService</span> <span class="operator">=</span> ProxyUtil.createProxy(<span class="keyword">new</span> <span class="title class_">UserServiceImpl</span>());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2、调用用户业务的功能。</span></span><br><span class="line">        userService.login(<span class="string">&quot;admin&quot;</span>, <span class="string">&quot;123456&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;----------------------------------&quot;</span>);</span><br><span class="line"></span><br><span class="line">        userService.deleteUsers();</span><br><span class="line">        System.out.println(<span class="string">&quot;----------------------------------&quot;</span>);</span><br><span class="line"></span><br><span class="line">        String[] names = userService.selectUsers();</span><br><span class="line">        System.out.println(<span class="string">&quot;查询到的用户是：&quot;</span> + Arrays.toString(names));</span><br><span class="line">        System.out.println(<span class="string">&quot;----------------------------------&quot;</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>执行结果如下图所示</p>
-<p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1669622545712.png" alt="1669622545712"></p>
 <p>动态代理对象的执行流程如下图所示，每次用代理对象调用方法时，都会执行InvocationHandler中的invoke方法。</p>
 <p><img src="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/1669622605490.png" alt="1669622605490"></p>
 <p>动态代理的优点</p>
