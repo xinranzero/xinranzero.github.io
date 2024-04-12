@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>【JavaWeb】HTML、CSS | xinranzero</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Web开发Web介绍 Web：全球广域网，也称为万维网(www World Wide Web)，能够通过浏览器访问的网站。 Web 网站的工作流程 整个流程如下：  浏览器先向前端服务器请求前端资源，也就是我们所说的网页； 浏览器再向后台服务器发起请求，获取数据； 浏览器将得到的后台数据填充到网页上，然后展示给用户去看。  网站的开发模式**Web开发&#x3D;开发网站~**主要有2种：前端台分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【JavaWeb】HTML、CSS">
+<meta property="og:url" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/index.html">
+<meta property="og:site_name" content="xinranzero">
+<meta property="og:description" content="Web开发Web介绍 Web：全球广域网，也称为万维网(www World Wide Web)，能够通过浏览器访问的网站。 Web 网站的工作流程 整个流程如下：  浏览器先向前端服务器请求前端资源，也就是我们所说的网页； 浏览器再向后台服务器发起请求，获取数据； 浏览器将得到的后台数据填充到网页上，然后展示给用户去看。  网站的开发模式**Web开发&#x3D;开发网站~**主要有2种：前端台分">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412145130187.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412154004604.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160140233.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160146970.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160153981.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160200603.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160208339.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160216061.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160227021.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160235837.png">
+<meta property="og:image" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160242687.png">
+<meta property="article:published_time" content="2024-04-11T02:50:17.000Z">
+<meta property="article:modified_time" content="2024-04-12T08:49:48.666Z">
+<meta property="article:author" content="Rong Zhao">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412145130187.png">
+  
+    <link rel="alternate" href="/atom.xml" title="xinranzero" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">xinranzero</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://xinranzero.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-【JavaWeb】HTML、CSS" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/" class="article-date">
+  <time class="dt-published" datetime="2024-04-11T02:50:17.000Z" itemprop="datePublished">2024-04-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      【JavaWeb】HTML、CSS
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Web开发"><a href="#Web开发" class="headerlink" title="Web开发"></a>Web开发</h1><h2 id="Web介绍"><a href="#Web介绍" class="headerlink" title="Web介绍"></a>Web介绍</h2><p> Web：全球广域网，也称为万维网(www World Wide Web)，能够通过浏览器访问的网站。</p>
+<h2 id="Web-网站的工作流程"><a href="#Web-网站的工作流程" class="headerlink" title="Web 网站的工作流程"></a>Web 网站的工作流程</h2><p><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412145130187.png" alt="image-20240412145130187"></p>
+<p><strong>整个流程如下：</strong></p>
+<ol>
+<li>浏览器先向前端服务器请求<strong>前端资源</strong>，也就是我们所说的<strong>网页</strong>；</li>
+<li>浏览器再向<strong>后台服务器</strong>发起请求，获取<strong>数据</strong>；</li>
+<li>浏览器将得到的后台<strong>数据</strong>填充到<strong>网页</strong>上，然后展示给用户去看。</li>
+</ol>
+<h2 id="网站的开发模式"><a href="#网站的开发模式" class="headerlink" title="网站的开发模式"></a>网站的开发模式</h2><p>**Web开发&#x3D;开发网站~**主要有2种：前端台分离和混合开发，目前流行的是前后端分离开发模式。</p>
+<p><strong>前后台分离</strong>：（<strong>目前企业开发的主流，</strong>市场占有率70%以上）这种开发模式的特点如下</p>
+<ul>
+<li><p>前端人员开发前端程序，前端程序单独部署到前端服务器上</p>
+</li>
+<li><p>后端人员开开发后端程序，后端程序单独部署到后端服务器上</p>
+</li>
+</ul>
+<h2 id="网站开发技术"><a href="#网站开发技术" class="headerlink" title="网站开发技术"></a>网站开发技术</h2><h3 id="前端"><a href="#前端" class="headerlink" title="前端"></a>前端</h3><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>HTML</td>
+<td>用于构建网站的基础结构的</td>
+</tr>
+<tr>
+<td>css</td>
+<td>用于美化页面的，作用和化妆或者整容作用一样</td>
+</tr>
+<tr>
+<td>JavaScript</td>
+<td>实现网页和用户的交互</td>
+</tr>
+<tr>
+<td>Vue</td>
+<td>主要用于将数据填充到html页面上的</td>
+</tr>
+<tr>
+<td>Element</td>
+<td>主要提供了一些非常美观的组件</td>
+</tr>
+<tr>
+<td>Nginx</td>
+<td>一款web服务器软件，可以用于部署我们的前端工程</td>
+</tr>
+</tbody></table>
+<h3 id="后端"><a href="#后端" class="headerlink" title="后端"></a>后端</h3><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Maven</td>
+<td>一款java中用于管理项目的软件</td>
+</tr>
+<tr>
+<td>Mysql</td>
+<td>最常用的一款数据库软件之一</td>
+</tr>
+<tr>
+<td>SpringBoot</td>
+<td>spring家族的产品，当前最为主流的项目开发技术。</td>
+</tr>
+<tr>
+<td>Mybatis</td>
+<td>用于操作数据库的框架</td>
+</tr>
+</tbody></table>
+<h1 id="前端开发"><a href="#前端开发" class="headerlink" title="前端开发"></a>前端开发</h1><h2 id="整体认知"><a href="#整体认知" class="headerlink" title="整体认知"></a>整体认知</h2><ol>
+<li>网页有哪些部分组成 ?<ul>
+<li>​	文字、图片、音频、视频、超链接、表格等等。</li>
+</ul>
+</li>
+<li>我们看到的网页，背后的本质是什么 ?<ul>
+<li>程序员写的前端代码 (备注：在前后端分离的开发模式中。)</li>
+</ul>
+</li>
+<li>前端的代码是如何转换成用户眼中的网页的 ?<ul>
+<li>通过浏览器转化（解析和渲染）成用户看到的网页。</li>
+<li>浏览器中对代码进行解析和渲染的部分，称为 <strong>浏览器内核</strong>。</li>
+</ul>
+</li>
+</ol>
+<h2 id="Web标准"><a href="#Web标准" class="headerlink" title="Web标准"></a>Web标准</h2><p>即网页标准，一系列，大部分由W3C（ World Wide Web Consortium，万维网联盟）负责制定。由三个组成部分：</p>
+<ul>
+<li><strong>HTML</strong>：负责网页的<strong>结构</strong>（页面元素和内容）。</li>
+<li><strong>CSS</strong>：负责网页的<strong>表现</strong>（页面元素的外观、位置等页面样式，如：颜色、大小等）。</li>
+<li><strong>JavaScript</strong>：负责网页的<strong>行为</strong>（交互效果）。</li>
+</ul>
+<h1 id="HTML-CSS"><a href="#HTML-CSS" class="headerlink" title="HTML &amp; CSS"></a>HTML &amp; CSS</h1><h2 id="快速入门"><a href="#快速入门" class="headerlink" title="快速入门"></a>快速入门</h2><h3 id="什么是HTML"><a href="#什么是HTML" class="headerlink" title="什么是HTML ?"></a>什么是HTML ?</h3><p>**HTML: **HyperText Markup Language，超文本标记语言。</p>
+<ul>
+<li><p>超文本：超越了文本的限制，比普通文本更强大。除了文字信息，还可以定义图片、音频、视频等内容。</p>
+</li>
+<li><p>标记语言：由标签构成的语言</p>
+<ul>
+<li>HTML标签都是预定义好的。例如：使用 <h1> 标签展示标题，使用<a>展示超链接，使用<img>展示图片，<video>展示视频。</video></a></h1></li>
+<li>HTML代码直接在浏览器中运行，HTML标签由浏览器解析。</li>
+</ul>
+</li>
+</ul>
+<h3 id="html的固定基本结构"><a href="#html的固定基本结构" class="headerlink" title="html的固定基本结构"></a>html的固定基本结构</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">title</span>&gt;</span>HTML 快速入门<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">h1</span>&gt;</span>Hello HTML<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;1.jpg&quot;</span>/&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>&lt;html&gt;是根标签，&lt;head&gt;和&lt;body&gt;是子标签，&lt;head&gt;中的字标签&lt;title&gt;是用来定义网页的标题的，里面定义的内容会显示在浏览器网页的标题位置。 &lt;body&gt; 中编写的内容，就网页中显示的核心内容。</p>
+<h3 id="HTML中的标签特点"><a href="#HTML中的标签特点" class="headerlink" title="HTML中的标签特点"></a>HTML中的标签特点</h3><ul>
+<li>HTML标签不区分大小写</li>
+<li>HTML标签的属性值，采用单引号、双引号都可以</li>
+<li>HTML语法相对比较松散 (建议大家编写HTML标签的时候尽量严谨一些)</li>
+</ul>
+<h3 id="什么是CSS"><a href="#什么是CSS" class="headerlink" title="什么是CSS ?"></a>什么是CSS ?</h3><p><strong>CSS:</strong> Cascading Style Sheet，层叠样式表，用于控制页面的样式（表现）。</p>
+<h2 id="基础标签-样式"><a href="#基础标签-样式" class="headerlink" title="基础标签 &amp; 样式"></a>基础标签 &amp; 样式</h2><h3 id="标题"><a href="#标题" class="headerlink" title="标题"></a>标题</h3><h4 id="【标题排版】"><a href="#【标题排版】" class="headerlink" title="【标题排版】"></a>【标题排版】</h4><p>图片标签：&lt;img&gt;</p>
+<ul>
+<li>src：指定图像的url（绝对路径 &#x2F; 相对路径）</li>
+<li>width：图像的宽度（像素 &#x2F; 相对于父元素的百分比）</li>
+<li>height：图像的高度（像素 &#x2F; 相对于父元素的百分比）</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">A. 图片标签: <span class="tag">&lt;<span class="name">img</span>&gt;</span></span><br><span class="line"></span><br><span class="line">B. 常见属性: </span><br><span class="line">	src: 指定图像的url (可以指定 绝对路径 , 也可以指定 相对路径)</span><br><span class="line">	width: 图像的宽度 (像素 / 百分比 , 相对于父元素的百分比)</span><br><span class="line">	height: 图像的高度 (像素 / 百分比 , 相对于父元素的百分比)</span><br><span class="line">	</span><br><span class="line">	备注: 一般width 和 height 我们只会指定一个，另外一个会自动的等比例缩放。</span><br><span class="line">	</span><br><span class="line">C. 路径书写方式:</span><br><span class="line">    绝对路径:</span><br><span class="line">        1. 绝对磁盘路径: C:\Users\Administrator\Desktop\HTML\img\news_logo.png</span><br><span class="line">        			   <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;C:\Users\Administrator\Desktop\HTML\img\news_logo.png&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        2. 绝对网络路径: https://i2.sinaimg.cn/dy/deco/2012/0613/yocc20120613img01/news_logo.png</span><br><span class="line">        			   <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;https://i2.sinaimg.cn/dy/deco/2012/0613/yocc20120613img01/news_logo.png&quot;</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    相对路径:</span><br><span class="line">        ./ : 当前目录 , ./ 可以省略的</span><br><span class="line">        ../: 上一级目录</span><br></pre></td></tr></table></figure>
+
+<p>标题标签h系列</p>
+<ul>
+<li>标题标签：<h1> - <h6></h6></h1></li>
+<li>水平线标签：<hr>图片</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">A. 标题标签: <span class="tag">&lt;<span class="name">h1</span>&gt;</span> - <span class="tag">&lt;<span class="name">h6</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">	<span class="tag">&lt;<span class="name">h1</span>&gt;</span>111111111111<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">h2</span>&gt;</span>111111111111<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">h3</span>&gt;</span>111111111111<span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">h4</span>&gt;</span>111111111111<span class="tag">&lt;/<span class="name">h4</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">h5</span>&gt;</span>111111111111<span class="tag">&lt;/<span class="name">h5</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">h6</span>&gt;</span>111111111111<span class="tag">&lt;/<span class="name">h6</span>&gt;</span></span><br><span class="line">	</span><br><span class="line">B. 效果 : h1为一级标题，字体也是最大的 ； h6为六级标题，字体是最小的。</span><br></pre></td></tr></table></figure>
+
+<p>注意：HTML标签都是预定义好的，不能自己随意定义。</p>
+<p>[补充]&lt;span&gt;标签</p>
+<ul>
+<li>&lt;span&gt; 是一个在开发网页时大量会用到的没有语义的布局标签</li>
+<li>特点：一行可以显示多个(组合行内元素)，宽度和高度默认由内容撑开</li>
+</ul>
+<p>[补充]路径选择</p>
+<ol>
+<li>(1)绝对路径：绝对磁盘路径（D:&#x2F;xxxx）、绝对网络路径（<a target="_blank" rel="noopener" href="https://xxxx)/">https://xxxx）</a></li>
+<li>(2)相对路径：从当前文件开始查找。 （.&#x2F; : 当前目录, ..&#x2F; : 上级目录）</li>
+</ol>
+<h4 id="【标题样式】"><a href="#【标题样式】" class="headerlink" title="【标题样式】"></a>【标题样式】</h4><p>CSS引入方式：</p>
+<ul>
+<li>(1)行内样式：写在标签的style属性中（不推荐），属性值是css属性键值对。</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">h1</span> <span class="attr">style</span>=<span class="string">&quot;xxx: xxx; xxx: xxx;&quot;</span>&gt;</span>中国新闻网<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>(2)内嵌样式：写在style标签中（可以写在页面任何位置，但通常约定写在head标签中），在标签内部定义css样式。</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="language-css"></span></span><br><span class="line"><span class="language-css">  <span class="selector-tag">h1</span> &#123;</span></span><br><span class="line"><span class="language-css">     xxx: xxx; </span></span><br><span class="line"><span class="language-css">     xxx: xxx;</span></span><br><span class="line"><span class="language-css">  &#125;</span></span><br><span class="line"><span class="language-css"></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>(3)外联样式：写在一个单独的.css文件中（需要通过 link 标签在网页中引入，通过href属性引入外部css文件。）</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">h1 &#123;</span><br><span class="line">   xxx: xxx; </span><br><span class="line">   xxx: xxx;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">&quot;stylesheet&quot;</span> <span class="attr">href</span>=<span class="string">&quot;css/news.css&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>上述3种引入方式，企业开发的使用情况如下：</p>
+<ol>
+<li>内联样式会出现大量的代码冗余，不方便后期的维护，所以不常用。</li>
+<li>内部样式，通过定义css选择器，让样式作用于当前页面的指定的标签上。</li>
+<li>外部样式，html和css实现了完全的分离，企业开发常用方式。</li>
+</ol>
+<h5 id="补充-CSS属性-颜色设置方式"><a href="#补充-CSS属性-颜色设置方式" class="headerlink" title="[补充]CSS属性-颜色设置方式"></a>[补充]CSS属性-颜色设置方式</h5><table>
+<thead>
+<tr>
+<th><strong>表示方式</strong></th>
+<th><strong>表示含义</strong></th>
+<th><strong>取值</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>关键字</td>
+<td>预定义的颜色名</td>
+<td>red、green、blue…</td>
+</tr>
+<tr>
+<td>rgb表示法</td>
+<td>红绿蓝三原色，每项取值范围：0-255</td>
+<td>rgb(0,0,0)、rgb(255,255,255)、rgb(255,0,0)</td>
+</tr>
+<tr>
+<td>十六进制表示法</td>
+<td>#开头，将数字转换成十六进制表示</td>
+<td>#000000、#ff0000、#cccccc，简写：#000、#ccc</td>
+</tr>
+</tbody></table>
+<p>颜色属性：color: 设置文本内容的颜色</p>
+<h5 id="补充-CSS选择器：来选取需要设置样式的元素-标签"><a href="#补充-CSS选择器：来选取需要设置样式的元素-标签" class="headerlink" title="[补充]CSS选择器：来选取需要设置样式的元素(标签)"></a>[补充]CSS选择器：来选取需要设置样式的元素(标签)</h5><p>| (1)元素选择器 | 元素名称 {<br>    color: red;<br>}     | h1 {<br>    color: red;</p>
+<p>}   | </p><h1> Hello CSS </h1>                    |<br>| ————- | —————————— | ———————- | ————————————— |<br>| (2)id选择器   | #id属性值 {<br>    color: red;<br>}    | #hid {<br>    color: red;<br>} | <h1 id="hid"> CSS id Selector</h1>      |<br>| (3)类选择器   | .class属性值 {<br>    color: red;<br>} | .cls {<br>    color: red;<br>} | <h1 class="cls">CSS class Selector</h1> |<p></p>
+<p><strong>(1)元素（标签）选择器：</strong> </p>
+<ul>
+<li>选择器的名字必须是标签的名字</li>
+<li>作用：选择器中的样式会作用于所有同名的标签上</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">元素名称 &#123;</span><br><span class="line">    css样式名:css样式值；</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例子如下：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">div</span>&#123;</span><br><span class="line">    <span class="attribute">color</span>: red;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>(2)id选择器:</strong></p>
+<ul>
+<li>选择器的名字前面需要加上#</li>
+<li>作用：选择器中的样式会作用于指定id的标签上，而且有且只有一个标签（由于id是唯一的）</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#id属性值 &#123;</span><br><span class="line">    css样式名:css样式值；</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例子如下：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#did</span> &#123;</span><br><span class="line">    <span class="attribute">color</span>: blue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>(3)类选择器：</strong></p>
+<ul>
+<li>选择器的名字前面需要加上 .</li>
+<li>作用：选择器中的样式会作用于所有class的属性值和该名字一样的标签上，可以是多个</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.class属性值 &#123;</span><br><span class="line">    css样式名:css样式值；</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例子如下：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.cls</span>&#123;</span><br><span class="line">     <span class="attribute">color</span>: green;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>[补充]css属性</p>
+<ul>
+<li>font-size：字体大小 （注意：记得加px）</li>
+</ul>
+<h4 id="【超链接】"><a href="#【超链接】" class="headerlink" title="【超链接】"></a>【超链接】</h4><p>标签：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;...&quot;</span> <span class="attr">target</span>=<span class="string">&quot;...&quot;</span>&gt;</span>央视网<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>属性：</p>
+<ul>
+<li>href：指定资源访问的url</li>
+<li>target：指定在何处打开资源链接<ul>
+<li>_self：默认值，在当前页面打开</li>
+<li>_blank：在空白页面打开</li>
+</ul>
+</li>
+</ul>
+<p>[补充]CSS属性</p>
+<ul>
+<li>text-decoration：规定添加到文本的修饰，none表示定义标准的文本。</li>
+<li>color：定义文本的颜色。</li>
+</ul>
+<h3 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h3><h4 id="【正文排版】"><a href="#【正文排版】" class="headerlink" title="【正文排版】"></a>【正文排版】</h4><ol>
+<li>视频标签：&lt;video&gt;<ul>
+<li>src：规定视频的url</li>
+<li>controls：显示播放控件</li>
+<li>width：播放器的宽度</li>
+<li>height：播放器的高度</li>
+</ul>
+</li>
+<li>音频标签：&lt;audio&gt;<ul>
+<li>src：规定音频的url</li>
+<li>controls：显示播放控件</li>
+</ul>
+</li>
+<li>段落标签：换行~&lt;br&gt; , 段落：&lt;p&gt;</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th align="left">显示结果</th>
+<th align="left">描述</th>
+<th align="left">占位符</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"></td>
+<td align="left">空格</td>
+<td align="left">&amp;nbsp;</td>
+</tr>
+<tr>
+<td align="left">&lt;</td>
+<td align="left">小于号</td>
+<td align="left">&amp;lt;</td>
+</tr>
+<tr>
+<td align="left">&gt;</td>
+<td align="left">大于号</td>
+<td align="left">&amp;gt;</td>
+</tr>
+<tr>
+<td align="left">&amp;</td>
+<td align="left">和号</td>
+<td align="left">&amp;amp;</td>
+</tr>
+<tr>
+<td align="left">“</td>
+<td align="left">引号</td>
+<td align="left">&amp;quot;</td>
+</tr>
+<tr>
+<td align="left">‘</td>
+<td align="left">撇号</td>
+<td align="left">&amp;apos;</td>
+</tr>
+</tbody></table>
+<p>​		4. 文本加粗标签: &lt;b&gt; &#x2F; &lt;strong&gt;</p>
+<table>
+<thead>
+<tr>
+<th>效果</th>
+<th>标签</th>
+<th>标签(强调)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>加粗</td>
+<td>b</td>
+<td>strong</td>
+</tr>
+<tr>
+<td>倾斜</td>
+<td>i</td>
+<td>em</td>
+</tr>
+<tr>
+<td>下划线</td>
+<td>u</td>
+<td>ins</td>
+</tr>
+<tr>
+<td>删除线</td>
+<td>s</td>
+<td>del</td>
+</tr>
+</tbody></table>
+<h5 id="补充-CSS属性-文本排版样式"><a href="#补充-CSS属性-文本排版样式" class="headerlink" title="[补充]CSS属性-文本排版样式"></a>[补充]CSS属性-文本排版样式</h5><ul>
+<li>line-height：设置行高</li>
+<li>text-indent：定义第一个行内容的缩进</li>
+<li>text-align：规定元素中的文本的水平对齐方式</li>
+</ul>
+<h4 id="【页面布局】"><a href="#【页面布局】" class="headerlink" title="【页面布局】"></a>【页面布局】</h4><h5 id="盒子模型"><a href="#盒子模型" class="headerlink" title="盒子模型"></a>盒子模型</h5><ul>
+<li>盒子：页面中所有的元素（标签），都可以看做是一个 盒子，由盒子将页面中的元素包含在一个矩形区域内，通过盒子的视角更方便的进行页面布局。</li>
+<li>盒子模型组成：内容区域（content）、内边距区域（padding）、边框区域（border）、外边距区域（margin）。</li>
+</ul>
+<p><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412154004604.png" alt="image-20240412154004604"></p>
+<h5 id="布局标签"><a href="#布局标签" class="headerlink" title="布局标签"></a>布局标签</h5><p>实际开发网页中，会大量频繁的使用 div 和 span 这两个没有语义的布局标签。</p>
+<ul>
+<li>标签：&lt;div&gt;  &lt;span&gt;</li>
+<li>特点：<ul>
+<li>div标签：<ul>
+<li>一行只显示一个（独占一行）</li>
+<li>宽度默认是父元素的宽度，高度默认由内容撑开</li>
+<li>可以设置宽高（width、height）</li>
+</ul>
+</li>
+<li>span标签：<ul>
+<li>一行可以显示多个</li>
+<li>宽度和高度默认由内容撑开</li>
+<li>不可以设置宽高（width、height）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="补充-CSS盒子模型"><a href="#补充-CSS盒子模型" class="headerlink" title="[补充]CSS盒子模型"></a>[补充]CSS盒子模型</h5><ul>
+<li>组成：内容（content）、内边距（padding）、边框（border）、外边距（margin）</li>
+</ul>
+<h5 id="补充-CSS属性"><a href="#补充-CSS属性" class="headerlink" title="[补充]CSS属性"></a>[补充]CSS属性</h5><ul>
+<li>width：设置宽度</li>
+<li>height：设置高度</li>
+<li>border：设置边框的属性，如：1px solid #000；</li>
+<li>padding：内边距</li>
+<li>margin：外边距</li>
+<li>注意：如果只需要设置某一个方位的边框、内边距、外边距，可以在属性名后加上 – 位置，如：padding-top、padding-left、padding-right …</li>
+</ul>
+<h5 id="布局实现"><a href="#布局实现" class="headerlink" title="布局实现"></a>布局实现</h5><ol>
+<li>需要将body中的新闻标题部分、正文部分使用一个 div 布局标签将其包裹起来，方便通过css设置内容占用的宽度，比如：65%。</li>
+<li>通过css为该div设置外边距，左右的外边距分别为：17.5%，上下外边距靠边展示即可，为：0%。</li>
+</ol>
+<h2 id="表格、表单标签"><a href="#表格、表单标签" class="headerlink" title="表格、表单标签"></a>表格、表单标签</h2><h3 id="表格标签"><a href="#表格标签" class="headerlink" title="表格标签"></a>表格标签</h3><p>场景：在网页中以表格（行、列）形式整齐展示数据，如：班级表。<br>标签：</p>
+<table>
+<thead>
+<tr>
+<th><strong>标签</strong></th>
+<th><strong>描述</strong></th>
+<th><strong>属性</strong>&#x2F;<strong>备注</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&lt;table&gt;</td>
+<td>定义表格整体，可以包裹多个 &lt;tr&gt;</td>
+<td>border：规定表格边框的宽度</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>width：规定表格的宽度</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>cellspacing: 规定单元之间的空间。</td>
+</tr>
+<tr>
+<td>&lt;tr&gt;</td>
+<td>表格的行，可以包裹多个 &lt;td&gt;</td>
+<td></td>
+</tr>
+<tr>
+<td>&lt;td&gt;</td>
+<td>表格单元格(普通)，可以包裹内容</td>
+<td>如果是表头单元格，可以替换为 &lt;th&gt;</td>
+</tr>
+</tbody></table>
+<h3 id="表单标签"><a href="#表单标签" class="headerlink" title="表单标签"></a>表单标签</h3><p>场景：在网页中主要负责数据采集功能，如 注册、登录等数据采集。</p>
+<p>标签：&lt;form&gt;</p>
+<ul>
+<li>表单项：不同类型的 input 元素、下拉列表、文本域等。<ul>
+<li>&lt;input&gt;：定义表单项，通过type属性控制输入形式</li>
+<li>&lt;select&gt;：定义下拉列表，&lt;option&gt;定义列表项</li>
+<li>&lt;textarea&gt;：定义文本域</li>
+</ul>
+</li>
+<li>属性：<ul>
+<li>action：规定当提交表单时向何处发送表单数据，URL</li>
+<li>method：规定用于发送表单数据的方式。GET、POST<ul>
+<li>GET：表单数据是拼接在url后面的， 如： xxxxxxxxxxx?username&#x3D;Tom&amp;age&#x3D;12，url中能携带的表单数据大小是有限制的。</li>
+<li>POST： 表单数据是在请求体（消息体）中携带的，大小没有限制。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>注意事项</p>
+<ul>
+<li>表单中的所有表单项，要想能够正常的采集数据，在提交的时候能提交到服务端，表单项必须指定name属性。 否则，无法提交该表单项。</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户名: <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>表单标签-表单项&lt;input&gt;</p>
+<table>
+<thead>
+<tr>
+<th><strong>type取值</strong></th>
+<th><strong>描述</strong></th>
+<th><strong>形式</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>text</td>
+<td>默认值，定义单行的输入字段</td>
+<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160140233.png" alt="image-20240412160140233"></td>
+</tr>
+<tr>
+<td>password</td>
+<td>定义密码字段</td>
+<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160146970.png" alt="image-20240412160146970"></td>
+</tr>
+<tr>
+<td>radio</td>
+<td>定义单选按钮</td>
+<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160153981.png" alt="image-20240412160153981"></td>
+</tr>
+<tr>
+<td>checkbox</td>
+<td>定义复选框</td>
+<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160200603.png" alt="image-20240412160200603"></td>
+</tr>
+<tr>
+<td>file</td>
+<td>定义文件上传按钮</td>
+<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160208339.png" alt="image-20240412160208339"></td>
+</tr>
+<tr>
+<td>date&#x2F;time&#x2F;datetime-local</td>
+<td>定义日期&#x2F;时间&#x2F;日期时间</td>
+<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160216061.png" alt="image-20240412160216061"></td>
+</tr>
+<tr>
+<td>number</td>
+<td>定义数字输入框</td>
+<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160227021.png" alt="image-20240412160227021"></td>
+</tr>
+<tr>
+<td>email</td>
+<td>定义邮件输入框</td>
+<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160235837.png" alt="image-20240412160235837"></td>
+</tr>
+<tr>
+<td>hidden</td>
+<td>定义隐藏域</td>
+<td></td>
+</tr>
+<tr>
+<td>submit &#x2F; reset &#x2F; button</td>
+<td>定义提交按钮 &#x2F; 重置按钮 &#x2F; 可点击按钮</td>
+<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160242687.png" alt="image-20240412160242687"></td>
+</tr>
+</tbody></table>
+<h2 id="文档查阅"><a href="#文档查阅" class="headerlink" title="文档查阅"></a>文档查阅</h2><p>文档地址: <a target="_blank" rel="noopener" href="https://www.w3school.com.cn/index.html">https://www.w3school.com.cn/index.html</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/" data-id="cluwfgocb0000lsuh81ej4f93" data-title="【JavaWeb】HTML、CSS" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">【Java基础】【java.lang.reflect】Junit单元测试、反射</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/">【JavaWeb】HTML、CSS</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/">【Java基础】【java.lang.reflect】Junit单元测试、反射</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/">【Java基础】【java.lang】多线程</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.net%E3%80%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">【Java基础】【java.net】网络编程</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/08/%E3%80%90LeeCode%E3%80%91%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/">【LeeCode】刷题记录.md</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 Rong Zhao<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
