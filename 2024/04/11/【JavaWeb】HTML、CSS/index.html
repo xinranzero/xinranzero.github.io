@@ -1,12 +1,26 @@
-<!DOCTYPE html>
-<html>
+
+<!DOCTYPE html><html lang="en">
+
 <head>
   <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1" theme-name="Stellar" theme-version="1.29.1">
   
+  <meta name="generator" content="Hexo 7.1.1">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
   
-  <title>【JavaWeb】HTML、CSS | xinranzero</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Web开发Web介绍 Web：全球广域网，也称为万维网(www World Wide Web)，能够通过浏览器访问的网站。 Web 网站的工作流程 整个流程如下：  浏览器先向前端服务器请求前端资源，也就是我们所说的网页； 浏览器再向后台服务器发起请求，获取数据； 浏览器将得到的后台数据填充到网页上，然后展示给用户去看。  网站的开发模式**Web开发&#x3D;开发网站~**主要有2种：前端台分">
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  
+  <title>【JavaWeb】HTML、CSS - xinranzero</title>
+
+  
+    <meta name="description" content="Web开发Web介绍 Web：全球广域网，也称为万维网(www World Wide Web)，能够通过浏览器访问的网站。 Web 网站的工作流程 整个流程如下：  浏览器先向前端服务器请求前端资源，也就是我们所说的网页； 浏览器再向后台服务器发起请求，获取数据； 浏览器将得到的后台数据填充到网页上，然后展示给用户去看。  网站的开发模式**Web开发&#x3D;开发网站~**主要有2种：前端台分">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【JavaWeb】HTML、CSS">
 <meta property="og:url" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/index.html">
@@ -31,83 +45,63 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412145130187.png">
   
-    <link rel="alternate" href="/atom.xml" title="xinranzero" type="application/atom+xml">
-  
-  
-    <link rel="shortcut icon" href="/favicon.png">
   
   
   
-<link rel="stylesheet" href="/css/style.css">
+
+  <!-- feed -->
+  
+
+  <link rel="stylesheet" href="/css/main.css?v=1.29.1">
 
   
-    
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
 
   
-  
-<meta name="generator" content="Hexo 7.1.1"></head>
 
+  
+</head>
 <body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">xinranzero</a>
-      </h1>
+
+<div class="l_body s:aa content tech" id="start" layout="post" ><aside class="l_left"><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="undefined" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">xinranzero</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="Search"></form><div id="search-result"></div><div class="search-no-result">No Results!</div></div>
+
+
+<nav class="menu dis-select"></nav>
+</div>
+<div class="widgets">
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">Recent Update</span></div><div class="widget-body fs14"><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/"><span class="title">【Go基础】微服务概念与演进</span></a><a class="item title" href="/2024/04/05/%E3%80%90%E6%B1%82%E8%81%8C%E3%80%91%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E4%BB%BD%E5%8F%97%E6%AC%A2%E8%BF%8E%E7%9A%84%E6%A0%A1%E6%8B%9B%E7%AE%80%E5%8E%86/"><span class="title">【求职】如何写一份受欢迎的校招简历</span></a><a class="item title" href="/2024/04/06/%E3%80%90%E8%B5%84%E6%BA%90%E5%B8%96%E3%80%91%E5%AD%A6%E4%B9%A0Java%E5%92%8C%E7%AE%97%E6%B3%95/"><span class="title">【资源帖】学习Java和算法</span></a><a class="item title" href="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/"><span class="title">【JavaWeb】HTML、CSS</span></a><a class="item title" href="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/"><span class="title">【Java基础】【java.lang.reflect】Junit单元测试、反射</span></a><a class="item title" href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.net%E3%80%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"><span class="title">【Java基础】【java.net】网络编程</span></a><a class="item title" href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><span class="title">【Java基础】【java.lang】多线程</span></a><a class="item title" href="/2024/04/08/%E3%80%90LeeCode%E3%80%91%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/"><span class="title">【LeeCode】刷题记录.md</span></a><a class="item title" href="/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E7%89%B9%E6%AE%8A%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6%E3%80%81%E6%97%A5%E5%BF%97%E6%8A%80%E6%9C%AF/"><span class="title">【Java基础】特殊文本文件、日志技术</span></a><a class="item title" href="/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.io%E3%80%91io%E6%B5%81/"><span class="title">【Java基础】java.io包下的常用API-io流</span></a></div></widget>
+</div>
+
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2024-04-11T02:50:17.000Z">2024-04-11</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2024-04-12T09:00:53.041Z">2024-04-12</time></span></div></div></div>
+    
+    <div class="bottom only-title">
       
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+      <div class="text-area">
+        <h1 class="text title"><span>【JavaWeb】HTML、CSS</span></h1>
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-        
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
-        
-        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://xinranzero.com"></form>
       </div>
     </div>
-  </div>
-</header>
-
-      <div class="outer">
-        <section id="main"><article id="post-【JavaWeb】HTML、CSS" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/" class="article-date">
-  <time class="dt-published" datetime="2024-04-11T02:50:17.000Z" itemprop="datePublished">2024-04-11</time>
-</a>
     
   </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="p-name article-title" itemprop="headline name">
-      【JavaWeb】HTML、CSS
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="Web开发"><a href="#Web开发" class="headerlink" title="Web开发"></a>Web开发</h1><h2 id="Web介绍"><a href="#Web介绍" class="headerlink" title="Web介绍"></a>Web介绍</h2><p> Web：全球广域网，也称为万维网(www World Wide Web)，能够通过浏览器访问的网站。</p>
-<h2 id="Web-网站的工作流程"><a href="#Web-网站的工作流程" class="headerlink" title="Web 网站的工作流程"></a>Web 网站的工作流程</h2><p><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412145130187.png" alt="image-20240412145130187"></p>
+  </div><article class="md-text content"><h1 id="Web开发"><a href="#Web开发" class="headerlink" title="Web开发"></a>Web开发</h1><h2 id="Web介绍"><a href="#Web介绍" class="headerlink" title="Web介绍"></a>Web介绍</h2><p> Web：全球广域网，也称为万维网(www World Wide Web)，能够通过浏览器访问的网站。</p>
+<h2 id="Web-网站的工作流程"><a href="#Web-网站的工作流程" class="headerlink" title="Web 网站的工作流程"></a>Web 网站的工作流程</h2><p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412145130187.png" alt="image-20240412145130187"></p>
 <p><strong>整个流程如下：</strong></p>
 <ol>
 <li>浏览器先向前端服务器请求<strong>前端资源</strong>，也就是我们所说的<strong>网页</strong>；</li>
@@ -292,7 +286,7 @@
 </tr>
 </tbody></table>
 <p>颜色属性：color: 设置文本内容的颜色</p>
-<h5 id="补充-CSS选择器：来选取需要设置样式的元素-标签"><a href="#补充-CSS选择器：来选取需要设置样式的元素-标签" class="headerlink" title="[补充]CSS选择器：来选取需要设置样式的元素(标签)"></a>[补充]CSS选择器：来选取需要设置样式的元素(标签)</h5><p><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412170049481.png" alt="image-20240412170049481"></p>
+<h5 id="补充-CSS选择器：来选取需要设置样式的元素-标签"><a href="#补充-CSS选择器：来选取需要设置样式的元素-标签" class="headerlink" title="[补充]CSS选择器：来选取需要设置样式的元素(标签)"></a>[补充]CSS选择器：来选取需要设置样式的元素(标签)</h5><p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412170049481.png" alt="image-20240412170049481"></p>
 <p><strong>(1)元素（标签）选择器：</strong> </p>
 <ul>
 <li>选择器的名字必须是标签的名字</li>
@@ -437,7 +431,7 @@
 <li>盒子：页面中所有的元素（标签），都可以看做是一个 盒子，由盒子将页面中的元素包含在一个矩形区域内，通过盒子的视角更方便的进行页面布局。</li>
 <li>盒子模型组成：内容区域（content）、内边距区域（padding）、边框区域（border）、外边距区域（margin）。</li>
 </ul>
-<p><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412154004604.png" alt="image-20240412154004604"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412154004604.png" alt="image-20240412154004604"></p>
 <h5 id="布局标签"><a href="#布局标签" class="headerlink" title="布局标签"></a>布局标签</h5><p>实际开发网页中，会大量频繁的使用 div 和 span 这两个没有语义的布局标签。</p>
 <ul>
 <li>标签：&lt;div&gt;  &lt;span&gt;</li>
@@ -544,42 +538,42 @@
 <tbody><tr>
 <td>text</td>
 <td>默认值，定义单行的输入字段</td>
-<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160140233.png" alt="image-20240412160140233"></td>
+<td><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160140233.png" alt="image-20240412160140233"></td>
 </tr>
 <tr>
 <td>password</td>
 <td>定义密码字段</td>
-<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160146970.png" alt="image-20240412160146970"></td>
+<td><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160146970.png" alt="image-20240412160146970"></td>
 </tr>
 <tr>
 <td>radio</td>
 <td>定义单选按钮</td>
-<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160153981.png" alt="image-20240412160153981"></td>
+<td><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160153981.png" alt="image-20240412160153981"></td>
 </tr>
 <tr>
 <td>checkbox</td>
 <td>定义复选框</td>
-<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160200603.png" alt="image-20240412160200603"></td>
+<td><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160200603.png" alt="image-20240412160200603"></td>
 </tr>
 <tr>
 <td>file</td>
 <td>定义文件上传按钮</td>
-<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160208339.png" alt="image-20240412160208339"></td>
+<td><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160208339.png" alt="image-20240412160208339"></td>
 </tr>
 <tr>
 <td>date&#x2F;time&#x2F;datetime-local</td>
 <td>定义日期&#x2F;时间&#x2F;日期时间</td>
-<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160216061.png" alt="image-20240412160216061"></td>
+<td><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160216061.png" alt="image-20240412160216061"></td>
 </tr>
 <tr>
 <td>number</td>
 <td>定义数字输入框</td>
-<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160227021.png" alt="image-20240412160227021"></td>
+<td><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160227021.png" alt="image-20240412160227021"></td>
 </tr>
 <tr>
 <td>email</td>
 <td>定义邮件输入框</td>
-<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160235837.png" alt="image-20240412160235837"></td>
+<td><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160235837.png" alt="image-20240412160235837"></td>
 </tr>
 <tr>
 <td>hidden</td>
@@ -589,139 +583,499 @@
 <tr>
 <td>submit &#x2F; reset &#x2F; button</td>
 <td>定义提交按钮 &#x2F; 重置按钮 &#x2F; 可点击按钮</td>
-<td><img src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160242687.png" alt="image-20240412160242687"></td>
+<td><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/image-20240412160242687.png" alt="image-20240412160242687"></td>
 </tr>
 </tbody></table>
 <h2 id="文档查阅"><a href="#文档查阅" class="headerlink" title="文档查阅"></a>文档查阅</h2><p>文档地址: <a target="_blank" rel="noopener" href="https://www.w3school.com.cn/index.html">https://www.w3school.com.cn/index.html</a></p>
 
-      
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>License</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
     </div>
-    <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/" data-id="cm8fz2gjz0001ywtudyyybxpf" data-title="【JavaWeb】HTML、CSS" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-    </footer>
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          【Go基础】微服务概念与演进
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">【Java基础】【java.lang.reflect】Junit单元测试、反射</div>
-    </a>
-  
-</nav>
-
-  
 </article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">Newer</div><a href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/">【Go基础】微服务概念与演进</a></div><div class="item" id="next"><div class="note">Older</div><a href="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/">【Java基础】【java.lang.reflect】Junit单元测试、反射</a></div></section></div>
 
 
-</section>
-        
-          <aside id="sidebar">
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Rong Zhao</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1">Stellar 1.29.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+<div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Web%E5%BC%80%E5%8F%91"><span class="toc-text">Web开发</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Web%E4%BB%8B%E7%BB%8D"><span class="toc-text">Web介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web-%E7%BD%91%E7%AB%99%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">Web 网站的工作流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%AB%99%E7%9A%84%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F"><span class="toc-text">网站的开发模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BD%91%E7%AB%99%E5%BC%80%E5%8F%91%E6%8A%80%E6%9C%AF"><span class="toc-text">网站开发技术</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E7%AB%AF"><span class="toc-text">前端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8E%E7%AB%AF"><span class="toc-text">后端</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91"><span class="toc-text">前端开发</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E8%AE%A4%E7%9F%A5"><span class="toc-text">整体认知</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web%E6%A0%87%E5%87%86"><span class="toc-text">Web标准</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HTML-CSS"><span class="toc-text">HTML &amp; CSS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8"><span class="toc-text">快速入门</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFHTML"><span class="toc-text">什么是HTML ?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#html%E7%9A%84%E5%9B%BA%E5%AE%9A%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84"><span class="toc-text">html的固定基本结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HTML%E4%B8%AD%E7%9A%84%E6%A0%87%E7%AD%BE%E7%89%B9%E7%82%B9"><span class="toc-text">HTML中的标签特点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFCSS"><span class="toc-text">什么是CSS ?</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E6%A0%87%E7%AD%BE-%E6%A0%B7%E5%BC%8F"><span class="toc-text">基础标签 &amp; 样式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E9%A2%98"><span class="toc-text">标题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E3%80%90%E6%A0%87%E9%A2%98%E6%8E%92%E7%89%88%E3%80%91"><span class="toc-text">【标题排版】</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E3%80%90%E6%A0%87%E9%A2%98%E6%A0%B7%E5%BC%8F%E3%80%91"><span class="toc-text">【标题样式】</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%A1%A5%E5%85%85-CSS%E5%B1%9E%E6%80%A7-%E9%A2%9C%E8%89%B2%E8%AE%BE%E7%BD%AE%E6%96%B9%E5%BC%8F"><span class="toc-text">[补充]CSS属性-颜色设置方式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%A1%A5%E5%85%85-CSS%E9%80%89%E6%8B%A9%E5%99%A8%EF%BC%9A%E6%9D%A5%E9%80%89%E5%8F%96%E9%9C%80%E8%A6%81%E8%AE%BE%E7%BD%AE%E6%A0%B7%E5%BC%8F%E7%9A%84%E5%85%83%E7%B4%A0-%E6%A0%87%E7%AD%BE"><span class="toc-text">[补充]CSS选择器：来选取需要设置样式的元素(标签)</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E3%80%90%E8%B6%85%E9%93%BE%E6%8E%A5%E3%80%91"><span class="toc-text">【超链接】</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E6%96%87"><span class="toc-text">正文</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E3%80%90%E6%AD%A3%E6%96%87%E6%8E%92%E7%89%88%E3%80%91"><span class="toc-text">【正文排版】</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%A1%A5%E5%85%85-CSS%E5%B1%9E%E6%80%A7-%E6%96%87%E6%9C%AC%E6%8E%92%E7%89%88%E6%A0%B7%E5%BC%8F"><span class="toc-text">[补充]CSS属性-文本排版样式</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E3%80%90%E9%A1%B5%E9%9D%A2%E5%B8%83%E5%B1%80%E3%80%91"><span class="toc-text">【页面布局】</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%9B%92%E5%AD%90%E6%A8%A1%E5%9E%8B"><span class="toc-text">盒子模型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%83%E5%B1%80%E6%A0%87%E7%AD%BE"><span class="toc-text">布局标签</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%A1%A5%E5%85%85-CSS%E7%9B%92%E5%AD%90%E6%A8%A1%E5%9E%8B"><span class="toc-text">[补充]CSS盒子模型</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%A1%A5%E5%85%85-CSS%E5%B1%9E%E6%80%A7"><span class="toc-text">[补充]CSS属性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%83%E5%B1%80%E5%AE%9E%E7%8E%B0"><span class="toc-text">布局实现</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E6%A0%BC%E3%80%81%E8%A1%A8%E5%8D%95%E6%A0%87%E7%AD%BE"><span class="toc-text">表格、表单标签</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%A8%E6%A0%BC%E6%A0%87%E7%AD%BE"><span class="toc-text">表格标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A1%A8%E5%8D%95%E6%A0%87%E7%AD%BE"><span class="toc-text">表单标签</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E6%A1%A3%E6%9F%A5%E9%98%85"><span class="toc-text">文档查阅</span></a></li></ol></li></ol></div><div class="widget-footer">
+
+<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>Scroll to Top</span></a></div></widget>
+</div></aside><div class='float-panel blur'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+<script type="text/javascript">
+  const ctx = {
+    date_suffix: {
+      just: `Just`,
+      min: `minutes ago`,
+      hour: `hours ago`,
+      day: `days ago`,
+    },
+    root : `/`,
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+  };
+  const deps = {
+    jquery: `https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js`,
+    marked: `https://cdn.jsdelivr.net/npm/marked@13.0.1/lib/marked.umd.min.js`
+  }
   
+
+</script>
+
+<script type="text/javascript">
+  const utils = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = ctx.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    jq: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+    },
     
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      let retryTimes = 3;
+      utils.onLoading(el);
+      function req() {
+        return new Promise((resolve, reject) => {
+          let status = 0; // 0 等待 1 完成 2 超时
+          let timer = setTimeout(() => {
+            if (status === 0) {
+              status = 2;
+              timer = null;
+              reject('请求超时');
+              if (retryTimes == 0) {
+                onFailure();
+              }
+            }
+          }, 5000);
+          fetch(url).then(function(response) {
+            if (status !== 2) {
+              clearTimeout(timer);
+              resolve(response);
+              timer = null;
+              status = 1;
+            }
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          }).then(function(data) {
+            retryTimes = 0;
+            utils.onLoadSuccess(el);
+            callback(data);
+          }).catch(function(error) {
+            if (retryTimes > 0) {
+              retryTimes -= 1;
+              setTimeout(() => {
+                req();
+              }, 5000);
+            } else {
+              utils.onLoadFailure(el);
+              onFailure();
+            }
+          });
+        });
+      }
+      req();
+    },
+  };
+</script>
 
-  
-    
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
 
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
         
-          <li>
-            <a href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/">【Go基础】微服务概念与演进</a>
-          </li>
-        
-          <li>
-            <a href="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/">【JavaWeb】HTML、CSS</a>
-          </li>
-        
-          <li>
-            <a href="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/">【Java基础】【java.lang.reflect】Junit单元测试、反射</a>
-          </li>
-        
-          <li>
-            <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/">【Java基础】【java.lang】多线程</a>
-          </li>
-        
-          <li>
-            <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.net%E3%80%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">【Java基础】【java.net】网络编程</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      
-      &copy; 2025 Rong Zhao<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
 
 
-<script src="/js/jquery-3.6.4.min.js"></script>
+<!-- required -->
+<script src="/js/main.js?v=1.29.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `Switched to Light Mode`,
+      dark: `Switched to Dark Mode`,
+      auto: `Switched to Auto Mode`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
+
+<!-- optional -->
 
 
 
-  
-<script src="/fancybox/jquery.fancybox.min.js"></script>
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+</script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error)';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const els = document.getElementsByClassName('ds-memos');
+    if (els != undefined && els.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
 
 
+<!-- inject -->
 
-
-<script src="/js/script.js"></script>
-
-
-
-
-
-  </div>
-</body>
-</html>
+</div></body></html>
