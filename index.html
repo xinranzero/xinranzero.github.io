@@ -69,6 +69,68 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-【Go基础】微服务概念与演进" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/" class="article-date">
+  <time class="dt-published" datetime="2025-03-19T13:33:12.725Z" itemprop="datePublished">2025-03-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="微服务概念与演进"><a href="#微服务概念与演进" class="headerlink" title="微服务概念与演进"></a>微服务概念与演进</h1><h2 id="巨石架构到微服务的演进"><a href="#巨石架构到微服务的演进" class="headerlink" title="巨石架构到微服务的演进"></a>巨石架构到微服务的演进</h2><p>传统网页应用虽然进行了模块化设计，但是最终仍然是打包成一个war包进行部署，启动慢，无法拓展，可靠性很低。</p>
+<h2 id="什么是微服务"><a href="#什么是微服务" class="headerlink" title="什么是微服务"></a>什么是微服务</h2><p>是面向服务的架构模式（SOA）的最佳实践。<br><strong>定义</strong>：围绕业务功能构建的，服务关注单一业务，服务间采用轻量级的通信机制，可以全自动独立部署，可以使用不同的编程语言和数据存储技术。微服务架构通过业务拆分实现服务组件化，通过组件组合快速开发系统，业务单一的服务组件又可以独立部署，使得整个系统变得清晰灵活。</p>
+<h2 id="如何实现微服务"><a href="#如何实现微服务" class="headerlink" title="如何实现微服务"></a>如何实现微服务</h2><p>组件服务化，例如在Go中实现需要：<br>• <strong>kit</strong>：一个微服务的基础库（框架）<br>• <strong>service</strong>：业务代码 + kit 依赖 + 第三方依赖组成的业务微服务<br>• <strong>RPC + message queue</strong>：轻量级通讯<br>按业务组织服务，<strong>常见的模式</strong>：大前端（移动&#x2F;Web） &gt; 网关接入 &gt; 业务服务 &gt; 平台服务 &gt; 基础设施（PaaS&#x2F;Saas）</p>
+<h2 id="微服务的优点和缺点"><a href="#微服务的优点和缺点" class="headerlink" title="微服务的优点和缺点"></a>微服务的优点和缺点</h2><p><strong>优点</strong>：原子服务、独立进程、隔离部署、去中心化服务治理。</p>
+<p><strong>缺点</strong>：基础设施的建设、复杂度高。<br>固有的复杂性：① 必须使用RPC或者消息传递实现进程间的通信，处理通信慢与局部失效的问题；② 不同服务可能使用不同数据库。</p>
+<h2 id="要搞定这些缺点，需要做怎样的基础设施建设"><a href="#要搞定这些缺点，需要做怎样的基础设施建设" class="headerlink" title="要搞定这些缺点，需要做怎样的基础设施建设"></a>要搞定这些缺点，需要做怎样的基础设施建设</h2><p>做什么事情–可用性设计、API设计等引申话题</p>
+<h1 id="微服务组件"><a href="#微服务组件" class="headerlink" title="微服务组件"></a>微服务组件</h1><h2 id="微服务设计中常见的角色"><a href="#微服务设计中常见的角色" class="headerlink" title="微服务设计中常见的角色"></a>微服务设计中常见的角色</h2><p>三大组件：API Gateway、BFF层、底层服务Microservices。<br>API网关分层：</p>
+<ul>
+<li>流量入口：协议转换&#x2F;路由分发</li>
+<li>安全边界：统一认证&#x2F;权限控制</li>
+<li>流量治理：限流熔断&#x2F;日志监控</li>
+</ul>
+<p>BFF适配层：为不同终端提供定制化API<br>CQRS模式：读写分离（通过binlog实现数据同步）</p>
+<h2 id="演进过程"><a href="#演进过程" class="headerlink" title="演进过程"></a>演进过程</h2><h2 id="Microservices拆分"><a href="#Microservices拆分" class="headerlink" title="Microservices拆分:"></a>Microservices拆分:</h2><ol>
+<li>按垂直功能性能角度，含久必分分久必合</li>
+<li>可以考虑中间加一层(例如统一接入账号)</li>
+<li>按照业务领域抽象（DDD）</li>
+<li>按照功能拆分：CQRS，应用程序分为命令端和查询端。</li>
+</ol>
+<h2 id="安全问题"><a href="#安全问题" class="headerlink" title="安全问题"></a>安全问题</h2><p><strong>外部的安全保障</strong>：API Gateway统一认证拦截 -&gt; BFF校验Token -&gt; Service</p>
+<p><strong>服务内部的安全保障</strong>：<br>① 认证：知道是谁调用的；<br>② 授权：RBAC，控制能访问哪些接口。</p>
+<p><strong>信任等级</strong>：Full&#x2F;Half&#x2F;Zero Trust。</p>
+<h1 id="gRPC"><a href="#gRPC" class="headerlink" title="gRPC"></a>gRPC</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>A high-performance, open-source universal RPC framework. 高性能开源框架。<br><strong>特性</strong>：</p>
+<ol>
+<li>支持多语言；</li>
+<li>序列化支持Protocol Buffer和Json；</li>
+<li>HTTP&#x2F;2多路复用。</li>
+</ol>
+<p>其中最重要的是<strong>标准健康监测协议</strong>，应用如下：<br>应用1：服务稳定与不稳定时摘除与恢复；<br>应用2：外挂容器健康检测；<br>应用3：生产者与消费者之间的检测；<br>应用4：平滑发布。</p>
+<h2 id="服务发现的模型"><a href="#服务发现的模型" class="headerlink" title="服务发现的模型"></a>服务发现的模型</h2><p>① 客户端发现（微服务的核心是去中心化，用这种更好）；<br>② 服务端发现（如果服务很大，可能用service mesh）。</p>
+<h1 id="多集群与多租户"><a href="#多集群与多租户" class="headerlink" title="多集群与多租户"></a>多集群与多租户</h1><h2 id="多集群"><a href="#多集群" class="headerlink" title="多集群"></a>多集群</h2><p>why?——单集群坏处：一般布N+2来冗余节点。出现故障时后果严重。<br>how?——物理上两套资源，逻辑上维护cluster概念。<br>好处？——不同集群使用多套独占的缓存，性能好。<br>坏处？——缓存命中率下降，不同业务形态数据正交。<br>拓展：从全集群中选取一批节点（子集），利用划分子集限制连接池大小。——子集算法。</p>
+<h2 id="多租户"><a href="#多租户" class="headerlink" title="多租户"></a>多租户</h2><p>why？保障代码隔离性，基于流量租户做路由决策。<br>问题：[并行测试]时混用环境不可靠，而多布环境成本高，也难以做压测。<br>解决方法：染色发布，基于流量类型做路由。本质是从源头传递一个标签，挂在go的上下文中，基于RPC负载均衡的流量做路由,路由到指定的节点。</p>
+<p>参考资料：<br><a target="_blank" rel="noopener" href="https://microservices.io/index.html">https://microservices.io/index.html</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/mindfloating/article/details/51221780">https://blog.csdn.net/mindfloating/article/details/51221780</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dadadechengzi/p/9373069.html">https://www.cnblogs.com/dadadechengzi/p/9373069.html</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/viaiu/archive/2018/11/24/10011376.html">https://www.cnblogs.com/viaiu/archive/2018/11/24/10011376.html</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/lfs2640666960/p/9543096.html">https://www.cnblogs.com/lfs2640666960/p/9543096.html</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/L6OKJK1ev1FyVDu03CQ0OA">https://mp.weixin.qq.com/s/L6OKJK1ev1FyVDu03CQ0OA</a><br><a target="_blank" rel="noopener" href="https://www.bookstack.cn/read/API-design-guide/API-design-guide-02-%E9%9D%A2%E5%90%91%E8%B5%84%E6%BA%90%E7%9A%84%E8%AE%BE%E8%AE%A1.md">https://www.bookstack.cn/read/API-design-guide/API-design-guide-02-面向资源的设计.md</a><br><a target="_blank" rel="noopener" href="https://www.programmableweb.com/news/how-to-design-great-apis-api-first-design-and-raml/how-to/2015/07/10">https://www.programmableweb.com/news/how-to-design-great-apis-api-first-design-and-raml/how-to/2015/07/10</a><br><a target="_blank" rel="noopener" href="http://www.dockone.io/article/394">http://www.dockone.io/article/394</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/3c7a0e81451a">https://www.jianshu.com/p/3c7a0e81451a</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/6e539caf662d">https://www.jianshu.com/p/6e539caf662d</a><br><a target="_blank" rel="noopener" href="https://my.oschina.net/CraneHe/blog/70317">https://my.oschina.net/CraneHe/blog/70317</a><br><a target="_blank" rel="noopener" href="https://my.oschina.net/CraneHe/blog/703169">https://my.oschina.net/CraneHe/blog/703169</a><br><a target="_blank" rel="noopener" href="https://my.oschina.net/CraneHe/blog/703160">https://my.oschina.net/CraneHe/blog/703160</a></p>
+<p>学习笔记，侵删。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://xinranzero.com/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/" data-id="cm8fyvmt500005ktu5lhtb7yx" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-【JavaWeb】HTML、CSS" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/" class="article-date">
@@ -582,7 +644,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/" data-id="cluwfgocb0000lsuh81ej4f93" data-title="【JavaWeb】HTML、CSS" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://xinranzero.com/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/" data-id="cm8fyvmta00015ktugryydve3" data-title="【JavaWeb】HTML、CSS" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -1008,7 +1070,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/" data-id="cluthi17t0001mguhceutgsz3" data-title="【Java基础】【java.lang.reflect】Junit单元测试、反射" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://xinranzero.com/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/" data-id="cm8fyvmtd00035ktu4unx2lx2" data-title="【Java基础】【java.lang.reflect】Junit单元测试、反射" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -1460,7 +1522,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/" data-id="clur1v70l00000cuhgtan2vux" data-title="【Java基础】【java.lang】多线程" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://xinranzero.com/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/" data-id="cm8fyvmtf00065ktubpzbcjf9" data-title="【Java基础】【java.lang】多线程" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -1796,7 +1858,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.net%E3%80%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" data-id="cluthi17v0002mguhc3hbc53m" data-title="【Java基础】【java.net】网络编程" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://xinranzero.com/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.net%E3%80%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" data-id="cm8fyvmte00055ktual9kboib" data-title="【Java基础】【java.net】网络编程" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -1881,7 +1943,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/08/%E3%80%90LeeCode%E3%80%91%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" data-id="clur1v70q00010cuh2d982dfy" data-title="【LeeCode】刷题记录.md" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://xinranzero.com/2024/04/08/%E3%80%90LeeCode%E3%80%91%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" data-id="cm8fyvmti000b5ktu9d1u91c3" data-title="【LeeCode】刷题记录.md" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -2220,7 +2282,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E7%89%B9%E6%AE%8A%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6%E3%80%81%E6%97%A5%E5%BF%97%E6%8A%80%E6%9C%AF/" data-id="cluqm6gm80000gcuh4guh74cp" data-title="【Java基础】特殊文本文件、日志技术" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://xinranzero.com/2024/04/08/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E7%89%B9%E6%AE%8A%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6%E3%80%81%E6%97%A5%E5%BF%97%E6%8A%80%E6%9C%AF/" data-id="cm8fyvmth00095ktu3bpffeol" data-title="【Java基础】特殊文本文件、日志技术" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -2795,7 +2857,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.io%E3%80%91io%E6%B5%81/" data-id="cluthi17o0000mguhh0avgbbu" data-title="【Java基础】java.io包下的常用API-io流" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://xinranzero.com/2024/04/07/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.io%E3%80%91io%E6%B5%81/" data-id="cm8fyvmtc00025ktugvdjae3i" data-title="【Java基础】java.io包下的常用API-io流" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -2859,8 +2921,8 @@
 <li>public V remove(Object key)。根据键删除整个元素。</li>
 <li>public  boolean containsKey(Object key)。判断是否包含某个键。（是精确匹配。）</li>
 <li>public boolean containsValue(Object value)。判断是否包含某个值。（值的类型一定要注意。）</li>
-<li>public Set<K> keySet()。获取全部键的集合。（会放到一个Set里面再返回。）</li>
-<li>public Collection<V> values()。获取Map集合的全部值。（会放到一个Collection里面再返回，因为Set里面不允许有重复的值。）</li>
+<li>public Set<K> keySet()。获取全部键的集合。（会放到一个Set里面再返回。）</K></li>
+<li>public Collection<V> values()。获取Map集合的全部值。（会放到一个Collection里面再返回，因为Set里面不允许有重复的值。）</V></li>
 <li>putAll()。把其他Map集合的数据倒入到自己集合中来。</li>
 </ol>
 <h2 id="Map遍历方式"><a href="#Map遍历方式" class="headerlink" title="Map遍历方式"></a>Map遍历方式</h2><ol>
@@ -2869,7 +2931,7 @@
 <li><strong>Labmda</strong>。JDK 1.8开始之后的新技术（非常的简单）。</li>
 </ol>
 <h3 id="键找值"><a href="#键找值" class="headerlink" title="键找值"></a>键找值</h3><ol>
-<li>public Set<K> keySet()。获取所有键的集合。</li>
+<li>public Set<K> keySet()。获取所有键的集合。</K></li>
 <li>public V get(Object key)。根据键获取其对应的值。</li>
 </ol>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1、获取Map集合的全部键</span></span><br><span class="line">Set&lt;String&gt; keys = map.keySet();</span><br><span class="line"><span class="comment">// System.out.println(keys);</span></span><br><span class="line"><span class="comment">// [蜘蛛精, 牛魔王, 至尊宝, 紫霞]</span></span><br><span class="line"><span class="comment">//         key</span></span><br><span class="line"><span class="comment">// 2、遍历全部的键，根据键获取其对应的值</span></span><br><span class="line"><span class="keyword">for</span> (String key : keys) &#123;</span><br><span class="line">    <span class="comment">// 根据键获取对应的值</span></span><br><span class="line">    <span class="type">double</span> <span class="variable">value</span> <span class="operator">=</span> map.get(key);</span><br><span class="line">    System.out.println(key + <span class="string">&quot;=====&gt;&quot;</span> + value);</span><br></pre></td></tr></table></figure>
@@ -2939,26 +3001,26 @@
 
 <h2 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h2><h3 id="获取Stream流"><a href="#获取Stream流" class="headerlink" title="获取Stream流"></a>获取Stream流</h3><p>如何获取集合的Stream流？</p>
 <ul>
-<li>Collection类。default Stream<E> stream()。获取当前集合对象的Stream流。</li>
+<li>Collection类。default Stream<E> stream()。获取当前集合对象的Stream流。</E></li>
 </ul>
 <p>如何获取数组的Stream流？</p>
 <ul>
-<li>Arrays类。public static <T> Stream<T> stream(T[] array)。获取当前数组的Stream流。</li>
-<li>Stream类。public static<T> Stream<T> of(T… values)。获取当前接收数据的Stream流。</li>
+<li>Arrays类。public static <T> Stream<T> stream(T[] array)。获取当前数组的Stream流。</T></T></li>
+<li>Stream类。public static<T> Stream<T> of(T… values)。获取当前接收数据的Stream流。</T></T></li>
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 目标：掌握Stream流的创建。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StreamTest2</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 1、如何获取List集合的Stream流？</span></span><br><span class="line">        List&lt;String&gt; names = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        Collections.addAll(names, <span class="string">&quot;张三丰&quot;</span>,<span class="string">&quot;张无忌&quot;</span>,<span class="string">&quot;周芷若&quot;</span>,<span class="string">&quot;赵敏&quot;</span>,<span class="string">&quot;张强&quot;</span>);</span><br><span class="line">        Stream&lt;String&gt; stream = names.stream();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2、如何获取Set集合的Stream流？</span></span><br><span class="line">        Set&lt;String&gt; set = <span class="keyword">new</span> <span class="title class_">HashSet</span>&lt;&gt;();</span><br><span class="line">        Collections.addAll(set, <span class="string">&quot;刘德华&quot;</span>,<span class="string">&quot;张曼玉&quot;</span>,<span class="string">&quot;蜘蛛精&quot;</span>,<span class="string">&quot;马德&quot;</span>,<span class="string">&quot;德玛西亚&quot;</span>);</span><br><span class="line">        Stream&lt;String&gt; stream1 = set.stream();</span><br><span class="line">        stream1.filter(s -&gt; s.contains(<span class="string">&quot;德&quot;</span>)).forEach(s -&gt; System.out.println(s));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3、如何获取Map集合的Stream流？</span></span><br><span class="line">        Map&lt;String, Double&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        map.put(<span class="string">&quot;古力娜扎&quot;</span>, <span class="number">172.3</span>);</span><br><span class="line">        map.put(<span class="string">&quot;迪丽热巴&quot;</span>, <span class="number">168.3</span>);</span><br><span class="line">        map.put(<span class="string">&quot;马尔扎哈&quot;</span>, <span class="number">166.3</span>);</span><br><span class="line">        map.put(<span class="string">&quot;卡尔扎巴&quot;</span>, <span class="number">168.3</span>);</span><br><span class="line"></span><br><span class="line">        Set&lt;String&gt; keys = map.keySet();</span><br><span class="line">        Stream&lt;String&gt; ks = keys.stream();</span><br><span class="line"></span><br><span class="line">        Collection&lt;Double&gt; values = map.values();</span><br><span class="line">        Stream&lt;Double&gt; vs = values.stream();</span><br><span class="line"></span><br><span class="line">        Set&lt;Map.Entry&lt;String, Double&gt;&gt; entries = map.entrySet();</span><br><span class="line">        Stream&lt;Map.Entry&lt;String, Double&gt;&gt; kvs = entries.stream();</span><br><span class="line">        kvs.filter(e -&gt; e.getKey().contains(<span class="string">&quot;巴&quot;</span>))</span><br><span class="line">                .forEach(e -&gt; System.out.println(e.getKey()+ <span class="string">&quot;--&gt;&quot;</span> + e.getValue()));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 4、如何获取数组的Stream流？</span></span><br><span class="line">        String[] names2 = &#123;<span class="string">&quot;张翠山&quot;</span>, <span class="string">&quot;东方不败&quot;</span>, <span class="string">&quot;唐大山&quot;</span>, <span class="string">&quot;独孤求败&quot;</span>&#125;;</span><br><span class="line">        Stream&lt;String&gt; s1 = Arrays.stream(names2);</span><br><span class="line">        Stream&lt;String&gt; s2 = Stream.of(names2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="中间方法"><a href="#中间方法" class="headerlink" title="中间方法"></a>中间方法</h3><p>中间方法指的是调用完成后会返回新的Stream流，可以继续使用(支持链式编程)。（因此<strong>支持链式编程</strong>。）</p>
 <p>常用方法</p>
 <ol>
-<li>Stream<T> filter(Predicate&lt;? super T&gt; predicate)。用于对流中的数据进行过滤。</li>
-<li>Stream<T> sorted()。对元素进行升序排序。</li>
-<li>Stream<T> sorted(Comparator&lt;? super T&gt; comparator)。对元素进行升序排序。</li>
-<li>Stream<T> limit(long maxSize)。获取前几个元素。</li>
-<li>Stream<T> skip(long n)。跳过前几个元素。</li>
-<li>Stream<T> distinct()。去除流中重复的元素。</li>
-<li><R> Stream<R> map(Function&lt;? super T,? extends R&gt; mapper)。对元素进行加工，并返回对应的新流。</li>
-<li>static <T> Stream<T> concat(Stream a, Stream b)。合并a和b两个流为一个流。</li>
+<li>Stream<T> filter(Predicate&lt;? super T&gt; predicate)。用于对流中的数据进行过滤。</T></li>
+<li>Stream<T> sorted()。对元素进行升序排序。</T></li>
+<li>Stream<T> sorted(Comparator&lt;? super T&gt; comparator)。对元素进行升序排序。</T></li>
+<li>Stream<T> limit(long maxSize)。获取前几个元素。</T></li>
+<li>Stream<T> skip(long n)。跳过前几个元素。</T></li>
+<li>Stream<T> distinct()。去除流中重复的元素。</T></li>
+<li><R> Stream<R> map(Function&lt;? super T,? extends R&gt; mapper)。对元素进行加工，并返回对应的新流。</R></R></li>
+<li>static <T> Stream<T> concat(Stream a, Stream b)。合并a和b两个流为一个流。</T></T></li>
 </ol>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 目标：掌握Stream流提供的常见中间方法。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StreamTest3</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        List&lt;Double&gt; scores = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        Collections.addAll(scores, <span class="number">88.5</span>, <span class="number">100.0</span>, <span class="number">60.0</span>, <span class="number">99.0</span>, <span class="number">9.5</span>, <span class="number">99.6</span>, <span class="number">25.0</span>);</span><br><span class="line">        <span class="comment">// 需求1：找出成绩大于等于60分的数据，并升序后，再输出。</span></span><br><span class="line">        scores.stream().filter(s -&gt; s &gt;= <span class="number">60</span>).sorted().forEach(s -&gt; System.out.println(s));</span><br><span class="line"></span><br><span class="line">        List&lt;Student&gt; students = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        <span class="type">Student</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;蜘蛛精&quot;</span>, <span class="number">26</span>, <span class="number">172.5</span>);</span><br><span class="line">        <span class="type">Student</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;蜘蛛精&quot;</span>, <span class="number">26</span>, <span class="number">172.5</span>);</span><br><span class="line">        <span class="type">Student</span> <span class="variable">s3</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;紫霞&quot;</span>, <span class="number">23</span>, <span class="number">167.6</span>);</span><br><span class="line">        <span class="type">Student</span> <span class="variable">s4</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;白晶晶&quot;</span>, <span class="number">25</span>, <span class="number">169.0</span>);</span><br><span class="line">        <span class="type">Student</span> <span class="variable">s5</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;牛魔王&quot;</span>, <span class="number">35</span>, <span class="number">183.3</span>);</span><br><span class="line">        <span class="type">Student</span> <span class="variable">s6</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;牛夫人&quot;</span>, <span class="number">34</span>, <span class="number">168.5</span>);</span><br><span class="line">        Collections.addAll(students, s1, s2, s3, s4, s5, s6);</span><br><span class="line">        <span class="comment">// 需求2：找出年龄大于等于23,且年龄小于等于30岁的学生，并按照年龄降序输出.</span></span><br><span class="line">        students.stream().filter(s -&gt; s.getAge() &gt;= <span class="number">23</span> &amp;&amp; s.getAge() &lt;= <span class="number">30</span>)</span><br><span class="line">            .sorted((o1, o2) -&gt; o2.getAge() - o1.getAge())</span><br><span class="line">            .forEach(s -&gt; System.out.println(s));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 需求3：取出身高最高的前3名学生，并输出。</span></span><br><span class="line">        students.stream().sorted((o1, o2) -&gt; Double.compare(o2.getHeight(), o1.getHeight()))</span><br><span class="line">            .limit(<span class="number">3</span>).forEach(System.out::println);</span><br><span class="line">        System.out.println(<span class="string">&quot;-----------------------------------------------&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 需求4：取出身高倒数的2名学生，并输出。   s1 s2 s3 s4 s5 s6</span></span><br><span class="line">        students.stream().sorted((o1, o2) -&gt; Double.compare(o2.getHeight(), o1.getHeight()))</span><br><span class="line">            .skip(students.size() - <span class="number">2</span>).forEach(System.out::println);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 需求5：找出身高超过168的学生叫什么名字，要求去除重复的名字，再输出。</span></span><br><span class="line">        students.stream().filter(s -&gt; s.getHeight() &gt; <span class="number">168</span>).map(Student::getName)</span><br><span class="line">            .distinct().forEach(System.out::println);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// distinct去重复，自定义类型的对象（希望内容一样就认为重复，重写hashCode,equals）</span></span><br><span class="line">        students.stream().filter(s -&gt; s.getHeight() &gt; <span class="number">168</span>)</span><br><span class="line">            .distinct().forEach(System.out::println);</span><br><span class="line"></span><br><span class="line">        Stream&lt;String&gt; st1 = Stream.of(<span class="string">&quot;张三&quot;</span>, <span class="string">&quot;李四&quot;</span>);</span><br><span class="line">        Stream&lt;String&gt; st2 = Stream.of(<span class="string">&quot;张三2&quot;</span>, <span class="string">&quot;李四2&quot;</span>, <span class="string">&quot;王五&quot;</span>);</span><br><span class="line">        Stream&lt;String&gt; allSt = Stream.concat(st1, st2); <span class="comment">//如果合并的两个类型不一样，需要用Object来接。</span></span><br><span class="line">        allSt.forEach(System.out::println);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -2967,8 +3029,8 @@
 <ol>
 <li>void forEach(Consumer action)。对此流运算后的元素执行遍历。</li>
 <li>long count()。统计此流运算后的元素个数。</li>
-<li>Optional<T> max(Comparator&lt;? super T&gt; comparator)。获取此流运算后的最大值元素。</li>
-<li>Optional<T> min(Comparator&lt;? super T&gt; comparator)。获取此流运算后的最小值元素。</li>
+<li>Optional<T> max(Comparator&lt;? super T&gt; comparator)。获取此流运算后的最大值元素。</T></li>
+<li>Optional<T> min(Comparator&lt;? super T&gt; comparator)。获取此流运算后的最小值元素。</T></li>
 </ol>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 目标：Stream流的终结方法</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StreamTest4</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        List&lt;Student&gt; students = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">        <span class="type">Student</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;蜘蛛精&quot;</span>, <span class="number">26</span>, <span class="number">172.5</span>);</span><br><span class="line">        <span class="type">Student</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;蜘蛛精&quot;</span>, <span class="number">26</span>, <span class="number">172.5</span>);</span><br><span class="line">        <span class="type">Student</span> <span class="variable">s3</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;紫霞&quot;</span>, <span class="number">23</span>, <span class="number">167.6</span>);</span><br><span class="line">        <span class="type">Student</span> <span class="variable">s4</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;白晶晶&quot;</span>, <span class="number">25</span>, <span class="number">169.0</span>);</span><br><span class="line">        <span class="type">Student</span> <span class="variable">s5</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;牛魔王&quot;</span>, <span class="number">35</span>, <span class="number">183.3</span>);</span><br><span class="line">        <span class="type">Student</span> <span class="variable">s6</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;牛夫人&quot;</span>, <span class="number">34</span>, <span class="number">168.5</span>);</span><br><span class="line">        Collections.addAll(students, s1, s2, s3, s4, s5, s6);</span><br><span class="line">        <span class="comment">// 需求1：请计算出身高超过168的学生有几人。</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">size</span> <span class="operator">=</span> students.stream().filter(s -&gt; s.getHeight() &gt; <span class="number">168</span>).count();</span><br><span class="line">        System.out.println(size);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 需求2：请找出身高最高的学生对象，并输出。</span></span><br><span class="line">        <span class="type">Student</span> <span class="variable">s</span> <span class="operator">=</span> students.stream().max((o1, o2) -&gt; Double.compare(o1.getHeight(), o2.getHeight())).get();</span><br><span class="line">        System.out.println(s);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 需求3：请找出身高最矮的学生对象，并输出。</span></span><br><span class="line">        <span class="type">Student</span> <span class="variable">ss</span> <span class="operator">=</span> students.stream().min((o1, o2) -&gt; Double.compare(o1.getHeight(), o2.getHeight())).get();</span><br><span class="line">        System.out.println(ss);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 需求4：请找出身高超过170的学生对象，并放到一个新集合中去返回。</span></span><br><span class="line">        <span class="comment">// 流只能收集一次。</span></span><br><span class="line">        List&lt;Student&gt; students1 = students.stream().filter(a -&gt; a.getHeight() &gt; <span class="number">170</span>).collect(Collectors.toList());</span><br><span class="line">        System.out.println(students1);</span><br><span class="line"></span><br><span class="line">        Set&lt;Student&gt; students2 = students.stream().filter(a -&gt; a.getHeight() &gt; <span class="number">170</span>).collect(Collectors.toSet());</span><br><span class="line">        System.out.println(students2);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 需求5：请找出身高超过170的学生对象，并把学生对象的名字和身高，存入到一个Map集合返回。</span></span><br><span class="line">        Map&lt;String, Double&gt; map =</span><br><span class="line">                students.stream().filter(a -&gt; a.getHeight() &gt; <span class="number">170</span>)</span><br><span class="line">                        .distinct().collect(Collectors.toMap(a -&gt; a.getName(), a -&gt; a.getHeight()));</span><br><span class="line">        System.out.println(map);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Object[] arr = students.stream().filter(a -&gt; a.getHeight() &gt; 170).toArray();</span></span><br><span class="line">        Student[] arr = students.stream().filter(a -&gt; a.getHeight() &gt; <span class="number">170</span>).toArray(len -&gt; <span class="keyword">new</span> <span class="title class_">Student</span>[len]);</span><br><span class="line">        System.out.println(Arrays.toString(arr));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -2983,8 +3045,8 @@
 </ol>
 <p>collect具体的收集方式</p>
 <ol>
-<li>public static <T> Collector toList()。把元素收集到List集合中。</li>
-<li>public static <T> Collector toSet()。把元素收集到Set集合中。注意<strong>Set会去重</strong>。</li>
+<li>public static <T> Collector toList()。把元素收集到List集合中。</T></li>
+<li>public static <T> Collector toSet()。把元素收集到Set集合中。注意<strong>Set会去重</strong>。</T></li>
 <li>public static  Collector toMap(Function keyMapper , Function valueMapper)。把元素收集到Map集合中。注意需要在收集的时候<strong>指定键和值</strong>。而且它不能帮我们去重，因此可能报错，要自己在中间加一个distict()方法。</li>
 </ol>
 <p>注意，<strong>流只能收集一次</strong>！不可以先用一个Steam对象接住Steam流，然后做两次收集操作。</p>
@@ -2992,7 +3054,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/06/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.util%E3%80%91%E9%9B%86%E5%90%88%EF%BC%88Map%E3%80%81Stream%E6%B5%81%EF%BC%89/" data-id="cluo501ti00031cuhgion1pxs" data-title="【Java基础】集合（Map、Stream流）" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://xinranzero.com/2024/04/06/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.util%E3%80%91%E9%9B%86%E5%90%88%EF%BC%88Map%E3%80%81Stream%E6%B5%81%EF%BC%89/" data-id="cm8fyvmtg00085ktu9lrdggf8" data-title="【Java基础】集合（Map、Stream流）" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -3048,10 +3110,10 @@
 </li>
 <li>面试专题：<ul>
 <li>2023版：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1yT411H7YK/">https://www.bilibili.com/video/BV1yT411H7YK/</a></li>
-<li>2021版：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV15b4y117RJ/">https://www.bilibili.com/video/BV15b4y117RJ/</a></li>
 </ul>
 </li>
 </ol>
+<p>复制标题和时长：<a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv22846057/">https://www.bilibili.com/read/cv22846057/</a></p>
 <h2 id="精进指南"><a href="#精进指南" class="headerlink" title="精进指南"></a>精进指南</h2><ul>
 <li>（JavaWeb后，选学）MySQL：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Kr4y1i7ru/">https://www.bilibili.com/video/BV1Kr4y1i7ru/</a></li>
 <li>（微服务后，选学）Redis微服务：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1cr4y1671t/">https://www.bilibili.com/video/BV1cr4y1671t/</a></li>
@@ -3082,128 +3144,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/06/%E3%80%90%E8%B5%84%E6%BA%90%E5%B8%96%E3%80%91%E5%AD%A6%E4%B9%A0Java%E5%92%8C%E7%AE%97%E6%B3%95/" data-id="clunjsaz1000030uh14smflz1" data-title="【资源帖】学习Java和算法" class="article-share-link"><span class="fa fa-share">Share</span></a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-【伴行青年】如何写一份受欢迎的校招简历" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2024/04/05/%E3%80%90%E4%BC%B4%E8%A1%8C%E9%9D%92%E5%B9%B4%E3%80%91%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E4%BB%BD%E5%8F%97%E6%AC%A2%E8%BF%8E%E7%9A%84%E6%A0%A1%E6%8B%9B%E7%AE%80%E5%8E%86/" class="article-date">
-  <time class="dt-published" datetime="2024-04-05T12:03:34.000Z" itemprop="datePublished">2024-04-05</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2024/04/05/%E3%80%90%E4%BC%B4%E8%A1%8C%E9%9D%92%E5%B9%B4%E3%80%91%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E4%BB%BD%E5%8F%97%E6%AC%A2%E8%BF%8E%E7%9A%84%E6%A0%A1%E6%8B%9B%E7%AE%80%E5%8E%86/">【伴行青年】如何写一份受欢迎的校招简历</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><ol>
-<li>过度包装设计。减弱主要信息能量，华而不实。</li>
-<li>篇幅过长。</li>
-<li>求职定位不明。</li>
-<li>实践经历描述不当。</li>
-<li>一份简历闯天下。<ul>
-<li>JD：工作职责、工作胜任力。</li>
-</ul>
-</li>
-<li>使用表格式简历。</li>
-<li>啰啰嗦嗦重点不突出。</li>
-<li>不该讲的乱讲。例如，创业、离职原因、到岗时间、离婚、错误检讨、薪资条件。</li>
-</ol>
-<h1 id="优秀简历的特征"><a href="#优秀简历的特征" class="headerlink" title="优秀简历的特征"></a>优秀简历的特征</h1><h2 id="版面设计"><a href="#版面设计" class="headerlink" title="版面设计"></a>版面设计</h2><p>简洁大方、布局清晰、模板分界。</p>
-<h2 id="简历结构"><a href="#简历结构" class="headerlink" title="简历结构"></a>简历结构</h2><p>结构完整、详略得当、易于阅读。</p>
-<h2 id="内容呈现"><a href="#内容呈现" class="headerlink" title="内容呈现"></a>内容呈现</h2><p>逻辑清晰、优势突出、数据支撑。</p>
-<h2 id="人岗匹配"><a href="#人岗匹配" class="headerlink" title="人岗匹配"></a>人岗匹配</h2><p>有的放矢、贴近岗位JD、天生我才。</p>
-<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><ol>
-<li>脱颖而出、入得法眼。</li>
-<li>顺畅读完，越读越喜欢。</li>
-<li>打动人心，不如见一面。</li>
-<li>为面试好印象做好铺垫。（面试官其实是根据初印象，步步求证是否确实是需要的人。）</li>
-</ol>
-<h1 id="简历的完整结构“2-2”"><a href="#简历的完整结构“2-2”" class="headerlink" title="简历的完整结构“2+2”"></a>简历的完整结构“2+2”</h1><p>通用的（非本专业&#x2F;技术岗）：</p>
-<ol>
-<li>基本信息：略写。7%。</li>
-<li>自我评价：较详。20%。</li>
-<li>工作经历：详写。（大力气。）70%。</li>
-<li>学历、证书、技能：略写。3%。</li>
-</ol>
-<h2 id="基本信息"><a href="#基本信息" class="headerlink" title="基本信息"></a>基本信息</h2><ul>
-<li>姓名+求职意向+性别+年龄。（政治面貌：国企央企等写，外企不写，民企无所谓。）</li>
-<li>联系方式：城市、电话、微信、邮箱。（不用写太多。城市可以写XX(意向城市)。联系方式三个必有一，推荐电话。）</li>
-<li>个人照片：彩色、正面头像、有精气神。（匹配行业。）</li>
-</ul>
-<h2 id="自我评价-教育背景"><a href="#自我评价-教育背景" class="headerlink" title="自我评价&#x2F;教育背景"></a>自我评价&#x2F;教育背景</h2><p>社招：</p>
-<ul>
-<li>工作背景。例如，年份+领域&#x2F;行业+擅长&#x2F;熟悉&#x2F;掌握。</li>
-<li>优势能力。四条分号隔开。专业软件可以写。</li>
-<li>职业素养。</li>
-</ul>
-<p><strong>校招：</strong></p>
-<ul>
-<li>起止时段：学校、专业、学历、学位。</li>
-<li>主修课程。</li>
-<li>奖学金可以写。</li>
-</ul>
-<h2 id="工作经历-实习经历-项目经历"><a href="#工作经历-实习经历-项目经历" class="headerlink" title="工作经历&#x2F;实习经历&#x2F;项目经历"></a>工作经历&#x2F;实习经历&#x2F;项目经历</h2><p>社招：</p>
-<ul>
-<li>工作时段。（可以有总分，总的在某个公司，分的是不同岗位。最好是倒叙。）</li>
-<li>工作职责。（前3-5个。）</li>
-<li>工作业绩。（为了醒目，可以换个标志，比如五角星。一定要有数据，没数据也不要乱讲。）</li>
-<li>工作获奖。（要有含金量的，行业、省市级以上，发明专利等。）</li>
-</ul>
-<p><strong>校招：</strong></p>
-<ul>
-<li>起止时段、公司、岗位。</li>
-<li>工作职责、价值、奖项。</li>
-</ul>
-<h2 id="其他佐证"><a href="#其他佐证" class="headerlink" title="其他佐证"></a>其他佐证</h2><ul>
-<li>学历背景：学校、专业。</li>
-<li>语言能力：语种、级别。（只是针对某些需要语言能力的岗位。其他：听说读写能力流利，可作为工作语言。）</li>
-<li>专业技能：证书、级别。（例如岗位资格证。）</li>
-</ul>
-<h2 id="校招和社招的区别"><a href="#校招和社招的区别" class="headerlink" title="校招和社招的区别"></a>校招和社招的区别</h2><ul>
-<li>教育背景前置&#x2F;后置。</li>
-<li>自我评价的有无。（复盘能力。）</li>
-</ul>
-<h1 id="优秀简历写作心法"><a href="#优秀简历写作心法" class="headerlink" title="优秀简历写作心法"></a>优秀简历写作心法</h1><p><strong>人岗匹配！！！</strong></p>
-<ol>
-<li>职场的本质是价值交换。（以终为始。）</li>
-<li>见字如面，格式细节很重要，大小标题和逻辑关系。</li>
-<li>凤头猪肚豹尾。自我评价漂亮客观，工作经历饱满有结果，其他佐证简短有力。</li>
-<li>工作经历倒叙。写清楚总分，闭环表达，数据支撑。</li>
-<li>工作<strong>年限5年以下，请用一张A4纸</strong>完成。</li>
-<li>如果<strong>经历比较少，根据一段经历可以多挖掘</strong>，例如，“1+3+6+x”主轴。</li>
-</ol>
-<h1 id="如何准备"><a href="#如何准备" class="headerlink" title="如何准备"></a>如何准备</h1><ol>
-<li>确定自己身份：校招&#x2F;社招，确定目标岗位，了解岗位JD。</li>
-<li>准备模板，通读三遍。准备素材，多多益善。（所有经历都可以准备。）</li>
-<li>现有骨架，再填充。时间倒叙，先粗后细。</li>
-<li>先写草稿，反复打磨。</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://xinranzero.com/2024/04/05/%E3%80%90%E4%BC%B4%E8%A1%8C%E9%9D%92%E5%B9%B4%E3%80%91%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E4%BB%BD%E5%8F%97%E6%AC%A2%E8%BF%8E%E7%9A%84%E6%A0%A1%E6%8B%9B%E7%AE%80%E5%8E%86/" data-id="clumoru9q00018guh4mi0e9el" data-title="【伴行青年】如何写一份受欢迎的校招简历" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="http://xinranzero.com/2024/04/06/%E3%80%90%E8%B5%84%E6%BA%90%E5%B8%96%E3%80%91%E5%AD%A6%E4%B9%A0Java%E5%92%8C%E7%AE%97%E6%B3%95/" data-id="cm8fyvmtm000e5ktufior2ce1" data-title="【资源帖】学习Java和算法" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
@@ -3238,7 +3179,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li></ul>
     </div>
   </div>
 
@@ -3249,6 +3190,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/">(no title)</a>
+          </li>
         
           <li>
             <a href="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/">【JavaWeb】HTML、CSS</a>
@@ -3266,10 +3211,6 @@
             <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.net%E3%80%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">【Java基础】【java.net】网络编程</a>
           </li>
         
-          <li>
-            <a href="/2024/04/08/%E3%80%90LeeCode%E3%80%91%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/">【LeeCode】刷题记录.md</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -3283,7 +3224,7 @@
   <div class="outer">
     <div id="footer-info" class="inner">
       
-      &copy; 2024 Rong Zhao<br>
+      &copy; 2025 Rong Zhao<br>
       Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>

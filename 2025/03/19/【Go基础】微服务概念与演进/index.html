@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>xinranzero</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="微服务概念与演进巨石架构到微服务的演进传统网页应用虽然进行了模块化设计，但是最终仍然是打包成一个war包进行部署，启动慢，无法拓展，可靠性很低。 什么是微服务是面向服务的架构模式（SOA）的最佳实践。定义：围绕业务功能构建的，服务关注单一业务，服务间采用轻量级的通信机制，可以全自动独立部署，可以使用不同的编程语言和数据存储技术。微服务架构通过业务拆分实现服务组件化，通过组件组合快速开发系统，业务单">
+<meta property="og:type" content="article">
+<meta property="og:title" content="xinranzero">
+<meta property="og:url" content="http://xinranzero.com/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/index.html">
+<meta property="og:site_name" content="xinranzero">
+<meta property="og:description" content="微服务概念与演进巨石架构到微服务的演进传统网页应用虽然进行了模块化设计，但是最终仍然是打包成一个war包进行部署，启动慢，无法拓展，可靠性很低。 什么是微服务是面向服务的架构模式（SOA）的最佳实践。定义：围绕业务功能构建的，服务关注单一业务，服务间采用轻量级的通信机制，可以全自动独立部署，可以使用不同的编程语言和数据存储技术。微服务架构通过业务拆分实现服务组件化，通过组件组合快速开发系统，业务单">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-03-19T13:33:12.725Z">
+<meta property="article:modified_time" content="2025-03-19T13:33:12.725Z">
+<meta property="article:author" content="Rong Zhao">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="xinranzero" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.1.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">xinranzero</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Search"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://xinranzero.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-【Go基础】微服务概念与演进" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/" class="article-date">
+  <time class="dt-published" datetime="2025-03-19T13:33:12.725Z" itemprop="datePublished">2025-03-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="微服务概念与演进"><a href="#微服务概念与演进" class="headerlink" title="微服务概念与演进"></a>微服务概念与演进</h1><h2 id="巨石架构到微服务的演进"><a href="#巨石架构到微服务的演进" class="headerlink" title="巨石架构到微服务的演进"></a>巨石架构到微服务的演进</h2><p>传统网页应用虽然进行了模块化设计，但是最终仍然是打包成一个war包进行部署，启动慢，无法拓展，可靠性很低。</p>
+<h2 id="什么是微服务"><a href="#什么是微服务" class="headerlink" title="什么是微服务"></a>什么是微服务</h2><p>是面向服务的架构模式（SOA）的最佳实践。<br><strong>定义</strong>：围绕业务功能构建的，服务关注单一业务，服务间采用轻量级的通信机制，可以全自动独立部署，可以使用不同的编程语言和数据存储技术。微服务架构通过业务拆分实现服务组件化，通过组件组合快速开发系统，业务单一的服务组件又可以独立部署，使得整个系统变得清晰灵活。</p>
+<h2 id="如何实现微服务"><a href="#如何实现微服务" class="headerlink" title="如何实现微服务"></a>如何实现微服务</h2><p>组件服务化，例如在Go中实现需要：<br>• <strong>kit</strong>：一个微服务的基础库（框架）<br>• <strong>service</strong>：业务代码 + kit 依赖 + 第三方依赖组成的业务微服务<br>• <strong>RPC + message queue</strong>：轻量级通讯<br>按业务组织服务，<strong>常见的模式</strong>：大前端（移动&#x2F;Web） &gt; 网关接入 &gt; 业务服务 &gt; 平台服务 &gt; 基础设施（PaaS&#x2F;Saas）</p>
+<h2 id="微服务的优点和缺点"><a href="#微服务的优点和缺点" class="headerlink" title="微服务的优点和缺点"></a>微服务的优点和缺点</h2><p><strong>优点</strong>：原子服务、独立进程、隔离部署、去中心化服务治理。</p>
+<p><strong>缺点</strong>：基础设施的建设、复杂度高。<br>固有的复杂性：① 必须使用RPC或者消息传递实现进程间的通信，处理通信慢与局部失效的问题；② 不同服务可能使用不同数据库。</p>
+<h2 id="要搞定这些缺点，需要做怎样的基础设施建设"><a href="#要搞定这些缺点，需要做怎样的基础设施建设" class="headerlink" title="要搞定这些缺点，需要做怎样的基础设施建设"></a>要搞定这些缺点，需要做怎样的基础设施建设</h2><p>做什么事情–可用性设计、API设计等引申话题</p>
+<h1 id="微服务组件"><a href="#微服务组件" class="headerlink" title="微服务组件"></a>微服务组件</h1><h2 id="微服务设计中常见的角色"><a href="#微服务设计中常见的角色" class="headerlink" title="微服务设计中常见的角色"></a>微服务设计中常见的角色</h2><p>三大组件：API Gateway、BFF层、底层服务Microservices。<br>API网关分层：</p>
+<ul>
+<li>流量入口：协议转换&#x2F;路由分发</li>
+<li>安全边界：统一认证&#x2F;权限控制</li>
+<li>流量治理：限流熔断&#x2F;日志监控</li>
+</ul>
+<p>BFF适配层：为不同终端提供定制化API<br>CQRS模式：读写分离（通过binlog实现数据同步）</p>
+<h2 id="演进过程"><a href="#演进过程" class="headerlink" title="演进过程"></a>演进过程</h2><h2 id="Microservices拆分"><a href="#Microservices拆分" class="headerlink" title="Microservices拆分:"></a>Microservices拆分:</h2><ol>
+<li>按垂直功能性能角度，含久必分分久必合</li>
+<li>可以考虑中间加一层(例如统一接入账号)</li>
+<li>按照业务领域抽象（DDD）</li>
+<li>按照功能拆分：CQRS，应用程序分为命令端和查询端。</li>
+</ol>
+<h2 id="安全问题"><a href="#安全问题" class="headerlink" title="安全问题"></a>安全问题</h2><p><strong>外部的安全保障</strong>：API Gateway统一认证拦截 -&gt; BFF校验Token -&gt; Service</p>
+<p><strong>服务内部的安全保障</strong>：<br>① 认证：知道是谁调用的；<br>② 授权：RBAC，控制能访问哪些接口。</p>
+<p><strong>信任等级</strong>：Full&#x2F;Half&#x2F;Zero Trust。</p>
+<h1 id="gRPC"><a href="#gRPC" class="headerlink" title="gRPC"></a>gRPC</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>A high-performance, open-source universal RPC framework. 高性能开源框架。<br><strong>特性</strong>：</p>
+<ol>
+<li>支持多语言；</li>
+<li>序列化支持Protocol Buffer和Json；</li>
+<li>HTTP&#x2F;2多路复用。</li>
+</ol>
+<p>其中最重要的是<strong>标准健康监测协议</strong>，应用如下：<br>应用1：服务稳定与不稳定时摘除与恢复；<br>应用2：外挂容器健康检测；<br>应用3：生产者与消费者之间的检测；<br>应用4：平滑发布。</p>
+<h2 id="服务发现的模型"><a href="#服务发现的模型" class="headerlink" title="服务发现的模型"></a>服务发现的模型</h2><p>① 客户端发现（微服务的核心是去中心化，用这种更好）；<br>② 服务端发现（如果服务很大，可能用service mesh）。</p>
+<h1 id="多集群与多租户"><a href="#多集群与多租户" class="headerlink" title="多集群与多租户"></a>多集群与多租户</h1><h2 id="多集群"><a href="#多集群" class="headerlink" title="多集群"></a>多集群</h2><p>why?——单集群坏处：一般布N+2来冗余节点。出现故障时后果严重。<br>how?——物理上两套资源，逻辑上维护cluster概念。<br>好处？——不同集群使用多套独占的缓存，性能好。<br>坏处？——缓存命中率下降，不同业务形态数据正交。<br>拓展：从全集群中选取一批节点（子集），利用划分子集限制连接池大小。——子集算法。</p>
+<h2 id="多租户"><a href="#多租户" class="headerlink" title="多租户"></a>多租户</h2><p>why？保障代码隔离性，基于流量租户做路由决策。<br>问题：[并行测试]时混用环境不可靠，而多布环境成本高，也难以做压测。<br>解决方法：染色发布，基于流量类型做路由。本质是从源头传递一个标签，挂在go的上下文中，基于RPC负载均衡的流量做路由,路由到指定的节点。</p>
+<p>参考资料：<br><a target="_blank" rel="noopener" href="https://microservices.io/index.html">https://microservices.io/index.html</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/mindfloating/article/details/51221780">https://blog.csdn.net/mindfloating/article/details/51221780</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dadadechengzi/p/9373069.html">https://www.cnblogs.com/dadadechengzi/p/9373069.html</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/viaiu/archive/2018/11/24/10011376.html">https://www.cnblogs.com/viaiu/archive/2018/11/24/10011376.html</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/lfs2640666960/p/9543096.html">https://www.cnblogs.com/lfs2640666960/p/9543096.html</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/L6OKJK1ev1FyVDu03CQ0OA">https://mp.weixin.qq.com/s/L6OKJK1ev1FyVDu03CQ0OA</a><br><a target="_blank" rel="noopener" href="https://www.bookstack.cn/read/API-design-guide/API-design-guide-02-%E9%9D%A2%E5%90%91%E8%B5%84%E6%BA%90%E7%9A%84%E8%AE%BE%E8%AE%A1.md">https://www.bookstack.cn/read/API-design-guide/API-design-guide-02-面向资源的设计.md</a><br><a target="_blank" rel="noopener" href="https://www.programmableweb.com/news/how-to-design-great-apis-api-first-design-and-raml/how-to/2015/07/10">https://www.programmableweb.com/news/how-to-design-great-apis-api-first-design-and-raml/how-to/2015/07/10</a><br><a target="_blank" rel="noopener" href="http://www.dockone.io/article/394">http://www.dockone.io/article/394</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/3c7a0e81451a">https://www.jianshu.com/p/3c7a0e81451a</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/6e539caf662d">https://www.jianshu.com/p/6e539caf662d</a><br><a target="_blank" rel="noopener" href="https://my.oschina.net/CraneHe/blog/70317">https://my.oschina.net/CraneHe/blog/70317</a><br><a target="_blank" rel="noopener" href="https://my.oschina.net/CraneHe/blog/703169">https://my.oschina.net/CraneHe/blog/703169</a><br><a target="_blank" rel="noopener" href="https://my.oschina.net/CraneHe/blog/703160">https://my.oschina.net/CraneHe/blog/703160</a></p>
+<p>学习笔记，侵删。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://xinranzero.com/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/" data-id="cm8fyvmt500005ktu5lhtb7yx" data-title="" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">【JavaWeb】HTML、CSS</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">March 2025</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">April 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/">【JavaWeb】HTML、CSS</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/">【Java基础】【java.lang.reflect】Junit单元测试、反射</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang%E3%80%91%E5%A4%9A%E7%BA%BF%E7%A8%8B/">【Java基础】【java.lang】多线程</a>
+          </li>
+        
+          <li>
+            <a href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.net%E3%80%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/">【Java基础】【java.net】网络编程</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2025 Rong Zhao<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
