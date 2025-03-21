@@ -17,18 +17,18 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
   <meta name="theme-color" content="#f9fafb">
   
-  <title>【go基础】垃圾回收演进 三色标记法 - xinranzero</title>
+  <title>【Go基础】垃圾回收演进 三色标记法 - xinranzero</title>
 
   
     <meta name="description" content="GO1.3标记清除，整体需要STW：1.暂停，找到可达和不可达对象，2. 标记可达对象，3. 清除未标记对象，4. 结束暂停 GO1.5三色标记法，堆启动写屏障，栈不启动，全部扫描一次后，需要重新扫描栈（STW），效率低 如果没有STW，对象丢失的2个条件：  黑色对象指向白色对象（白色挂在黑色下面） 灰色对象与其可达白色对象之间遭到破坏（灰色也丢失了该白色）  屏障机制，保障对象不丢失的2种方式">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【go基础】垃圾回收演进 三色标记法">
+<meta property="og:title" content="【Go基础】垃圾回收演进 三色标记法">
 <meta property="og:url" content="http://xinranzero.com/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%BC%94%E8%BF%9B%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95/index.html">
 <meta property="og:site_name" content="xinranzero">
 <meta property="og:description" content="GO1.3标记清除，整体需要STW：1.暂停，找到可达和不可达对象，2. 标记可达对象，3. 清除未标记对象，4. 结束暂停 GO1.5三色标记法，堆启动写屏障，栈不启动，全部扫描一次后，需要重新扫描栈（STW），效率低 如果没有STW，对象丢失的2个条件：  黑色对象指向白色对象（白色挂在黑色下面） 灰色对象与其可达白色对象之间遭到破坏（灰色也丢失了该白色）  屏障机制，保障对象不丢失的2种方式">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-03-19T13:57:53.000Z">
-<meta property="article:modified_time" content="2025-03-19T13:58:41.463Z">
+<meta property="article:modified_time" content="2025-03-21T07:40:13.639Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
   
@@ -63,7 +63,7 @@
 <div class="widgets">
 
 
-<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">Recent Update</span></div><div class="widget-body fs14"><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%B8%B8%E7%94%A8%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E8%AE%BE%E7%BD%AE/"><span class="title">【Go基础】常用环境变量设置</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/"><span class="title">【Go基础】并发编程基本概念</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%BC%94%E8%BF%9B%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95/"><span class="title">【go基础】垃圾回收演进 三色标记法</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91Go%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5%E8%B5%84%E6%BA%90%E5%B8%96/"><span class="title">【Go基础】Go入门与实践资源帖</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/"><span class="title">【Go基础】微服务概念与演进</span></a><a class="item title" href="/2024/04/05/%E3%80%90%E6%B1%82%E8%81%8C%E3%80%91%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E4%BB%BD%E5%8F%97%E6%AC%A2%E8%BF%8E%E7%9A%84%E6%A0%A1%E6%8B%9B%E7%AE%80%E5%8E%86/"><span class="title">【求职】如何写一份受欢迎的校招简历</span></a><a class="item title" href="/2024/04/06/%E3%80%90%E8%B5%84%E6%BA%90%E5%B8%96%E3%80%91%E5%AD%A6%E4%B9%A0Java%E5%92%8C%E7%AE%97%E6%B3%95/"><span class="title">【资源帖】学习Java和算法</span></a><a class="item title" href="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/"><span class="title">【JavaWeb】HTML、CSS</span></a><a class="item title" href="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/"><span class="title">【Java基础】【java.lang.reflect】Junit单元测试、反射</span></a><a class="item title" href="/2024/04/09/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.net%E3%80%91%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/"><span class="title">【Java基础】【java.net】网络编程</span></a></div></widget>
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">Recent Update</span></div><div class="widget-body fs14"><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/"><span class="title">【Go基础】错误处理</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%BC%94%E8%BF%9B%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95/"><span class="title">【Go基础】垃圾回收演进 三色标记法</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%B8%B8%E7%94%A8%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E8%AE%BE%E7%BD%AE/"><span class="title">【Go基础】常用环境变量设置</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/"><span class="title">【Go基础】并发编程基本概念</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91Go%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5%E8%B5%84%E6%BA%90%E5%B8%96/"><span class="title">【Go基础】Go入门与实践资源帖</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/"><span class="title">【Go基础】微服务概念与演进</span></a><a class="item title" href="/2024/04/05/%E3%80%90%E6%B1%82%E8%81%8C%E3%80%91%E5%A6%82%E4%BD%95%E5%86%99%E4%B8%80%E4%BB%BD%E5%8F%97%E6%AC%A2%E8%BF%8E%E7%9A%84%E6%A0%A1%E6%8B%9B%E7%AE%80%E5%8E%86/"><span class="title">【求职】如何写一份受欢迎的校招简历</span></a><a class="item title" href="/2024/04/06/%E3%80%90%E8%B5%84%E6%BA%90%E5%B8%96%E3%80%91%E5%AD%A6%E4%B9%A0Java%E5%92%8C%E7%AE%97%E6%B3%95/"><span class="title">【资源帖】学习Java和算法</span></a><a class="item title" href="/2024/04/11/%E3%80%90JavaWeb%E3%80%91HTML%E3%80%81CSS/"><span class="title">【JavaWeb】HTML、CSS</span></a><a class="item title" href="/2024/04/10/%E3%80%90Java%E5%9F%BA%E7%A1%80%E3%80%91%E3%80%90java.lang.reflect%E3%80%91Junit%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95%E3%80%81%E5%8F%8D%E5%B0%84/"><span class="title">【Java基础】【java.lang.reflect】Junit单元测试、反射</span></a></div></widget>
 </div>
 
 </div></aside><div class="l_main" id="main">
@@ -76,12 +76,12 @@
   <div class="content">
     <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a>
 <span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div>
-<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-03-19T13:57:53.000Z">2025-03-19</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-03-19T13:58:41.463Z">2025-03-19</time></span></div></div></div>
+<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-03-19T13:57:53.000Z">2025-03-19</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-03-21T07:40:13.639Z">2025-03-21</time></span></div></div></div>
     
     <div class="bottom only-title">
       
       <div class="text-area">
-        <h1 class="text title"><span>【go基础】垃圾回收演进 三色标记法</span></h1>
+        <h1 class="text title"><span>【Go基础】垃圾回收演进 三色标记法</span></h1>
         
       </div>
     </div>
