@@ -20,28 +20,33 @@
   <title>【数据库】如何保障数据库和缓存一致性 - xinranzero</title>
 
   
-    <meta name="description" content="数据库和缓存的一致性问题，在面试以及实践中都是非常重要的知识点，而一般面试者只能说出最佳的实践是什么（即延迟双删或者先更新数据库再删除缓存key），但是不能通过线程之间的读写关系举例说明为什么要这样实践，本文通过穷尽更新缓存的四种方式进行分析，得出了这个结论。最后，本文还介绍了利用消息中间件MQ应对其他更复杂的情形。  缓存合理使用确提升了系统的吞吐量和稳定性，然而这是有代价的。这个代价便是缓存和">
+    <meta name="description" content="数据库和缓存的一致性问题，在面试以及实践中都是非常重要的知识点，而一般面试者只能说出最佳的实践是什么（即延迟双删或者先更新数据库再删除缓存key），但是不能通过线程之间的读写关系举例说明为什么要这样实践，本文通过穷尽更新缓存的四种方式进行分析，得出了这个结论。最后，本文还介绍了利用消息中间件MQ应对其他更复杂的情形。 [建议先看思维导图和How的总结]  Why缓存？ 缓存合理使用确提升了系统的吞">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【数据库】如何保障数据库和缓存一致性">
 <meta property="og:url" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/index.html">
 <meta property="og:site_name" content="xinranzero">
-<meta property="og:description" content="数据库和缓存的一致性问题，在面试以及实践中都是非常重要的知识点，而一般面试者只能说出最佳的实践是什么（即延迟双删或者先更新数据库再删除缓存key），但是不能通过线程之间的读写关系举例说明为什么要这样实践，本文通过穷尽更新缓存的四种方式进行分析，得出了这个结论。最后，本文还介绍了利用消息中间件MQ应对其他更复杂的情形。  缓存合理使用确提升了系统的吞吐量和稳定性，然而这是有代价的。这个代价便是缓存和">
+<meta property="og:description" content="数据库和缓存的一致性问题，在面试以及实践中都是非常重要的知识点，而一般面试者只能说出最佳的实践是什么（即延迟双删或者先更新数据库再删除缓存key），但是不能通过线程之间的读写关系举例说明为什么要这样实践，本文通过穷尽更新缓存的四种方式进行分析，得出了这个结论。最后，本文还介绍了利用消息中间件MQ应对其他更复杂的情形。 [建议先看思维导图和How的总结]  Why缓存？ 缓存合理使用确提升了系统的吞">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7.jpg">
-<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640">
-<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7.png">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104201449.png">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104324573.png">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328103815659.png">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328103833551.png">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328105647001.png">
 <meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/CacheAsidePattern.png">
-<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640">
-<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640">
-<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640">
-<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640">
-<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640">
-<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328103917806.png">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328103932370.png">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104443923.png">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104007544.png">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328105722009.png">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104024557.png">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104040124.png">
+<meta property="og:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104052718.png">
 <meta property="article:published_time" content="2025-03-27T08:04:32.000Z">
-<meta property="article:modified_time" content="2025-03-27T08:09:15.824Z">
+<meta property="article:modified_time" content="2025-03-28T03:04:15.275Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7.jpg">
+<meta name="twitter:image" content="http://xinranzero.com/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7.png">
   
   
   
@@ -87,7 +92,7 @@
   <div class="content">
     <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a>
 <span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div>
-<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-03-27T08:04:32.000Z">2025-03-27</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-03-27T08:09:15.824Z">2025-03-27</time></span></div></div></div>
+<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-03-27T08:04:32.000Z">2025-03-27</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-03-28T03:04:15.275Z">2025-03-28</time></span></div></div></div>
     
     <div class="bottom only-title">
       
@@ -99,36 +104,43 @@
     
   </div>
   </div><article class="md-text content"><p>数据库和缓存的一致性问题，在面试以及实践中都是非常重要的知识点，而一般面试者只能说出最佳的实践是什么（即延迟双删或者先更新数据库再删除缓存key），但是不能通过线程之间的读写关系举例说明为什么要这样实践，本文通过穷尽更新缓存的四种方式进行分析，得出了这个结论。最后，本文还介绍了利用消息中间件MQ应对其他更复杂的情形。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7.jpg" alt="如何保障数据库和缓存一致性"></p>
+<p><em><strong>[建议先看思维导图和How的总结]</strong></em></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7.png" alt="如何保障数据库和缓存一致性"></p>
+<h1 id="Why缓存？"><a href="#Why缓存？" class="headerlink" title="Why缓存？"></a>Why缓存？</h1><p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104201449.png" alt="image-20250328104201449"></p>
 <p>缓存合理使用确提升了系统的吞吐量和稳定性，然而这是有代价的。这个代价便是缓存和数据库的一致性带来了挑战，本文将针对最常见的 cache-aside 策略下如何维护缓存一致性彻底讲透。  </p>
 <p>在真实的业务场景中，我们的业务的数据——例如订单、会员、支付等——都是持久化到数据库中的，因为数据库能有很好的事务保证、持久化保证。但是，正因为数据库要能够满足这么多优秀的功能特性，使得数据库在设计上通常难以兼顾到性能，因此往往不能满足大型流量下的性能要求，像是 MySQL 数据库只能承担“千”这个级别的 QPS，否则很可能会不稳定，进而导致整个系统的故障。</p>
 <p>但是客观上，我们的业务规模很可能要求着更高的 QPS，有些业务的规模本身就非常大，也有些业务会遇到一些流量高峰，比如电商会遇到大促的情况。</p>
 <p>而这时候大部分的流量实际上都是<strong>读请求</strong>，而且大部分数据也是没有那么多变化的，如热门商品信息、微博的内容等常见数据就是如此。此时，<strong>缓存就是我们应对此类场景的利器。</strong></p>
-<h2 id="缓存的意义"><a href="#缓存的意义" class="headerlink" title="缓存的意义"></a>缓存的意义</h2><p>所谓缓存，实际上就是用空间换时间，准确地说是用<strong>更高速的空间来换时间</strong>，从而<strong>整体上提升读的性能。</strong></p>
+<p>所谓缓存，实际上就是用空间换时间，准确地说是用<strong>更高速的空间来换时间</strong>，从而<strong>整体上提升读的性能。</strong></p>
 <p>何为更高速的空间呢？</p>
-<p>更快的存储介质。通常情况下，如果说数据库的速度慢，就得用更快的存储组件去替代它，目前最常见的就是 Redis（内存存储）。Redis 单实例的读 QPS 可以高达 10w&#x2F;s，90% 的场景下只需要正确使用 Redis 就能应对。</p>
-<p>就近使用本地内存。就像 CPU 也有高速缓存一样，缓存也可以分为一级缓存、二级缓存。即便 Redis 本身性能已经足够高了，但访问一次 Redis 毕竟也需要一次网络 IO，而使用本地内存无疑有更快的速度。不过单机的内存是十分有限的，所以这种一级缓存只能存储非常少量的数据，通常是最热点的那些 key 对应的数据。这就相当于额外消耗宝贵的服务内存去换取高速的读取性能。</p>
-<h2 id="引入缓存后的一致性挑战"><a href="#引入缓存后的一致性挑战" class="headerlink" title="引入缓存后的一致性挑战"></a>引入缓存后的一致性挑战</h2><p>用空间换时间，意味着数据同时存在于多个空间。最常见的场景就是数据同时存在于 Redis 与 MySQL 上（为了问题的普适性，后面举例中若没有特别说明，缓存均指 Redis 缓存）。</p>
+<ol>
+<li><p><strong>更快的存储介质</strong>。通常情况下，如果说数据库的速度慢，就得用更快的存储组件去替代它，目前最常见的就是 Redis（内存存储）。Redis 单实例的读 QPS 可以高达 10w&#x2F;s，90% 的场景下只需要正确使用 Redis 就能应对。</p>
+</li>
+<li><p><strong>就近使用本地内存</strong>。就像 CPU 也有高速缓存一样，缓存也可以分为一级缓存、二级缓存。即便 Redis 本身性能已经足够高了，但访问一次 Redis 毕竟也需要一次网络 IO，而使用本地内存无疑有更快的速度。不过单机的内存是十分有限的，所以这种一级缓存只能存储非常少量的数据，通常是最热点的那些 key 对应的数据。这就相当于额外消耗宝贵的服务内存去换取高速的读取性能。</p>
+</li>
+</ol>
+<h1 id="Challenges？引入缓存后的一致性挑战"><a href="#Challenges？引入缓存后的一致性挑战" class="headerlink" title="Challenges？引入缓存后的一致性挑战"></a>Challenges？引入缓存后的一致性挑战</h1><p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104324573.png" alt="image-20250328104324573"></p>
+<p>用空间换时间，意味着数据同时存在于多个空间。最常见的场景就是数据同时存在于 Redis 与 MySQL 上（为了问题的普适性，后面举例中若没有特别说明，缓存均指 Redis 缓存）。</p>
 <p>实际上，最权威最全的数据还是在 MySQL 里的。而万一 Redis 数据没有得到及时的更新（例如数据库更新了没更新到 Redis），就出现了数据不一致。</p>
 <p>大部分情况下，只要使用了缓存，就必然会有不一致的情况出现，只是说这个不一致的时间窗口是否能做到足够的小。有些不合理的设计可能会导致数据持续不一致，这是我们需要改善设计去避免的。</p>
 <p>这里的一致性实际上对于本地缓存也是同理的，例如数据库更新后没有及时更新本地缓存，也是有一致性问题的，下文统一以 Redis 缓存作为引子讲述，实际上处理本地缓存原理基本一致。</p>
 <p><strong>缓存不一致性无法客观地完全消灭</strong></p>
 <p>为什么我们几乎没办法做到缓存和数据库之间的强一致呢？</p>
 <p>理想情况下，我们需要在数据库更新完后把对应的最新数据同步到缓存中，以便在读请求的时候能读到新的数据而不是旧的数据（脏数据）。但是很可惜，由于数据库和 Redis 之间是没有事务保证的，所以我们无法确保写入数据库成功后，写入 Redis 也是一定成功的；即便 Redis 写入能成功，在数据库写入成功后到 Redis 写入成功前的这段时间里，Redis 数据也肯定是和 MySQL 不一致的。如下两图所示：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640" alt="图片"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328103815659.png" alt="image-20250328103815659"></p>
 <p>无法事务保持一致</p>
 <p>所以说这个时间窗口是没办法完全消灭的，除非我们付出极大的代价，使用分布式事务等各种手段去维持强一致，但是这样会使得系统的整体性能大幅度下降，甚至比不用缓存还慢，这样不就与我们使用缓存的目标背道而驰了吗？</p>
-<p>不过虽然无法做到强一致，但是我们能做到的是缓存与数据库达到最终一致，而且不一致的时间窗口我们能做到尽可能短，按照经验来说，如果能将时间优化到 1ms 之内，这个一致性问题带来的影响我们就可以忽略不计。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640" alt="图片"></p>
-<h2 id="更新缓存的手段"><a href="#更新缓存的手段" class="headerlink" title="更新缓存的手段"></a>更新缓存的手段</h2><p>通常情况下，我们在处理查询请求的时候，使用缓存的逻辑如下：</p>
+<p>不过虽然无法做到强一致，但是我们能做到的是缓存与数据库达到最终一致，而且不一致的时间窗口我们能做到尽可能短，按照经验来说，如果能<strong>将时间优化到 1ms 之内</strong>，这个一致性问题带来的影响我们就可以忽略不计。</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328103833551.png" alt="image-20250328103833551"></p>
+<h1 id="How更新缓存"><a href="#How更新缓存" class="headerlink" title="How更新缓存?"></a>How更新缓存?</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328105647001.png" alt="image-20250328105647001"></p>
+<p>通常情况下，我们在处理查询请求的时候，使用缓存的逻辑如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">data = queryDataRedis(key);</span><br><span class="line"><span class="keyword">if</span> (data ==<span class="literal">null</span>) &#123;</span><br><span class="line">     data = queryDataMySQL(key); <span class="comment">//缓存查询不到，从MySQL做查询</span></span><br><span class="line">     <span class="keyword">if</span> (data!=<span class="literal">null</span>) &#123;</span><br><span class="line">         updateRedis(key, data);<span class="comment">//查询完数据后更新MySQL最新数据到Redis</span></span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>也就是说<strong>优先查询缓存，查询不到才查询数据库。</strong>如果这时候数据库查到数据了，就将缓存的数据进行更新。这是我们常说的 cache aside 的策略，也是最常用的策略。</p>
 <p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/CacheAsidePattern.png" alt="常见的缓存更新策略| HHD&#39;s Blog"></p>
 <p>这样的逻辑是正确的，而一致性的问题一般不来源于此，而是出现在处理<strong>写请求</strong>的时候。所以我们简化成最简单的写请求的逻辑，此时你可能会面临多个选择，究竟是直接更新缓存，还是失效缓存？而无论是更新缓存还是失效缓存，都可以选择在更新数据库之前，还是之后操作。</p>
 <p>这样就演变出 4 个策略：<strong>更新数据库后更新缓存、更新数据库前更新缓存、更新数据库后删除缓存、更新数据库前删除缓存。</strong>下面我们来分别讲述。</p>
-<p><strong>更新数据库后更新缓存的不一致问题</strong></p>
-<p>一种常见的操作是，设置一个过期时间，让写请求以数据库为准，过期后，读请求同步数据库中的最新数据给缓存。那么在加入了过期时间后，是否就不会有问题了呢？并不是这样。</p>
+<h2 id="1-更新数据库后更新缓存的不一致问题"><a href="#1-更新数据库后更新缓存的不一致问题" class="headerlink" title="1. 更新数据库后更新缓存的不一致问题"></a><strong>1. 更新数据库后更新缓存的不一致问题</strong></h2><p>一种常见的操作是，设置一个过期时间，让写请求以数据库为准，过期后，读请求同步数据库中的最新数据给缓存。那么在加入了过期时间后，是否就不会有问题了呢？并不是这样。</p>
 <p>大家设想一下这样的场景。</p>
 <p>假如这里有一个计数器，把数据库自减 1，原始数据库数据是 100，同时有两个写请求申请计数减一，假设线程 A 先减数据库成功，线程 B 后减数据库成功。那么这时候数据库的值是 98，缓存里正确的值应该也要是 98。</p>
 <p>但是特殊场景下，你可能会遇到这样的情况：</p>
@@ -147,13 +159,12 @@
 <table selecttype="cells"><colgroup><col width="128"><col width="180"><col width="180"><col width="180"></colgroup><tbody><tr height="24"><td><span>时间</span></td><td><span>线程A（写请求）</span></td><td><span>线程B（写请求）</span></td><td><span>问题</span></td></tr><tr height="24"><td><span>T1</span></td><td><span>更新数据库为99</span></td><td><br></td><td><br></td></tr><tr height="24"><td><span>T2</span></td><td><br></td><td><span>更新数据库为98</span></td><td><br></td></tr><tr height="24"><td><span>T3</span></td><td><br></td><td><span>更新缓存数据为98</span></td><td><br></td></tr><tr height="24"><td><span>T4</span></td><td><span>更新缓存数据为99</span></td><td><br></td><td><span>此时缓存的值被显式更新为99，但是实际上数据库的值已经是98，数据不一致</span></td></tr></tbody></table>
 
 <p>当然，如果更新 Redis 本身是失败的话，两边的值固然也是不一致的，这个前文也阐述过，几乎无法根除。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640" alt="图片"></p>
-<p><strong>更新数据库前更新缓存的不一致问题</strong></p>
-<p>那你可能会想，这是否表示，我应该先让缓存更新，之后再去更新数据库呢？类似这样：</p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328103917806.png" alt="image-20250328103917806"></p>
+<h2 id="2-更新数据库前更新缓存的不一致问题"><a href="#2-更新数据库前更新缓存的不一致问题" class="headerlink" title="2. 更新数据库前更新缓存的不一致问题"></a><strong>2. 更新数据库前更新缓存的不一致问题</strong></h2><p>那你可能会想，这是否表示，我应该先让缓存更新，之后再去更新数据库呢？类似这样：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">updateRedis(key, data);<span class="comment">//先更新缓存</span></span><br><span class="line">updateMySQL();<span class="comment">//再更新数据库</span></span><br></pre></td></tr></table></figure>
 
 <p>这样操作产生的问题更是显而易见的，因为我们无法保证数据库的更新成功，万一数据库更新失败了，你缓存的数据就不只是脏数据，而是错误数据了。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640" alt="图片"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328103932370.png" alt="image-20250328103932370"></p>
 <p>你可能会想，是否我在更新数据库失败的时候做 Redis 回滚的操作能够解决呢？这其实也是不靠谱的，因为我们也不能保证这个回滚的操作 100% 被成功执行。</p>
 <p>同时，在写写并发的场景下，同样有类似的一致性问题，请看以下情况：</p>
 <ul>
@@ -166,8 +177,7 @@
 </ul>
 <p>举个例子。线程 A 希望把计数器置为 0，线程 B 希望置为 1。而按照以上场景，缓存确实被设置为 1，但数据库却被设置为 0。</p>
 <p>所以<strong>通常情况下，更新缓存再更新数据库是我们应该避免使用的一种手段。</strong></p>
-<p><strong>更新数据库前删除缓存的问题</strong></p>
-<p>那如果采取删除缓存的策略呢？也就是说我们在更新数据库的时候失效对应的缓存，让缓存在下次触发读请求时进行更新，是否会更好呢？同样地，针对在更新数据库前和数据库后这两个删除时机，我们来比较下其差异。</p>
+<h2 id="3-更新数据库前删除缓存的问题"><a href="#3-更新数据库前删除缓存的问题" class="headerlink" title="3. 更新数据库前删除缓存的问题"></a><strong>3. 更新数据库前删除缓存的问题</strong></h2><p>那如果采取删除缓存的策略呢？也就是说我们在更新数据库的时候失效对应的缓存，让缓存在下次触发读请求时进行更新，是否会更好呢？同样地，针对在更新数据库前和数据库后这两个删除时机，我们来比较下其差异。</p>
 <p>最直观的做法，我们可能会先让缓存失效，然后去更新数据库，代码逻辑如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">deleteRedis(key);<span class="comment">//先删除缓存让缓存失效</span></span><br><span class="line">updateMySQL();<span class="comment">//再更新数据库</span></span><br></pre></td></tr></table></figure>
 
@@ -190,8 +200,7 @@
 <table selecttype="cells"><colgroup><col width="128"><col width="180"><col width="180"><col width="180"><col width="180"></colgroup><tbody><tr height="38"><td><span>时间</span></td><td><span>线程A（写请求）</span></td><td><span>线程C（新的读请求）</span></td><td><span>线程D（新的读请求）</span></td><td><span>问题</span></td></tr><tr height="24"><td><span>T5</span></td><td><span>sleep(N)</span></td><td><span>缓存存在，读取到缓存旧值100</span></td><td><br></td><td><span>其他线程可能在双删成功前读到脏数据</span></td></tr><tr height="24"><td><span>T6</span></td><td><span>删除缓存值</span></td><td><br></td><td><br></td><td><br></td></tr><tr height="24"><td><span>T7</span></td><td><br></td><td><br></td><td><span>缓存缺失，从数据库读取数据的最新值（99）</span></td><td><br></td></tr></tbody></table>
 
 <p>这种解决思路的关键在于对 N 的时间的判断，如果 N 时间太短，线程 A 第二次删除缓存的时间依旧早于线程 B 把脏数据写回缓存的时间，那么相当于做了无用功。而 N 如果设置得太长，那么在触发双删之前，新请求看到的都是脏数据。  </p>
-<p><strong>更新数据库后删除缓存</strong></p>
-<p>那如果我们把更新数据库放在删除缓存之前呢，问题是否解决？我们继续从读写并发的场景看下去，有没有类似的问题。</p>
+<h2 id="4-更新数据库后删除缓存"><a href="#4-更新数据库后删除缓存" class="headerlink" title="4. 更新数据库后删除缓存"></a><strong>4. 更新数据库后删除缓存</strong></h2><p>那如果我们把更新数据库放在删除缓存之前呢，问题是否解决？我们继续从读写并发的场景看下去，有没有类似的问题。</p>
 <table selecttype="cells"><colgroup><col width="128"><col width="180"><col width="180"><col width="180"><col width="180"></colgroup><tbody><tr height="24"><td><span>时间</span></td><td><span>线程A（写请求）</span></td><td><span>线程B（读请求）</span></td><td><span>线程C（读请求）</span></td><td><span>潜在问题</span></td></tr><tr height="24"><td><span>T1</span></td><td><span>更新主库 X = 99（原值 X = 100）</span></td><td><br></td><td><br></td><td><br></td></tr><tr height="24"><td><span>T2</span></td><td><br></td><td><br></td><td><span>读取数据，查询到缓存还有数据，返回100</span></td><td><span>线程C实际上读取到了和数据库不一致的数据</span></td></tr><tr height="24"><td><span>T3</span></td><td><span>删除缓存</span></td><td><br></td><td><br></td><td><br></td></tr><tr height="24"><td><span>T4</span></td><td><br></td><td><span>查询缓存，缓存缺失，查询数据库得到当前值99</span></td><td><br></td><td><br></td></tr><tr height="24"><td><span>T5</span></td><td><br></td><td><span>将99写入缓存</span></td><td><br></td><td><br></td></tr></tbody></table>
 
 <p>可以看到，大体上，采取先更新数据库再删除缓存的策略是没有问题的，仅在更新数据库成功到缓存删除之间的时间差内——[T2,T3)的窗口 ，可能会被别的线程读取到老值。  </p>
@@ -202,15 +211,30 @@
 
 <p>总的来说，这个不一致场景出现条件非常严格，因为并发量很大时，缓存不太可能不存在；如果并发很大，而缓存真的不存在，那么很可能是这时的写场景很多，因为写场景会删除缓存。</p>
 <p>所以待会我们会提到，写场景很多时候实际上并不适合采取删除策略。</p>
-<p><strong>总结四种更新策略</strong></p>
-<p>终上所述，我们对比了四个更新缓存的手段，做一个总结对比，其中应对方案也提供参考，具体不做展开，如下表：</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104443923.png" alt="image-20250328104443923"></p>
+<p><strong>【总结】</strong>红字为相应的解决方案，但是这些方案或多或少都存在一些问题：</p>
+<ol>
+<li>分布式锁：操作重</li>
+<li>用MQ确认：复杂</li>
+<li>延迟双删：关键在于sleep(N)的N<ul>
+<li>太短：早于新的读请求，于是新的读请求请求了数据库又往缓存写入了脏数据，无用功</li>
+<li>太长：新的读请求都得到了脏数据</li>
+</ul>
+</li>
+</ol>
+<p><strong>【总结】</strong>最佳实践：更新数据库后删除缓存值</p>
+<ul>
+<li>读多写少–&gt;更新数据库后删除缓存</li>
+<li>读写相当&#x2F;写多读少–&gt;更新数据库后更新缓存</li>
+</ul>
+<p>【原总结，看完上面的还没理解可以往下看】终上所述，我们对比了四个更新缓存的手段，做一个总结对比，其中应对方案也提供参考，具体不做展开，如下表：</p>
 <table selecttype="cells"><colgroup><col width="128"><col width="180"><col width="229"><col width="180"></colgroup><tbody><tr height="24"><td><span>策略</span></td><td><span>并发场景</span></td><td><span>潜在问题</span></td><td><span>应对方案</span></td></tr><tr height="37"><td colspan="1" rowspan="2"><span>更新数据库+更新缓存</span></td><td><span>写+读</span></td><td><span>线程A未更新完缓存之前，线程B的读请求会短暂读到旧值</span></td><td><span>可以忽略</span></td></tr><tr height="56"><td><span>写+写</span></td><td><span>更新数据库的顺序是先A后B，但更新缓存时顺序是先B后A，数据库和缓存数据不一致</span></td><td><span>分布式锁（操作重）</span></td></tr><tr height="37"><td colspan="1" rowspan="2"><span>更新缓存+更新数据库</span></td><td><span>无并发</span></td><td><span>线程A还未更新完缓存但是更新数据库可能失败</span></td><td><span>利用MQ确认数据库更新成功（较复杂）</span></td></tr><tr height="37"><td><span>写+写</span></td><td><span>更新缓存的顺序是先A后B，但更新数据库时顺序是先B后A</span></td><td><span>分布式锁（操作很重）</span></td></tr><tr height="24"><td><span>删除缓存值+更新数据库</span></td><td><span>写+读</span></td><td><span>写请求的线程A删除了缓存在更新数据库之前，这时候读请求线程B到来，因为缓存缺失，则把当前数据读取出来放到缓存，而后线程A更新成功了数据库</span></td><td><span>延迟双删（但是延迟的时间不好估计，且延迟的过程中依旧有不一致的时间窗口）</span></td></tr><tr height="56"><td colspan="1" rowspan="2"><span>更新数据库+删除缓存值</span></td><td><span>写+读（缓存命中）</span></td><td><span>线程A完成数据库更新成功后，尚未删除缓存，线程B有并发读请求会读到旧的脏数据</span></td><td><span>可以忽略</span></td></tr><tr height="56"><td><span>写+读（缓存不命中）</span></td><td><span>读请求不命中缓存，写请求处理完之后读请求才回写缓存，此时缓存不一致</span></td><td><span>分布式锁（操作重）</span></td></tr></tbody></table>
 
 <p><strong>从一致性的角度来看，采取更新数据库后删除缓存值，是更为适合的策略。</strong>因为出现不一致的场景的条件更为苛刻，概率相比其他方案更低。  </p>
 <p>那么是否更新缓存这个策略就一无是处呢？不是的！</p>
 <p>删除缓存值意味着对应的 Key 会失效，那么这时候读请求都会打到数据库。如果这个数据的写操作非常频繁，就会导致缓存的作用变得非常小。而如果这时候某些 Key 还是非常大的热 Key，就可能因为扛不住数据量而导致系统不可用。</p>
 <p>如下图所示：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640" alt="图片"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104007544.png" alt="image-20250328104007544"></p>
 <p>删除策略频繁的缓存失效导致读请求无法利用缓存</p>
 <p>所以做个简单总结，足以适应绝大部分的互联网开发场景的决策：</p>
 <ul>
@@ -219,14 +243,15 @@
 <li><p>针对读写相当或者写多读少的场景，建议选择更新数据库后更新缓存的策略。</p>
 </li>
 </ul>
-<h2 id="最终一致性如何保证？"><a href="#最终一致性如何保证？" class="headerlink" title="最终一致性如何保证？"></a>最终一致性如何保证？</h2><p><strong>缓存设置过期时间</strong></p>
+<p><strong>最终一致性如何保证？–&gt;缓存设置过期时间</strong></p>
 <p>第一个方法便是我们上面提到的，当我们无法确定 MySQL 更新完成后，缓存的更新&#x2F;删除一定能成功，例如 Redis 挂了导致写入失败了，或者当时网络出现故障，更常见的是服务当时刚好发生重启了，没有执行这一步的代码。</p>
 <p>这些时候 MySQL 的数据就无法刷到 Redis 了。为了避免这种不一致性永久存在，使用缓存的时候，我们必须要给缓存设置一个过期时间，例如 1 分钟，这样即使出现了更新 Redis 失败的极端场景，不一致的时间窗口最多也只是 1 分钟。</p>
 <p>这是我们最终一致性的兜底方案，万一出现任何情况的不一致问题，最后都能通过缓存失效后重新查询数据库，然后回写到缓存，来做到缓存与数据库的最终一致。</p>
+<h1 id="Addition-消息中间件的运用"><a href="#Addition-消息中间件的运用" class="headerlink" title="Addition:消息中间件的运用"></a>Addition:消息中间件的运用</h1><p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328105722009.png" alt="image-20250328105722009"></p>
 <h2 id="如何减少缓存删除-更新的失败？"><a href="#如何减少缓存删除-更新的失败？" class="headerlink" title="如何减少缓存删除&#x2F;更新的失败？"></a>如何减少缓存删除&#x2F;更新的失败？</h2><p>万一删除缓存这一步因为服务重启没有执行，或者 Redis 临时不可用导致删除缓存失败了，就会有一个较长的时间（缓存的剩余过期时间）是数据不一致的。</p>
 <p>那我们有没有什么手段来减少这种不一致的情况出现呢？这时候借助一个可靠的消息中间件就是一个不错的选择。</p>
 <p>因为消息中间件有 ATLEAST-ONCE 的机制，如下图所示。</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640" alt="图片"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104024557.png" alt="image-20250328104024557"></p>
 <p>我们把删除 Redis 的请求以消费 MQ 消息的手段去失效对应的 Key 值，如果 Redis 真的存在异常导致无法删除成功，我们依旧可以依靠 MQ 的重试机制来让最终 Redis 对应的 Key 失效。</p>
 <p>而你们或许会问，极端场景下，是否存在更新数据库后 MQ 消息没发送成功，或者没机会发送出去机器就重启的情况？</p>
 <p>这个场景的确比较麻烦，如果 MQ 使用的是 RocketMQ，我们可以借助 RocketMQ 的事务消息，来让删除缓存的消息最终一定发送出去。而如果你没有使用 RocketMQ，或者你使用的消息中间件并没有事务消息的特性，则可以采取消息表的方式让更新数据库和发送消息一起成功。事实上这个话题比较大了，我们不在这里展开。</p>
@@ -237,18 +262,15 @@
 
 <p>这就涉及多个 Redis 的操作，每一步都可能失败，影响到后面的更新。甚至从系统设计上，更新数据库可能是单独的一个服务，而这几个不同的 Key 的缓存维护却在不同的 3 个微服务中，这就大大增加了系统的复杂度和提高了缓存操作失败的可能性。最可怕的是，操作更新记录的地方很大概率不只在一个业务逻辑中，而是散发在系统各个零散的位置。</p>
 <p>针对这个场景，解决方案和上文提到的保证最终一致性的操作一样，就是把更新缓存的操作以 MQ 消息的方式发送出去，由不同的系统或者专门的一个系统进行订阅，而做聚合的操作。如下图：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640" alt="图片"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104040124.png" alt="image-20250328104040124"></p>
 <p>不同业务系统订阅 MQ 消息单独维护各自的缓存 Key</p>
 <h2 id="通过订阅-MySQL-binlog-的方式处理缓存"><a href="#通过订阅-MySQL-binlog-的方式处理缓存" class="headerlink" title="通过订阅 MySQL binlog 的方式处理缓存"></a>通过订阅 MySQL binlog 的方式处理缓存</h2><p>上面讲到的 MQ 处理方式需要业务代码里面显式地发送 MQ 消息。还有一种优雅的方式便是订阅 MySQL 的 binlog，监听数据的真实变化情况以处理相关的缓存。</p>
 <p>例如刚刚提到的例子中，如果粉丝又触发打赏了，这时候我们利用 binlog 表监听是能及时发现的，发现后就能集中处理了，而且无论是在什么系统什么位置去更新数据，都能做到集中处理。</p>
 <p>目前业界类似的产品有 Canal，具体的操作图如下：</p>
-<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/640" alt="图片"></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/image-20250328104052718.png" alt="image-20250328104052718"></p>
 <p>利用 Canel 订阅数据库 binlog 变更从而发出 MQ 消息，让一个专门消费者服务维护所有相关 Key 的缓存操作</p>
 <p>到这里，针对大型系统缓存设计如何保证最终一致性，我们已经从策略、场景、操作方案等角度进行了细致的讲述，希望能对你起到帮助。</p>
 <p>   </p>
-<p>作者简介</p>
-<p>作者 Jaskey，腾讯会议后台架构师。Apache RocketMQ committer、拥有11年中间件产品和和大型业务后台的双背景研发经历，对海量用户、高并发、多地域容灾等架构设计拥有丰富经验，热衷与技术总结和知识分享。</p>
-<p>对文章内容感兴趣的也欢迎与作者沟通微信：JaskeyLam，邮箱：<a href="mailto:&#x6c;&#105;&#x6e;&#x6a;&#117;&#x6e;&#x6a;&#x69;&#x65;&#64;&#x61;&#x70;&#97;&#x63;&#x68;&#101;&#x2e;&#111;&#x72;&#103;">&#x6c;&#105;&#x6e;&#x6a;&#117;&#x6e;&#x6a;&#x69;&#x65;&#64;&#x61;&#x70;&#97;&#x63;&#x68;&#101;&#x2e;&#111;&#x72;&#103;</a></p>
 <p>参考资料：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/HilTpiLm5VKp5pbhd-K9uQ">一文讲透数据库缓存一致性问题 (qq.com)</a></p>
 <p>扩展学习：</p>
 <ol>
@@ -280,7 +302,7 @@
 
 
 
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E7%9A%84%E6%84%8F%E4%B9%89"><span class="toc-text">缓存的意义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E5%85%A5%E7%BC%93%E5%AD%98%E5%90%8E%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E6%8C%91%E6%88%98"><span class="toc-text">引入缓存后的一致性挑战</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E7%BC%93%E5%AD%98%E7%9A%84%E6%89%8B%E6%AE%B5"><span class="toc-text">更新缓存的手段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%EF%BC%9F"><span class="toc-text">最终一致性如何保证？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%87%8F%E5%B0%91%E7%BC%93%E5%AD%98%E5%88%A0%E9%99%A4-%E6%9B%B4%E6%96%B0%E7%9A%84%E5%A4%B1%E8%B4%A5%EF%BC%9F"><span class="toc-text">如何减少缓存删除&#x2F;更新的失败？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E5%A4%8D%E6%9D%82%E7%9A%84%E5%A4%9A%E7%BC%93%E5%AD%98%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="toc-text">如何处理复杂的多缓存场景？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E8%AE%A2%E9%98%85-MySQL-binlog-%E7%9A%84%E6%96%B9%E5%BC%8F%E5%A4%84%E7%90%86%E7%BC%93%E5%AD%98"><span class="toc-text">通过订阅 MySQL binlog 的方式处理缓存</span></a></li></ol></div><div class="widget-footer">
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Why%E7%BC%93%E5%AD%98%EF%BC%9F"><span class="toc-text">Why缓存？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Challenges%EF%BC%9F%E5%BC%95%E5%85%A5%E7%BC%93%E5%AD%98%E5%90%8E%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7%E6%8C%91%E6%88%98"><span class="toc-text">Challenges？引入缓存后的一致性挑战</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#How%E6%9B%B4%E6%96%B0%E7%BC%93%E5%AD%98"><span class="toc-text">How更新缓存?</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BC%95%E8%A8%80"><span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%9B%B4%E6%96%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8E%E6%9B%B4%E6%96%B0%E7%BC%93%E5%AD%98%E7%9A%84%E4%B8%8D%E4%B8%80%E8%87%B4%E9%97%AE%E9%A2%98"><span class="toc-text">1. 更新数据库后更新缓存的不一致问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%9B%B4%E6%96%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%89%8D%E6%9B%B4%E6%96%B0%E7%BC%93%E5%AD%98%E7%9A%84%E4%B8%8D%E4%B8%80%E8%87%B4%E9%97%AE%E9%A2%98"><span class="toc-text">2. 更新数据库前更新缓存的不一致问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%9B%B4%E6%96%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%89%8D%E5%88%A0%E9%99%A4%E7%BC%93%E5%AD%98%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-text">3. 更新数据库前删除缓存的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%9B%B4%E6%96%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8E%E5%88%A0%E9%99%A4%E7%BC%93%E5%AD%98"><span class="toc-text">4. 更新数据库后删除缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Addition-%E6%B6%88%E6%81%AF%E4%B8%AD%E9%97%B4%E4%BB%B6%E7%9A%84%E8%BF%90%E7%94%A8"><span class="toc-text">Addition:消息中间件的运用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%87%8F%E5%B0%91%E7%BC%93%E5%AD%98%E5%88%A0%E9%99%A4-%E6%9B%B4%E6%96%B0%E7%9A%84%E5%A4%B1%E8%B4%A5%EF%BC%9F"><span class="toc-text">如何减少缓存删除&#x2F;更新的失败？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E5%A4%8D%E6%9D%82%E7%9A%84%E5%A4%9A%E7%BC%93%E5%AD%98%E5%9C%BA%E6%99%AF%EF%BC%9F"><span class="toc-text">如何处理复杂的多缓存场景？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E8%AE%A2%E9%98%85-MySQL-binlog-%E7%9A%84%E6%96%B9%E5%BC%8F%E5%A4%84%E7%90%86%E7%BC%93%E5%AD%98"><span class="toc-text">通过订阅 MySQL binlog 的方式处理缓存</span></a></li></ol></li></ol></div><div class="widget-footer">
 
 <a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>Scroll to Top</span></a></div></widget>
 </div></aside><div class='float-panel blur'>
