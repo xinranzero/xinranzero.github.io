@@ -17,20 +17,22 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
   <meta name="theme-color" content="#f9fafb">
   
-  <title>【Go基础】常用环境变量设置 - xinranzero</title>
+  <title>【Go基础】环境搭建与开发 - xinranzero</title>
 
   
-    <meta name="description" content="常用环境变量GOROOT：  go的安装目录（go安装：https:&#x2F;&#x2F;golang.google.cn&#x2F;dl&#x2F;）  GOPATH：一般给文件夹起名叫GoWorkstation、Go_WorkSpace等。  src：存放源代码 pkg：存放依赖包 bin：存放可执行文件  其他常用环境变量：GOOS，GOARCH，GOPROXY国内用户建议设置 goproxy：export GOPROXY&amp;#x">
+    <meta name="description" content="环境第1步:下载go（下载地址） 第2步：配置环境变量 GOROOT：go的安装目录  GOPATH：go的工作目录（全局），一般给文件夹起名叫GoWorkstation、Go_WorkSpace等。  src：存放源代码  pkg：存放依赖包  bin：存放可执行文件 GOPATH 是 Go 早期（Go 1.11 之前）管理依赖和项目代码的核心环境变量，早期go build、go run或go">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Go基础】常用环境变量设置">
-<meta property="og:url" content="http://xinranzero.com/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%B8%B8%E7%94%A8%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E8%AE%BE%E7%BD%AE/index.html">
+<meta property="og:title" content="【Go基础】环境搭建与开发">
+<meta property="og:url" content="http://xinranzero.com/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%8E%E5%BC%80%E5%8F%91/index.html">
 <meta property="og:site_name" content="xinranzero">
-<meta property="og:description" content="常用环境变量GOROOT：  go的安装目录（go安装：https:&#x2F;&#x2F;golang.google.cn&#x2F;dl&#x2F;）  GOPATH：一般给文件夹起名叫GoWorkstation、Go_WorkSpace等。  src：存放源代码 pkg：存放依赖包 bin：存放可执行文件  其他常用环境变量：GOOS，GOARCH，GOPROXY国内用户建议设置 goproxy：export GOPROXY&amp;#x">
+<meta property="og:description" content="环境第1步:下载go（下载地址） 第2步：配置环境变量 GOROOT：go的安装目录  GOPATH：go的工作目录（全局），一般给文件夹起名叫GoWorkstation、Go_WorkSpace等。  src：存放源代码  pkg：存放依赖包  bin：存放可执行文件 GOPATH 是 Go 早期（Go 1.11 之前）管理依赖和项目代码的核心环境变量，早期go build、go run或go">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://xinranzero.com/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%8E%E5%BC%80%E5%8F%91/image-20250329160733045.png">
 <meta property="article:published_time" content="2025-03-19T14:00:47.000Z">
-<meta property="article:modified_time" content="2025-03-19T14:00:56.150Z">
+<meta property="article:modified_time" content="2025-03-29T09:00:08.540Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xinranzero.com/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%8E%E5%BC%80%E5%8F%91/image-20250329160733045.png">
   
   
   
@@ -63,7 +65,7 @@
 <div class="widgets">
 
 
-<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">Recent Update</span></div><div class="widget-body fs14"><a class="item title" href="/2025/03/28/%E3%80%90%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E3%80%91%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E4%B8%8E%E6%8A%80%E6%9C%AF/"><span class="title">【系统设计】秒杀系统实现方案与技术</span></a><a class="item title" href="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/"><span class="title">【数据库】如何保障数据库和缓存一致性</span></a><a class="item title" href="/2025/03/24/%E3%80%90Kubernetes%E3%80%91%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BAKubenetes%E9%9B%86%E7%BE%A4/"><span class="title">【Kubernetes】如何搭建Kubenetes集群</span></a><a class="item title" href="/2025/03/23/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><span class="title">【Go基础】分布式事务</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/"><span class="title">【Go基础】微服务概念与演进</span></a><a class="item title" href="/2025/03/21/%E3%80%90%E9%80%9A%E7%94%A8%E5%B7%A5%E5%85%B7%E3%80%91Git%E5%88%86%E5%B8%83%E5%BC%8F%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E5%B7%A5%E5%85%B7/"><span class="title">【通用工具】Git分布式版本控制工具</span></a><a class="item title" href="/2025/03/23/%E3%80%90%E6%8A%80%E6%9C%AF%E6%80%9D%E8%80%83%E3%80%91%E5%B7%A5%E7%A8%8B%E4%B8%8A%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/"><span class="title">【技术思考】工程上的最佳实践</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/"><span class="title">【Go基础】错误处理</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%BC%94%E8%BF%9B%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95/"><span class="title">【Go基础】垃圾回收演进 三色标记法</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%B8%B8%E7%94%A8%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E8%AE%BE%E7%BD%AE/"><span class="title">【Go基础】常用环境变量设置</span></a></div></widget>
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">Recent Update</span></div><div class="widget-body fs14"><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%8E%E5%BC%80%E5%8F%91/"><span class="title">【Go基础】环境搭建与开发</span></a><a class="item title" href="/2025/03/28/%E3%80%90%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E3%80%91%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E4%B8%8E%E6%8A%80%E6%9C%AF/"><span class="title">【系统设计】秒杀系统实现方案与技术</span></a><a class="item title" href="/2025/03/27/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%A6%82%E4%BD%95%E4%BF%9D%E9%9A%9C%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7/"><span class="title">【数据库】如何保障数据库和缓存一致性</span></a><a class="item title" href="/2025/03/24/%E3%80%90Kubernetes%E3%80%91%E5%A6%82%E4%BD%95%E6%90%AD%E5%BB%BAKubenetes%E9%9B%86%E7%BE%A4/"><span class="title">【Kubernetes】如何搭建Kubenetes集群</span></a><a class="item title" href="/2025/03/23/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><span class="title">【Go基础】分布式事务</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/"><span class="title">【Go基础】微服务概念与演进</span></a><a class="item title" href="/2025/03/21/%E3%80%90%E9%80%9A%E7%94%A8%E5%B7%A5%E5%85%B7%E3%80%91Git%E5%88%86%E5%B8%83%E5%BC%8F%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E5%B7%A5%E5%85%B7/"><span class="title">【通用工具】Git分布式版本控制工具</span></a><a class="item title" href="/2025/03/23/%E3%80%90%E6%8A%80%E6%9C%AF%E6%80%9D%E8%80%83%E3%80%91%E5%B7%A5%E7%A8%8B%E4%B8%8A%E7%9A%84%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/"><span class="title">【技术思考】工程上的最佳实践</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/"><span class="title">【Go基础】错误处理</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%BC%94%E8%BF%9B%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95/"><span class="title">【Go基础】垃圾回收演进 三色标记法</span></a></div></widget>
 </div>
 
 </div></aside><div class="l_main" id="main">
@@ -76,28 +78,70 @@
   <div class="content">
     <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a>
 <span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div>
-<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-03-19T14:00:47.000Z">2025-03-19</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-03-19T14:00:56.150Z">2025-03-19</time></span></div></div></div>
+<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-03-19T14:00:47.000Z">2025-03-19</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-03-29T09:00:08.540Z">2025-03-29</time></span></div></div></div>
     
     <div class="bottom only-title">
       
       <div class="text-area">
-        <h1 class="text title"><span>【Go基础】常用环境变量设置</span></h1>
+        <h1 class="text title"><span>【Go基础】环境搭建与开发</span></h1>
         
       </div>
     </div>
     
   </div>
-  </div><article class="md-text content"><h1 id="常用环境变量"><a href="#常用环境变量" class="headerlink" title="常用环境变量"></a>常用环境变量</h1><p>GOROOT：</p>
+  </div><article class="md-text content"><h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><h2 id="第1步-下载go"><a href="#第1步-下载go" class="headerlink" title="第1步:下载go"></a>第1步:下载go</h2><p>（<a target="_blank" rel="noopener" href="https://golang.google.cn/dl/">下载地址</a>）</p>
+<h2 id="第2步：配置环境变量"><a href="#第2步：配置环境变量" class="headerlink" title="第2步：配置环境变量"></a>第2步：配置环境变量</h2><ul>
+<li><p><code>GOROOT</code>：go的安装目录</p>
+</li>
+<li><p><code>GOPATH</code>：go的工作目录（全局），一般给文件夹起名叫<code>GoWorkstation</code>、<code>Go_WorkSpace</code>等。</p>
 <ul>
-<li>go的安装目录（go安装：<a target="_blank" rel="noopener" href="https://golang.google.cn/dl/">https://golang.google.cn/dl/</a>）</li>
+<li><p><code>src</code>：存放源代码</p>
+</li>
+<li><p><code>pkg</code>：存放依赖包</p>
+</li>
+<li><p><code>bin</code>：存放可执行文件</p>
+<p><code>GOPATH</code> 是 Go 早期（Go 1.11 之前）管理依赖和项目代码的核心环境变量，早期<code>go build</code>、<code>go run</code>或<code>go install</code>等命令会按照当前目录-&gt;绝对路径-&gt;GOPATH路径查找目标代码。从Go 1.11开始，官方推荐使用<strong>Go Modules</strong>替代 <code>GOPATH</code>，可以在任意目录管理项目，依赖存储在 <code>go.mod</code> 和 <code>go.sum</code>，而非 <code>GOPATH</code>。</p>
+</li>
 </ul>
-<p>GOPATH：一般给文件夹起名叫<code>GoWorkstation</code>、<code>Go_WorkSpace</code>等。</p>
+</li>
+<li><p>其他常用环境变量：<code>GOOS</code>，<code>GOARCH</code>，<code>GOPROXY</code>，国内用户建议设置 goproxy：<code>export GOPROXY=https://goproxy.cn</code></p>
+<p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%8E%E5%BC%80%E5%8F%91/image-20250329160733045.png" alt="image-20250329160733045"></p>
+</li>
+</ul>
+<h1 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h1><p>推荐用Goland进行开发，实际运行的时候，如果是写的单独文件，设置按照<code>file</code>文件运行，否则包管理可能会有问题；如果是项目，需要指定目录为<code>xxx/src</code>，指定输出目录为<code>xxx/bin</code>。</p>
+<h1 id="Go-Modules"><a href="#Go-Modules" class="headerlink" title="Go Modules"></a>Go Modules</h1><h2 id="1-创建Go-Modules项目"><a href="#1-创建Go-Modules项目" class="headerlink" title="1. 创建Go Modules项目"></a>1. 创建Go Modules项目</h2><p><code>go mod init calc-mod</code>：在当前目录初始化一个 Go Modules 项目。会创建 <code>go.mod</code> 文件，内容为<code>module calc-mod</code>，<code>calc-mod</code> 是自定义的模块名（通常用于本地开发）。</p>
+<p>如果项目计划开源到 GitHub，模块名应改为仓库路径：<code>go mod init github.com/fuxing-repo/fuxing-module-name</code>，通常对应代码仓库的 URL（如 <code>github.com/用户/仓库</code>）。</p>
+<p>生成的 <code>go.mod</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">module github.com/fuxing-repo/fuxing-module-name</span><br></pre></td></tr></table></figure>
+
+<p><strong>与 Maven&#x2F;Gradle 的区别</strong>：Go 的设计哲学是<strong>去中心化</strong>，直接通过代码仓库（GitHub&#x2F;GitLab 等）分发模块，依赖 Git Tag 版本化。</p>
 <ul>
-<li>src：存放源代码</li>
-<li>pkg：存放依赖包</li>
-<li>bin：存放可执行文件</li>
+<li><strong>无需发布到中央仓库</strong>：Go 依赖直接从代码仓库（如 GitHub）下载。</li>
+<li><strong>版本控制</strong>：通过 Git 的标签（Tag）标记版本（如 <code>v1.0.0</code>）。如需指定版本运行 <code>go get github.com/foo/bar@v1.2.3</code>，Go 会自动更新 <code>go.mod</code>。</li>
 </ul>
-<p>其他常用环境变量：GOOS，GOARCH，GOPROXY<br>国内用户建议设置 goproxy：export GOPROXY&#x3D;<a target="_blank" rel="noopener" href="https://goproxy.cn/">https://goproxy.cn</a></p>
+<h2 id="2-完整流程示例"><a href="#2-完整流程示例" class="headerlink" title="2. 完整流程示例"></a>2. 完整流程示例</h2><p><strong>步骤 1：初始化模块</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go mod init github.com/fuxing-repo/calculator</span><br></pre></td></tr></table></figure>
+
+<p><strong>步骤 2：编写代码并导入依赖</strong></p>
+<p>在 <code>main.go</code> 中导入第三方库（如 <code>github.com/gin-gonic/gin</code>）：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;github.com/gin-gonic/gin&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    r := gin.Default()</span><br><span class="line">    r.Run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>步骤 3：自动下载依赖</strong></p>
+<p>运行任意 Go 命令（如 <code>go build</code> 或 <code>go list</code>）：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> list</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Go 会：<ol>
+<li>解析 <code>import</code> 语句，发现依赖 <code>github.com/gin-gonic/gin</code>。</li>
+<li>下载最新版本（或符合 <code>go.mod</code> 约束的版本）。</li>
+<li>更新 <code>go.mod</code> 和 <code>go.sum</code> 文件。</li>
+</ol>
+</li>
+</ul>
+<h1 id="包的管理"><a href="#包的管理" class="headerlink" title="包的管理"></a>包的管理</h1><p>Go的<code>import</code>是包级别的，包名就是当前文件夹名称。</p>
+<p>一个项目中，可以存在一样的包名，如果需要引用同样的包名，可以用<code>alisa</code>区分。</p>
+<p><strong>可见性</strong>：无论是变量、函数还是类属性及方法，它们的可见性都是与包相关联的。如果属性名或方法名首字母大写，则可以在其他包中直接访问这些属性和方法，否则只能在包内访问。</p>
+<p>结合<code>import</code>可以用一个包名来点出函数、结构体、接口等调用。</p>
+<p>入口的package必须是main，否则可以编译成功，但是跑不起来。</p>
 
 <div class="article-footer fs14">
     <section id="license">
@@ -121,7 +165,7 @@
 
 
 
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">常用环境变量</span></a></li></ol></div><div class="widget-footer">
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83"><span class="toc-text">环境</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC1%E6%AD%A5-%E4%B8%8B%E8%BD%BDgo"><span class="toc-text">第1步:下载go</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC2%E6%AD%A5%EF%BC%9A%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-text">第2步：配置环境变量</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%80%E5%8F%91"><span class="toc-text">开发</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Go-Modules"><span class="toc-text">Go Modules</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%88%9B%E5%BB%BAGo-Modules%E9%A1%B9%E7%9B%AE"><span class="toc-text">1. 创建Go Modules项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B%E7%A4%BA%E4%BE%8B"><span class="toc-text">2. 完整流程示例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8C%85%E7%9A%84%E7%AE%A1%E7%90%86"><span class="toc-text">包的管理</span></a></li></ol></div><div class="widget-footer">
 
 <a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>Scroll to Top</span></a></div></widget>
 </div></aside><div class='float-panel blur'>
