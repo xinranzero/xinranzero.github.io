@@ -17,18 +17,18 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
   <meta name="theme-color" content="#f9fafb">
   
-  <title>【Go基础】微服务概念与演进 - xinranzero</title>
+  <title>【mongoDB】分片 - xinranzero</title>
 
   
-    <meta name="description" content="微服务概念与演进巨石架构到微服务的演进传统网页应用虽然进行了模块化设计，但是最终仍然是打包成一个war包进行部署，启动慢，无法拓展，可靠性很低。 什么是微服务是面向服务的架构模式（SOA）的最佳实践。定义：围绕业务功能构建的，服务关注单一业务，服务间采用轻量级的通信机制，可以全自动独立部署，可以使用不同的编程语言和数据存储技术。微服务架构通过业务拆分实现服务组件化，通过组件组合快速开发系统，业务单">
+    <meta name="description" content="1.实战中的配置查看mongo集群的pod12345678910kubectl get pod -n mongoNAME                                  READY   STATUS    RESTARTS      AGEmongo-mongodb-sharded-configsvr-0     1&#x2F;1     Running   0             1">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Go基础】微服务概念与演进">
-<meta property="og:url" content="http://xinranzero.com/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/index.html">
+<meta property="og:title" content="【mongoDB】分片">
+<meta property="og:url" content="http://xinranzero.com/2025/11/28/%E3%80%90mongoDB%E3%80%91%E5%88%86%E7%89%87/index.html">
 <meta property="og:site_name" content="xinranzero">
-<meta property="og:description" content="微服务概念与演进巨石架构到微服务的演进传统网页应用虽然进行了模块化设计，但是最终仍然是打包成一个war包进行部署，启动慢，无法拓展，可靠性很低。 什么是微服务是面向服务的架构模式（SOA）的最佳实践。定义：围绕业务功能构建的，服务关注单一业务，服务间采用轻量级的通信机制，可以全自动独立部署，可以使用不同的编程语言和数据存储技术。微服务架构通过业务拆分实现服务组件化，通过组件组合快速开发系统，业务单">
+<meta property="og:description" content="1.实战中的配置查看mongo集群的pod12345678910kubectl get pod -n mongoNAME                                  READY   STATUS    RESTARTS      AGEmongo-mongodb-sharded-configsvr-0     1&#x2F;1     Running   0             1">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2025-03-19T13:41:56.000Z">
-<meta property="article:modified_time" content="2025-03-24T02:42:59.889Z">
+<meta property="article:published_time" content="2025-11-28T13:27:38.000Z">
+<meta property="article:modified_time" content="2025-11-28T13:58:34.809Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
   
@@ -76,51 +76,143 @@
   <div class="content">
     <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a>
 <span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div>
-<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-03-19T13:41:56.000Z">2025-03-19</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-03-24T02:42:59.889Z">2025-03-24</time></span></div></div></div>
+<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-11-28T13:27:38.000Z">2025-11-28</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-11-28T13:58:34.809Z">2025-11-28</time></span></div></div></div>
     
     <div class="bottom only-title">
       
       <div class="text-area">
-        <h1 class="text title"><span>【Go基础】微服务概念与演进</span></h1>
+        <h1 class="text title"><span>【mongoDB】分片</span></h1>
         
       </div>
     </div>
     
   </div>
-  </div><article class="md-text content"><h1 id="微服务概念与演进"><a href="#微服务概念与演进" class="headerlink" title="微服务概念与演进"></a>微服务概念与演进</h1><h2 id="巨石架构到微服务的演进"><a href="#巨石架构到微服务的演进" class="headerlink" title="巨石架构到微服务的演进"></a>巨石架构到微服务的演进</h2><p>传统网页应用虽然进行了模块化设计，但是最终仍然是打包成一个war包进行部署，启动慢，无法拓展，可靠性很低。</p>
-<h2 id="什么是微服务"><a href="#什么是微服务" class="headerlink" title="什么是微服务"></a>什么是微服务</h2><p>是面向服务的架构模式（SOA）的最佳实践。<br><strong>定义</strong>：围绕<strong>业务功能</strong>构建的，服务关注<strong>单一业务</strong>，服务间采<strong>用轻量级的通信</strong>机制，可以全自动<strong>独立部署</strong>，可以使用不同的编程语言和数据存储技术。微服务架构通过业务拆分实现服务组件化，通过组件组合快速开发系统，业务单一的服务组件又可以独立部署，使得整个系统变得清晰灵活。</p>
-<h2 id="如何实现微服务"><a href="#如何实现微服务" class="headerlink" title="如何实现微服务"></a>如何实现微服务</h2><p>组件服务化，例如在Go中实现需要：<br>• <strong>kit</strong>：一个微服务的基础库（框架）<br>• <strong>service</strong>：业务代码 + kit 依赖 + 第三方依赖组成的业务微服务<br>• <strong>RPC + message queue</strong>：轻量级通讯<br>按业务组织服务，<strong>常见的模式</strong>：大前端（移动&#x2F;Web） &gt; 网关接入 &gt; 业务服务 &gt; 平台服务 &gt; 基础设施（PaaS&#x2F;Saas）</p>
-<h2 id="微服务的优点和缺点"><a href="#微服务的优点和缺点" class="headerlink" title="微服务的优点和缺点"></a>微服务的优点和缺点</h2><p><strong>优点</strong>：原子服务、独立进程、隔离部署、去中心化服务治理。</p>
-<p><strong>缺点</strong>：基础设施的建设、复杂度高。<br>固有的复杂性：① 必须使用RPC或者消息传递实现进程间的通信，处理通信慢与局部失效的问题；② 不同服务可能使用不同数据库。</p>
-<h2 id="要搞定这些缺点，需要做怎样的基础设施建设"><a href="#要搞定这些缺点，需要做怎样的基础设施建设" class="headerlink" title="要搞定这些缺点，需要做怎样的基础设施建设"></a>要搞定这些缺点，需要做怎样的基础设施建设</h2><p>做什么事情–可用性设计、API设计等引申话题</p>
-<h1 id="微服务组件"><a href="#微服务组件" class="headerlink" title="微服务组件"></a>微服务组件</h1><h2 id="微服务设计中常见的角色"><a href="#微服务设计中常见的角色" class="headerlink" title="微服务设计中常见的角色"></a>微服务设计中常见的角色</h2><p>三大组件：API Gateway、BFF层、底层服务Microservices。<br>API网关分层：</p>
-<ul>
-<li>流量入口：协议转换&#x2F;路由分发</li>
-<li>安全边界：统一认证&#x2F;权限控制</li>
-<li>流量治理：限流熔断&#x2F;日志监控</li>
-</ul>
-<p>BFF适配层：为不同终端提供定制化API<br>CQRS模式：读写分离（通过binlog实现数据同步）</p>
-<h2 id="演进过程"><a href="#演进过程" class="headerlink" title="演进过程"></a>演进过程</h2><h2 id="Microservices拆分"><a href="#Microservices拆分" class="headerlink" title="Microservices拆分:"></a>Microservices拆分:</h2><ol>
-<li>按垂直功能性能角度，含久必分分久必合</li>
-<li>可以考虑中间加一层(例如统一接入账号)</li>
-<li>按照业务领域抽象（DDD）</li>
-<li>按照功能拆分：CQRS，应用程序分为命令端和查询端。</li>
-</ol>
-<h2 id="安全问题"><a href="#安全问题" class="headerlink" title="安全问题"></a>安全问题</h2><p><strong>外部的安全保障</strong>：API Gateway统一认证拦截 -&gt; BFF校验Token -&gt; Service</p>
-<p><strong>服务内部的安全保障</strong>：<br>① 认证：知道是谁调用的；<br>② 授权：RBAC，控制能访问哪些接口。</p>
-<p><strong>信任等级</strong>：Full&#x2F;Half&#x2F;Zero Trust。</p>
-<h1 id="gRPC"><a href="#gRPC" class="headerlink" title="gRPC"></a>gRPC</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>A high-performance, open-source universal RPC framework. 高性能开源框架。<br><strong>特性</strong>：</p>
+  </div><article class="md-text content"><h1 id="1-实战中的配置"><a href="#1-实战中的配置" class="headerlink" title="1.实战中的配置"></a>1.实战中的配置</h1><h2 id="查看mongo集群的pod"><a href="#查看mongo集群的pod" class="headerlink" title="查看mongo集群的pod"></a>查看mongo集群的pod</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod -n mongo</span><br><span class="line">NAME                                  READY   STATUS    RESTARTS      AGE</span><br><span class="line">mongo-mongodb-sharded-configsvr-0     1/1     Running   0             16d</span><br><span class="line">mongo-mongodb-sharded-configsvr-1     1/1     Running   1 (16d ago)   16d</span><br><span class="line">mongo-mongodb-sharded-configsvr-2     1/1     Running   1 (16d ago)   16d</span><br><span class="line">mongo-mongodb-sharded-mongos-0        1/1     Running   0             16d</span><br><span class="line">mongo-mongodb-sharded-mongos-1        1/1     Running   0             16d</span><br><span class="line">mongo-mongodb-sharded-shard0-data-0   1/1     Running   0             16d</span><br><span class="line">mongo-mongodb-sharded-shard0-data-1   1/1     Running   0             16d</span><br><span class="line">mongodb-exporter-976c9b7b-8dt25       1/1     Running   0             16d</span><br></pre></td></tr></table></figure>
+
+<p>在 MongoDB 分片架构中：</p>
 <ol>
-<li>支持多语言；</li>
-<li>序列化支持Protocol Buffer和Json；</li>
-<li>HTTP&#x2F;2多路复用。</li>
+<li><strong>mongos (mongo-mongodb-sharded-mongos-0)</strong>: 只是路由节点，负责转发请求，<strong>不存储任何数据</strong>。所以你在它的 describe 结果里只看到了 localtime 和 kube-api-access，看不到数据卷。</li>
+<li><strong>configsvr (mongo-mongodb-sharded-configsvr-0)</strong>: 存储集群的元数据（配置信息）。</li>
+<li><strong>shard data (mongo-mongodb-sharded-shard0-data-0)</strong>: <strong>这才是真正存储数据库业务数据的地方。</strong></li>
 </ol>
-<p>其中最重要的是<strong>标准健康监测协议</strong>，应用如下：<br>应用1：服务稳定与不稳定时摘除与恢复；<br>应用2：外挂容器健康检测；<br>应用3：生产者与消费者之间的检测；<br>应用4：平滑发布。</p>
-<h2 id="服务发现的模型"><a href="#服务发现的模型" class="headerlink" title="服务发现的模型"></a>服务发现的模型</h2><p>① 客户端发现（微服务的核心是去中心化，用这种更好）；<br>② 服务端发现（如果服务很大，可能用service mesh）。</p>
-<h1 id="多集群与多租户"><a href="#多集群与多租户" class="headerlink" title="多集群与多租户"></a>多集群与多租户</h1><h2 id="多集群"><a href="#多集群" class="headerlink" title="多集群"></a>多集群</h2><p>why?——单集群坏处：一般布N+2来冗余节点。出现故障时后果严重。<br>how?——物理上两套资源，逻辑上维护cluster概念。<br>好处？——不同集群使用多套独占的缓存，性能好。<br>坏处？——缓存命中率下降，不同业务形态数据正交。<br>拓展：从全集群中选取一批节点（子集），利用划分子集限制连接池大小。——子集算法。</p>
-<h2 id="多租户"><a href="#多租户" class="headerlink" title="多租户"></a>多租户</h2><p>why？保障代码隔离性，基于流量租户做路由决策。<br>问题：[并行测试]时混用环境不可靠，而多布环境成本高，也难以做压测。<br>解决方法：染色发布，基于流量类型做路由。本质是从源头传递一个标签，挂在go的上下文中，基于RPC负载均衡的流量做路由,路由到指定的节点。</p>
-<p>参考资料：<br><a target="_blank" rel="noopener" href="https://microservices.io/index.html">https://microservices.io/index.html</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/mindfloating/article/details/51221780">https://blog.csdn.net/mindfloating/article/details/51221780</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dadadechengzi/p/9373069.html">https://www.cnblogs.com/dadadechengzi/p/9373069.html</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/viaiu/archive/2018/11/24/10011376.html">https://www.cnblogs.com/viaiu/archive/2018/11/24/10011376.html</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/lfs2640666960/p/9543096.html">https://www.cnblogs.com/lfs2640666960/p/9543096.html</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/L6OKJK1ev1FyVDu03CQ0OA">https://mp.weixin.qq.com/s/L6OKJK1ev1FyVDu03CQ0OA</a><br><a target="_blank" rel="noopener" href="https://www.bookstack.cn/read/API-design-guide/API-design-guide-02-%E9%9D%A2%E5%90%91%E8%B5%84%E6%BA%90%E7%9A%84%E8%AE%BE%E8%AE%A1.md">https://www.bookstack.cn/read/API-design-guide/API-design-guide-02-面向资源的设计.md</a><br><a target="_blank" rel="noopener" href="https://www.programmableweb.com/news/how-to-design-great-apis-api-first-design-and-raml/how-to/2015/07/10">https://www.programmableweb.com/news/how-to-design-great-apis-api-first-design-and-raml/how-to/2015/07/10</a><br><a target="_blank" rel="noopener" href="http://www.dockone.io/article/394">http://www.dockone.io/article/394</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/3c7a0e81451a">https://www.jianshu.com/p/3c7a0e81451a</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/6e539caf662d">https://www.jianshu.com/p/6e539caf662d</a><br><a target="_blank" rel="noopener" href="https://my.oschina.net/CraneHe/blog/70317">https://my.oschina.net/CraneHe/blog/70317</a><br><a target="_blank" rel="noopener" href="https://my.oschina.net/CraneHe/blog/703169">https://my.oschina.net/CraneHe/blog/703169</a><br><a target="_blank" rel="noopener" href="https://my.oschina.net/CraneHe/blog/703160">https://my.oschina.net/CraneHe/blog/703160</a></p>
-<p>学习笔记，侵删。</p>
+<h2 id="想要知道数据实际存储在哪里"><a href="#想要知道数据实际存储在哪里" class="headerlink" title="想要知道数据实际存储在哪里"></a>想要知道数据实际存储在哪里</h2><p>第一步：查看数据节点 Pod 的 PVC 名称</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe pod mongo-mongodb-sharded-shard0-data-0 -n mongo</span><br></pre></td></tr></table></figure>
+
+<p>找到Volumes部分，其中ClaimName就是PVC名字。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Volumes:</span><br><span class="line">  datadir:</span><br><span class="line">    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)</span><br><span class="line">    ClaimName:  datadir-mongo-mongodb-sharded-shard0-data-0</span><br><span class="line">    ReadOnly:   false</span><br></pre></td></tr></table></figure>
+
+<p>第二步：查看 PVC 对应的 PV 名称</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pvc datadir-mongo-mongodb-sharded-shard0-data-0 -n mongo</span><br></pre></td></tr></table></figure>
+
+<p>输出结果中VOLUME 那一列就是 PV 的名字。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pvc datadir-mongo-mongodb-sharded-shard0-data-0 -n mongo</span><br><span class="line">NAME                                          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS    AGE</span><br><span class="line">datadir-mongo-mongodb-sharded-shard0-data-0   Bound    pvc-82de37fd-b2c7-4b90-8b83-553da08114f0   100Gi      RWO            local-storage   16d</span><br></pre></td></tr></table></figure>
+
+<p>第三步：查看 PV 的物理路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pv pvc-82de37fd-b2c7-4b90-8b83-553da08114f0 -o yaml</span><br></pre></td></tr></table></figure>
+
+<p>spec 部分，查看路径信息。hostPath的path，就是物理地址了。来到这个路径，可以看到里面有.wt文件，这就是mongo存储数据的文件了。</p>
+<p>从<strong>抽象需求</strong>（Pod&#x2F;PVC）到<strong>具体实现</strong>（PV&#x2F;物理路径）的逐层剥离：</p>
+<ol>
+<li><strong>Pod 层 (mongo-shard0-data-0)：</strong><ul>
+<li><strong>视角：</strong> “我是数据库程序，我只知道把数据写到容器内的 &#x2F;bitnami&#x2F;mongodb&#x2F;data 目录。这个目录挂载了一个叫 datadir 的卷。”</li>
+<li><strong>线索：</strong> ClaimName: datadir-mongo-0 (我有这张提货券)。</li>
+</ul>
+</li>
+<li><strong>PVC 层 (datadir-mongo-0)：</strong><ul>
+<li><strong>视角：</strong> “我是提货券，我要求 10GB 的空间。K8s 告诉我，我已经绑定到了 pvc-abcd-1234 这个资源上。”</li>
+<li><strong>线索：</strong> Volume: pvc-abcd-1234。</li>
+</ul>
+</li>
+<li><strong>PV 层 (pvc-abcd-1234)：</strong><ul>
+<li><strong>视角：</strong> “我是真正的存储资源对象。我有详细的连接信息。我的类型是 HostPath。”</li>
+<li><strong>线索：</strong> Path: &#x2F;data&#x2F;k8s-volumes&#x2F;mongo&#x2F;shard0。</li>
+</ul>
+</li>
+<li><strong>物理层 (Linux Server)：</strong><ul>
+<li><strong>视角：</strong> “我是硬盘上的一个文件夹。我就在 &#x2F;data&#x2F;k8s-volumes&#x2F;mongo&#x2F;shard0。”</li>
+</ul>
+</li>
+</ol>
+<p>为什么pod不能直接写死路径：</p>
+<ol>
+<li><strong>不可移植：</strong> 如果你的 Pod 迁移到了另一台服务器，或者换了一个集群，而新环境里没有 192.168.1.5 这台机器，Pod 就直接报错跑不起来了。</li>
+<li><strong>开发与运维分离：</strong> 开发人员（写 Pod 的人）通常不知道、也不应该关心服务器的 IP 和硬盘路径。运维人员（管 PV 的人）才需要关心。</li>
+</ol>
+<h2 id="分片架构为什么要这样设计"><a href="#分片架构为什么要这样设计" class="headerlink" title="分片架构为什么要这样设计"></a>分片架构为什么要这样设计</h2><p>核心理念只有四个字：**分而治之 (Divide and Conquer)**。</p>
+<p>它的目的是为了解决<strong>单机性能瓶颈</strong>（磁盘不够大、CPU 跑满、内存不足）。为了实现无限的水平扩展（Horizontal Scaling），MongoDB 将功能拆解成了这三个独立的组件。</p>
+<p>可以用一个<strong>“大型物流中心”</strong>的例子来完美类比这个架构：</p>
+<ol>
+<li>Mongos：前台接待&#x2F;调度员 (Router)</li>
+</ol>
+<ul>
+<li><strong>对应你的 Pod：</strong> mongo-mongodb-sharded-mongos-0</li>
+<li><strong>角色特点：</strong> <strong>无状态、不存货、只动嘴。</strong></li>
+<li><strong>为什么这么设计？</strong><ul>
+<li>它是应用程序（App）的唯一入口。你的代码只需要连接 mongos，就像你寄快递只找前台一样。</li>
+<li><strong>不存数据</strong>：因为它是负责计算路由逻辑的。它需要消耗 CPU 来解析你的查询命令，计算出数据在哪个分片上。</li>
+<li><strong>作用：</strong> 如果没有它，你的 App 就得自己去记“张三的数据在服务器 A，李四的数据在服务器 B”，这太痛苦了。Mongos 屏蔽了底层的复杂性。</li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li>Config Server：仓库账本&#x2F;目录管理员 (Metadata)</li>
+</ol>
+<ul>
+<li><strong>对应你的 Pod：</strong> mongo-mongodb-sharded-configsvr-0</li>
+<li><strong>角色特点：</strong> <strong>存目录、数据量小、极度重要。</strong></li>
+<li><strong>为什么这么设计？</strong><ul>
+<li>它存储的是**“元数据” (Metadata)**。也就是一张巨大的“地图”。</li>
+<li>它记录了：<em>“数据被切成了几块？如果在服务器 A 找不到，应该去服务器 B 找吗？哪个分片负责哪个范围的数据？”</em></li>
+<li><strong>关系：</strong> mongos 接到请求后，必须先问 Config Server：“嘿，用户要查 ID&#x3D;100 的数据，他在哪个仓库？”然后 mongos 才知道去哪里拿数据。</li>
+<li><strong>注意：</strong> 虽然它也存数据，但存的是配置信息，不是业务数据，所以它通常不需要很大的磁盘，但要求极高的数据一致性。</li>
+</ul>
+</li>
+</ul>
+<ol start="3">
+<li>Shard (Data Node)：真正的仓库&#x2F;搬运工 (Data Storage)</li>
+</ol>
+<ul>
+<li><strong>对应你的 Pod：</strong> mongo-mongodb-sharded-shard0-data-0</li>
+<li><strong>角色特点：</strong> <strong>存真货、干苦力、可无限增加。</strong></li>
+<li><strong>为什么这么设计？</strong><ul>
+<li>这里存储了你真正的业务数据（比如用户表、订单表）。</li>
+<li><strong>分片 (Sharding)</strong> 的意思就是：假设你有 100TB 数据，不可能塞进一台机器。于是我们把数据切碎：<ul>
+<li>Shard-0 存“A开头~H开头”的用户。</li>
+<li>Shard-1 存“I开头~Z开头”的用户。</li>
+</ul>
+</li>
+<li><strong>作用：</strong> 这就是为什么你要找数据必须看这个 Pod 的原因。所有的磁盘 I&#x2F;O 读写压力都在这里。</li>
+</ul>
+</li>
+</ul>
+<p>总结：一次查询的生命周期</p>
+<p>为了串联它们，假设你的 K8s 集群里来了一个请求：<strong>“帮我查找用户 ID &#x3D; 5000 的资料”</strong>。</p>
+<ol>
+<li><strong>第一步（Mongos）：</strong> 请求到达 mongos-0。Mongos 只是个接待员，它手里没有数据。</li>
+<li><strong>第二步（Config）：</strong> Mongos 悄悄看了一眼缓存里的“账本”（这个账本是从 configsvr-0 同步过来的）。账本上写着：<em>“ID 0~10000 的数据在 Shard-0 仓库里”</em>。</li>
+<li><strong>第三步（Shard）：</strong> Mongos 转头把请求转发给 shard0-data-0。</li>
+<li><strong>第四步（返回）：</strong> shard0-data-0 在自己的硬盘里找到数据，返回给 Mongos，Mongos 再返回给用户。</li>
+</ol>
+<p>为什么要拆得这么细？（设计优势）</p>
+<ol>
+<li><strong>无限扩展能力（Horizontal Scaling）：</strong><ul>
+<li>如果数据把 shard0 塞满了怎么办？很简单，加一组 shard1 服务器。Mongos 会自动把一部分数据搬过去。你的 App 甚至感觉不到变化，不需要停机。</li>
+</ul>
+</li>
+<li><strong>性能隔离：</strong><ul>
+<li><strong>CPU 密集型</strong>任务（如路由计算、排序聚合）由 mongos 承担。</li>
+<li><strong>IO 密集型</strong>任务（读写磁盘）由 shard 承担。</li>
+<li>如果查询太慢，可以单独给 mongos 加 CPU；如果磁盘不够，可以单独给 shard 加硬盘。</li>
+</ul>
+</li>
+<li><strong>高可用（High Availability）：</strong><ul>
+<li>在这个架构中，每一个组件（Shard, Config, Mongos）通常都是多副本的。</li>
+<li>Shard 坏了一个节点？有备份节点顶上。</li>
+<li>Mongos 坏了一个？K8s Service 会自动把流量切到另一个 Mongos 上。</li>
+</ul>
+</li>
+</ol>
+<p>这就是为什么你在 K8s 里看到这么多不同名字的 Pod，它们各司其职，共同支撑起了一个海量数据存储系统。</p>
 
 <div class="article-footer fs14">
     <section id="license">
@@ -130,7 +222,7 @@
     </section>
     </div>
 </article>
-<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">Newer</div><a href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91Go%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5%E8%B5%84%E6%BA%90%E5%B8%96/">【Go基础】Go入门与实践资源帖</a></div><div class="item" id="next"><div class="note">Older</div><a href="/2024/04/08/%E3%80%90LeeCode%E3%80%91%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/">【LeeCode】刷题记录.md</a></div></section></div>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">Older</div><a href="/2025/04/02/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AE%97%E6%B3%95LRU-LFU/">【算法】缓存淘汰算法LRU/LFU</a></div></section></div>
 
 
 
@@ -144,7 +236,7 @@
 
 
 
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B"><span class="toc-text">微服务概念与演进</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A8%E7%9F%B3%E6%9E%B6%E6%9E%84%E5%88%B0%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%BC%94%E8%BF%9B"><span class="toc-text">巨石架构到微服务的演进</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="toc-text">什么是微服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="toc-text">如何实现微服务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9A%84%E4%BC%98%E7%82%B9%E5%92%8C%E7%BC%BA%E7%82%B9"><span class="toc-text">微服务的优点和缺点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A6%81%E6%90%9E%E5%AE%9A%E8%BF%99%E4%BA%9B%E7%BC%BA%E7%82%B9%EF%BC%8C%E9%9C%80%E8%A6%81%E5%81%9A%E6%80%8E%E6%A0%B7%E7%9A%84%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E5%BB%BA%E8%AE%BE"><span class="toc-text">要搞定这些缺点，需要做怎样的基础设施建设</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6"><span class="toc-text">微服务组件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E8%AE%BE%E8%AE%A1%E4%B8%AD%E5%B8%B8%E8%A7%81%E7%9A%84%E8%A7%92%E8%89%B2"><span class="toc-text">微服务设计中常见的角色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%94%E8%BF%9B%E8%BF%87%E7%A8%8B"><span class="toc-text">演进过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Microservices%E6%8B%86%E5%88%86"><span class="toc-text">Microservices拆分:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="toc-text">安全问题</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#gRPC"><span class="toc-text">gRPC</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E5%BF%B5"><span class="toc-text">概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E7%9A%84%E6%A8%A1%E5%9E%8B"><span class="toc-text">服务发现的模型</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%9A%E9%9B%86%E7%BE%A4%E4%B8%8E%E5%A4%9A%E7%A7%9F%E6%88%B7"><span class="toc-text">多集群与多租户</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E9%9B%86%E7%BE%A4"><span class="toc-text">多集群</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E7%A7%9F%E6%88%B7"><span class="toc-text">多租户</span></a></li></ol></li></ol></div><div class="widget-footer">
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%AE%9E%E6%88%98%E4%B8%AD%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="toc-text">1.实战中的配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8Bmongo%E9%9B%86%E7%BE%A4%E7%9A%84pod"><span class="toc-text">查看mongo集群的pod</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%83%B3%E8%A6%81%E7%9F%A5%E9%81%93%E6%95%B0%E6%8D%AE%E5%AE%9E%E9%99%85%E5%AD%98%E5%82%A8%E5%9C%A8%E5%93%AA%E9%87%8C"><span class="toc-text">想要知道数据实际存储在哪里</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E7%89%87%E6%9E%B6%E6%9E%84%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%BF%99%E6%A0%B7%E8%AE%BE%E8%AE%A1"><span class="toc-text">分片架构为什么要这样设计</span></a></li></ol></li></ol></div><div class="widget-footer">
 
 <a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>Scroll to Top</span></a></div></widget>
 </div></aside><div class='float-panel blur'>
