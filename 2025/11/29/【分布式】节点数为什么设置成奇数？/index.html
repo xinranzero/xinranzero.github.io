@@ -17,18 +17,18 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
   <meta name="theme-color" content="#f9fafb">
   
-  <title>【Go基础】并发编程基本概念 - xinranzero</title>
+  <title>【分布式】节点数为什么设置成奇数？ - xinranzero</title>
 
   
-    <meta name="description" content="并发编程基本概念串行、并发与并行 串行：我们都是先读小学，小学毕业后再读初中，读完初中再读高中。 并发：同一时间段内执行多个任务（你在用微信和两个女朋友聊天）。 并行：同一时刻执行多个任务（你和你朋友都在用微信和女朋友聊天）。  进程、线程和协程 进程（process）：程序在操作系统中的一次执行过程，系统进行资源分配和调度的一个独立单位。 线程（thread）：操作系统基于进程开启的轻量级进程，">
+    <meta name="description" content="多数派的定义分布式系统里（比如 Etcd、ZooKeeper、Consul、Redis Sentinel、MongoDB ReplicaSet 等）一般采用多数派原则。 多数派原则（majority）：  只有多数派节点（majority of voting nodes）同意，写入才算成功；只有多数派在线，集群才能选出主节点。少数派分区永远不能参与选举，也不能投票  选举（leader elec">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Go基础】并发编程基本概念">
-<meta property="og:url" content="http://xinranzero.com/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/index.html">
+<meta property="og:title" content="【分布式】节点数为什么设置成奇数？">
+<meta property="og:url" content="http://xinranzero.com/2025/11/29/%E3%80%90%E5%88%86%E5%B8%83%E5%BC%8F%E3%80%91%E8%8A%82%E7%82%B9%E6%95%B0%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AE%BE%E7%BD%AE%E6%88%90%E5%A5%87%E6%95%B0%EF%BC%9F/index.html">
 <meta property="og:site_name" content="xinranzero">
-<meta property="og:description" content="并发编程基本概念串行、并发与并行 串行：我们都是先读小学，小学毕业后再读初中，读完初中再读高中。 并发：同一时间段内执行多个任务（你在用微信和两个女朋友聊天）。 并行：同一时刻执行多个任务（你和你朋友都在用微信和女朋友聊天）。  进程、线程和协程 进程（process）：程序在操作系统中的一次执行过程，系统进行资源分配和调度的一个独立单位。 线程（thread）：操作系统基于进程开启的轻量级进程，">
+<meta property="og:description" content="多数派的定义分布式系统里（比如 Etcd、ZooKeeper、Consul、Redis Sentinel、MongoDB ReplicaSet 等）一般采用多数派原则。 多数派原则（majority）：  只有多数派节点（majority of voting nodes）同意，写入才算成功；只有多数派在线，集群才能选出主节点。少数派分区永远不能参与选举，也不能投票  选举（leader elec">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2025-03-19T13:59:31.000Z">
-<meta property="article:modified_time" content="2025-03-19T13:59:48.138Z">
+<meta property="article:published_time" content="2025-11-29T06:21:33.000Z">
+<meta property="article:modified_time" content="2025-11-29T07:21:18.251Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
   
@@ -76,34 +76,232 @@
   <div class="content">
     <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a>
 <span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div>
-<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-03-19T13:59:31.000Z">2025-03-19</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-03-19T13:59:48.138Z">2025-03-19</time></span></div></div></div>
+<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-11-29T06:21:33.000Z">2025-11-29</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-11-29T07:21:18.251Z">2025-11-29</time></span></div></div></div>
     
     <div class="bottom only-title">
       
       <div class="text-area">
-        <h1 class="text title"><span>【Go基础】并发编程基本概念</span></h1>
+        <h1 class="text title"><span>【分布式】节点数为什么设置成奇数？</span></h1>
         
       </div>
     </div>
     
   </div>
-  </div><article class="md-text content"><h1 id="并发编程基本概念"><a href="#并发编程基本概念" class="headerlink" title="并发编程基本概念"></a>并发编程基本概念</h1><h2 id="串行、并发与并行"><a href="#串行、并发与并行" class="headerlink" title="串行、并发与并行"></a>串行、并发与并行</h2><ol>
-<li>串行：我们都是先读小学，小学毕业后再读初中，读完初中再读高中。</li>
-<li>并发：同一时间段内执行多个任务（你在用微信和两个女朋友聊天）。</li>
-<li>并行：同一时刻执行多个任务（你和你朋友都在用微信和女朋友聊天）。</li>
-</ol>
-<h2 id="进程、线程和协程"><a href="#进程、线程和协程" class="headerlink" title="进程、线程和协程"></a>进程、线程和协程</h2><ol>
-<li>进程（process）：程序在操作系统中的一次执行过程，系统进行资源分配和调度的一个独立单位。</li>
-<li>线程（thread）：操作系统基于进程开启的轻量级进程，是操作系统调度执行的最小单位。</li>
-<li>协程（coroutine）：非操作系统提供而是由用户自行创建和控制的用户态‘线程’，比线程更轻量级。</li>
-</ol>
-<h2 id="并发模型"><a href="#并发模型" class="headerlink" title="并发模型"></a>并发模型</h2><p>4种常见的实现方式：</p>
+  </div><article class="md-text content"><hr>
+<h1 id="多数派的定义"><a href="#多数派的定义" class="headerlink" title="多数派的定义"></a>多数派的定义</h1><p>分布式系统里（比如 Etcd、ZooKeeper、Consul、Redis Sentinel、MongoDB ReplicaSet 等）一般采用多数派原则。</p>
+<p><strong>多数派原则（majority）</strong>：</p>
+<blockquote>
+<p><strong>只有多数派节点（majority of voting nodes）同意，写入才算成功；只有多数派在线，集群才能选出主节点。少数派分区永远不能参与选举，也不能投票</strong></p>
+</blockquote>
+<p>选举（leader election）和一致性仲裁（quorum）更高效、更可靠。在最少节点的情况下达成最高的可用性。</p>
+<p>多数派的定义是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">quorum = floor(N/2) + 1</span><br></pre></td></tr></table></figure>
+
 <ol>
-<li>线程&amp;锁模型</li>
-<li>Actor模型</li>
-<li>CSP模型（communicating sequential processes，Go中主要是基于CSP的goroutine和channel实现）</li>
-<li>Fork&amp;Join模型</li>
+<li>多数派选举需要 &gt;50% 的票数</li>
+<li>奇数节点能减少浪费的资源</li>
+<li>偶数节点不会提高容错能力</li>
+<li>奇数节点能避免“平票”（leader 选不出来）</li>
 </ol>
+<h1 id="奇数投票节点确保一致性？"><a href="#奇数投票节点确保一致性？" class="headerlink" title="奇数投票节点确保一致性？"></a>奇数投票节点确保一致性？</h1><h2 id="（1）避免平票，保证能选出-Primary"><a href="#（1）避免平票，保证能选出-Primary" class="headerlink" title="（1）避免平票，保证能选出 Primary"></a>（1）避免平票，保证能选出 Primary</h2><p>奇数节点让投票在任何情况下都能明确区分“多数派”和“少数派”，而不会出现 50&#x2F;50 的对等分裂，从而避免平票，让 leader 一定能选出来。</p>
+<p>主节点选举依赖多数票。示例对比：</p>
+<p>✔ 使用 <strong>3 个投票节点（奇数）</strong>！</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">节点：A, B, C   （3 voting）</span><br><span class="line">majority = 2</span><br><span class="line"></span><br><span class="line">假设 A 挂了：</span><br><span class="line">剩下 B、C 仍有 2 票</span><br><span class="line">可继续选主</span><br></pre></td></tr></table></figure>
+
+<p>系统仍然 <strong>有主节点 → 可继续读写</strong>。</p>
+<p>✘ 使用 <strong>4 个投票节点（偶数）</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">节点：A, B, C, D</span><br><span class="line">majority = 3</span><br></pre></td></tr></table></figure>
+
+<p>即使挂掉一个：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">剩 3 个节点 → 需要 3 票 → 刚好全部在线</span><br></pre></td></tr></table></figure>
+
+<p>任何一个节点再出现网络抖动：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">只剩 2 票 &lt; majority(3)</span><br><span class="line">无法选主 → 集群只读不能写</span><br></pre></td></tr></table></figure>
+
+<p>➡ <strong>多花了一个节点却不能提升容错能力。</strong></p>
+<h2 id="（2）写入确保不会产生“脑裂（split-brain）”"><a href="#（2）写入确保不会产生“脑裂（split-brain）”" class="headerlink" title="（2）写入确保不会产生“脑裂（split-brain）”"></a>（2）写入确保不会产生“脑裂（split-brain）”</h2><p>写操作要求被多数投票节点确认才能成功：</p>
+<p>举例：3 voting nodes → majority &#x3D; 2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">primary 成功写入两个节点 → 数据安全</span><br></pre></td></tr></table></figure>
+
+<p>这样即使 primary 发生故障，另一个节点晋升为 primary 时：</p>
+<ul>
+<li>它一定已经拥有最新多数写入的数据</li>
+<li>旧主不会带着未提交的数据乱写</li>
+</ul>
+<p>➡ <strong>奇数投票节点保证：只有一个分区能达到 majority，另一个分区不能产生脏写。</strong></p>
+<h2 id="（3）最优容错-资源比"><a href="#（3）最优容错-资源比" class="headerlink" title="（3）最优容错&#x2F;资源比"></a>（3）最优容错&#x2F;资源比</h2><blockquote>
+<p><strong>建议投票节点必须为奇数（3、5、7）</strong><br> 是因为偶数节点没有增加容错能力，纯浪费资源。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>节点数</th>
+<th>多数派</th>
+<th>容忍故障数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>3</strong></td>
+<td>2</td>
+<td>1</td>
+<td>常用最小集群</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>3</td>
+<td>1</td>
+<td>和 3 节点一样，但多浪费一个节点</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td>3</td>
+<td>2</td>
+<td>容错能力提高了</td>
+</tr>
+</tbody></table>
+<p>➡ 所以为了不浪费资源，同样想增加容错能力时，会直接跳到 <strong>5 节点，而不是 4 节点</strong>。</p>
+<ul>
+<li><strong>primary 必须获得多数投票 → 避免选举平票</strong></li>
+<li><strong>写操作必须多数节点确认 → 避免多主和脑裂</strong></li>
+<li><strong>奇数节点最大化可用性，最小化资源浪费</strong></li>
+</ul>
+<p>因此 MongoDB 通过 <strong>majority 写入 + 奇数投票节点 + 单主架构</strong><br> 确保副本集中只有一个合法主节点，并且数据是强一致的。</p>
+<h1 id="主节点失联"><a href="#主节点失联" class="headerlink" title="主节点失联"></a>主节点失联</h1><blockquote>
+<p><strong>注意：网络分裂是“触发选举”的原因</strong></p>
+</blockquote>
+<p>副本集的节点之间依赖心跳（heartbeat）互相确认是否“能连通”。<strong>如果 Primary 无法与多数投票节点通信，它必须自动放弃主节点身份。自动降级（step down）变成 Secondary、不参与选举、不参与投票。</strong></p>
+<p>否则：它写的数据无法同步给其他节点，其他节点可能已经选出新的 Primary，两个 “主” 会产生冲突写，破坏一致性。</p>
+<ul>
+<li><strong>能连通 &#x3D; 存活节点</strong></li>
+<li><strong>不能连通 &#x3D; 故障节点</strong></li>
+</ul>
+<p>故障节点 <strong>自动被投票系统忽略</strong>。只有与大多数节点相互可达的节点<strong>才是合法的投票者</strong>。选举只发生在多数派分区中。</p>
+<p>当主节点恢复，发现已经有新的 Primary，不会争抢主，会自动作为 Secondary 追赶 oplog（同步数据），完全不会参与正在进行的选举。</p>
+<h1 id="选举新主节点"><a href="#选举新主节点" class="headerlink" title="选举新主节点"></a>选举新主节点</h1><p> Phase 1：请求成为候选人（申请 term）   Phase 2：投票</p>
+<blockquote>
+<p><strong>在任何一个 term（选举轮次）里只能有一个候选人。</strong></p>
+<p>🚫 他们无法同时成为候选人（协议禁止）</p>
+<p>🚫 electionTimeout 随机化让“同时发起”几乎不可能，即使一轮失败，也不会卡住，而是发起下一轮选举投票</p>
+<p>🚫 即使同时尝试，term 冲突规则保证只有一个候选人存活</p>
+<p>🚫 投票只能投给一个候选人，不能“投给自己”当候选人</p>
+</blockquote>
+<ol>
+<li><p>Raft 用的是 <strong>随机选举超时</strong>，每个节点有一个随机 electionTimeout，这个时间到达之前，不会发起选举，所以每轮只有 1 个节点最先到时间。</p>
+</li>
+<li><p>即使时间因为延迟等原因差不多，Raft 规定节点只能给一个候选人投票。</p>
+</li>
+</ol>
+<ul>
+<li>B 向 C 请求投票</li>
+<li>C 向 B 请求投票</li>
+</ul>
+<p>两者收到对方的 term 后，会比较 term 大小：谁的 term 更大，另一个就自动放弃本次竞选（step down），票投给 term 更大的那一方。所以最终仍然会选出一个 Primary。这叫 <strong>term 冲突决议</strong>。</p>
+<p>什么情况下会卡住？</p>
+<p>多数派本身断裂：<code>A  /断网/ B C</code>，集群仍然正常运行（在 B、C 那一边）</p>
+<p>如果分裂成：<code>A B  |  C</code>，AB都在选自己，C又断网→无法投票，本轮失败 → 下一轮继续随机超时 → 必然选出一个。</p>
+<blockquote>
+<p>有多数派 → 一定能选出来</p>
+<p>没多数派 → 协议自动重试，直到选出（除非网络把多数派都断开，否则不会选不出来。）</p>
+</blockquote>
+<h1 id="节点故障和网络分区"><a href="#节点故障和网络分区" class="headerlink" title="节点故障和网络分区"></a>节点故障和网络分区</h1><p>本质一样，但表现方式不同。</p>
+<blockquote>
+<p><strong>节点故障 &#x3D; 无法与该节点通信</strong><br> <strong>网络分区 &#x3D; 一部分节点无法与另一部分通信</strong></p>
+</blockquote>
+<p>→ 从 Raft &#x2F; Paxos &#x2F; Zookeeper 的选主协议视角来看：<strong>两者都是“通信不可达”，本质等价</strong>。</p>
+<h2 id="1-节点故障属于网络分区的一种特殊情况"><a href="#1-节点故障属于网络分区的一种特殊情况" class="headerlink" title="1. 节点故障属于网络分区的一种特殊情况"></a><strong>1. 节点故障属于网络分区的一种特殊情况</strong></h2><p>节点故障有两种典型表现：</p>
+<ol>
+<li><strong>节点宕机</strong>（进程挂了、机器断电）</li>
+<li><strong>节点卡死</strong>（CPU 100%，没有响应）</li>
+</ol>
+<p>在这两种情况下：</p>
+<ul>
+<li>其他节点发 RPC 给它</li>
+<li>超时，一直收不到回复</li>
+</ul>
+<p><strong>效果 ≈ 这个节点被隔离到了一个别人都到不了的区域</strong></p>
+<p>这就是一个非常典型的 “一对多” 网络分区：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">正常区域：A、B、C</span><br><span class="line">隔离区域：D（单独一块）</span><br></pre></td></tr></table></figure>
+
+<p>从多数派算法看：</p>
+<ul>
+<li>D 和大家无法通信</li>
+<li>A、B、C 仍然构成多数派，继续运行</li>
+</ul>
+<p><strong>所以“节点故障”其实就是“单节点网络分区”</strong>。</p>
+<h2 id="2-网络分区不一定是节点故障"><a href="#2-网络分区不一定是节点故障" class="headerlink" title="2. 网络分区不一定是节点故障"></a><strong>2. 网络分区不一定是节点故障</strong></h2><p>网络分区可以更复杂，比如：</p>
+<p>情况 1：分成 2-2 的两个组（4 节点例子）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A B | C D</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>两边互相看不到</li>
+<li>每一边都认为另一边“宕机”</li>
+</ul>
+<p>但实际上大家都还在，只是通信断了。</p>
+<p>情况 2：单链路损坏</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A -- C</span><br><span class="line">A X B</span><br><span class="line">B -- C</span><br></pre></td></tr></table></figure>
+
+<p>A 和 B 互相到不了，但都能到 C。</p>
+<p>这不是任何节点故障，只是链路坏了。</p>
+<h2 id="3-多数派协议看的是“能否通信”，不看“为什么无法通信”"><a href="#3-多数派协议看的是“能否通信”，不看“为什么无法通信”" class="headerlink" title="3. 多数派协议看的是“能否通信”，不看“为什么无法通信”"></a><strong>3. 多数派协议看的是“能否通信”，不看“为什么无法通信”</strong></h2><p>对于 Raft &#x2F; Paxos &#x2F; ZK 而言：</p>
+<table>
+<thead>
+<tr>
+<th>情况</th>
+<th>协议视角</th>
+<th>等价吗</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>节点宕机</td>
+<td>收不到心跳 → 不可达</td>
+<td>和“单节点分区”完全一样</td>
+</tr>
+<tr>
+<td>节点高负载卡死</td>
+<td>超时 → 不可达</td>
+<td>等价</td>
+</tr>
+<tr>
+<td>网络 cable 掉了</td>
+<td>不可达</td>
+<td>等价</td>
+</tr>
+<tr>
+<td>路由异常导致某节点看不到其他节点</td>
+<td>不可达</td>
+<td>等价</td>
+</tr>
+<tr>
+<td>整个机房掉电</td>
+<td>大部分节点不可达</td>
+<td>等价</td>
+</tr>
+</tbody></table>
+<p>所以：<strong>对分布式一致性算法来说，“原因不重要”，只看通信结果。</strong></p>
+<h2 id="4-为什么要把它们视为同一种情况？"><a href="#4-为什么要把它们视为同一种情况？" class="headerlink" title="4. 为什么要把它们视为同一种情况？"></a><strong>4. 为什么要把它们视为同一种情况？</strong></h2><p>因为共识算法的核心目标是：</p>
+<blockquote>
+<p><strong>保证只有多数派区域能够选主、写数据。</strong></p>
+</blockquote>
+<p>不管是因为：</p>
+<ul>
+<li>节点宕机</li>
+<li>火灾</li>
+<li>网卡坏了</li>
+<li>交换机掉线</li>
+<li>延迟过高</li>
+<li>TCP 拥塞太严重</li>
+<li>机器卡死不回包</li>
+<li>某段链路丢包</li>
+</ul>
+<p><strong>最终的结果都是节点之间无法通信</strong>。所以从一致性协议角度：</p>
+<blockquote>
+<p><strong>节点故障”和“网络分区”都是“不可达”。<br> 它们的后果与处理方式完全一样。</strong></p>
+</blockquote>
+<h1 id="拓展问题"><a href="#拓展问题" class="headerlink" title="拓展问题"></a>拓展问题</h1><p>MongoDB 如何判断一个节点“失联”？（基于心跳、electionTimeout）</p>
+<p>投票节点（voting node）和数据节点（non-voting node）的区别？</p>
+<p>如果主节点没有 step down 会怎样？（真实脑裂案例）</p>
+<p>“网络分裂情况下的时间线”描述一次真实的 MongoDB 选举过程</p>
 
 <div class="article-footer fs14">
     <section id="license">
@@ -113,7 +311,7 @@
     </section>
     </div>
 </article>
-<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">Newer</div><a href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/">【Go基础】错误处理</a></div><div class="item" id="next"><div class="note">Older</div><a href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%BC%94%E8%BF%9B%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95/">【Go基础】垃圾回收演进 三色标记法</a></div></section></div>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">Older</div><a href="/2025/11/28/%E3%80%90mongoDB%E3%80%91%E5%88%86%E7%89%87/">【mongoDB】分片</a></div></section></div>
 
 
 
@@ -127,7 +325,7 @@
 
 
 
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">并发编程基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%B2%E8%A1%8C%E3%80%81%E5%B9%B6%E5%8F%91%E4%B8%8E%E5%B9%B6%E8%A1%8C"><span class="toc-text">串行、并发与并行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E5%92%8C%E5%8D%8F%E7%A8%8B"><span class="toc-text">进程、线程和协程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E6%A8%A1%E5%9E%8B"><span class="toc-text">并发模型</span></a></li></ol></li></ol></div><div class="widget-footer">
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A4%9A%E6%95%B0%E6%B4%BE%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-text">多数派的定义</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%A5%87%E6%95%B0%E6%8A%95%E7%A5%A8%E8%8A%82%E7%82%B9%E7%A1%AE%E4%BF%9D%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F"><span class="toc-text">奇数投票节点确保一致性？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%881%EF%BC%89%E9%81%BF%E5%85%8D%E5%B9%B3%E7%A5%A8%EF%BC%8C%E4%BF%9D%E8%AF%81%E8%83%BD%E9%80%89%E5%87%BA-Primary"><span class="toc-text">（1）避免平票，保证能选出 Primary</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%882%EF%BC%89%E5%86%99%E5%85%A5%E7%A1%AE%E4%BF%9D%E4%B8%8D%E4%BC%9A%E4%BA%A7%E7%94%9F%E2%80%9C%E8%84%91%E8%A3%82%EF%BC%88split-brain%EF%BC%89%E2%80%9D"><span class="toc-text">（2）写入确保不会产生“脑裂（split-brain）”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%EF%BC%883%EF%BC%89%E6%9C%80%E4%BC%98%E5%AE%B9%E9%94%99-%E8%B5%84%E6%BA%90%E6%AF%94"><span class="toc-text">（3）最优容错&#x2F;资源比</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%BB%E8%8A%82%E7%82%B9%E5%A4%B1%E8%81%94"><span class="toc-text">主节点失联</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%89%E4%B8%BE%E6%96%B0%E4%B8%BB%E8%8A%82%E7%82%B9"><span class="toc-text">选举新主节点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%E6%95%85%E9%9A%9C%E5%92%8C%E7%BD%91%E7%BB%9C%E5%88%86%E5%8C%BA"><span class="toc-text">节点故障和网络分区</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E8%8A%82%E7%82%B9%E6%95%85%E9%9A%9C%E5%B1%9E%E4%BA%8E%E7%BD%91%E7%BB%9C%E5%88%86%E5%8C%BA%E7%9A%84%E4%B8%80%E7%A7%8D%E7%89%B9%E6%AE%8A%E6%83%85%E5%86%B5"><span class="toc-text">1. 节点故障属于网络分区的一种特殊情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%BD%91%E7%BB%9C%E5%88%86%E5%8C%BA%E4%B8%8D%E4%B8%80%E5%AE%9A%E6%98%AF%E8%8A%82%E7%82%B9%E6%95%85%E9%9A%9C"><span class="toc-text">2. 网络分区不一定是节点故障</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%A4%9A%E6%95%B0%E6%B4%BE%E5%8D%8F%E8%AE%AE%E7%9C%8B%E7%9A%84%E6%98%AF%E2%80%9C%E8%83%BD%E5%90%A6%E9%80%9A%E4%BF%A1%E2%80%9D%EF%BC%8C%E4%B8%8D%E7%9C%8B%E2%80%9C%E4%B8%BA%E4%BB%80%E4%B9%88%E6%97%A0%E6%B3%95%E9%80%9A%E4%BF%A1%E2%80%9D"><span class="toc-text">3. 多数派协议看的是“能否通信”，不看“为什么无法通信”</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%8A%8A%E5%AE%83%E4%BB%AC%E8%A7%86%E4%B8%BA%E5%90%8C%E4%B8%80%E7%A7%8D%E6%83%85%E5%86%B5%EF%BC%9F"><span class="toc-text">4. 为什么要把它们视为同一种情况？</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8B%93%E5%B1%95%E9%97%AE%E9%A2%98"><span class="toc-text">拓展问题</span></a></li></ol></div><div class="widget-footer">
 
 <a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>Scroll to Top</span></a></div></widget>
 </div></aside><div class='float-panel blur'>
