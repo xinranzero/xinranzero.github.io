@@ -17,18 +17,18 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
   <meta name="theme-color" content="#f9fafb">
   
-  <title>【mongoDB】聚合框架 - xinranzero</title>
+  <title>【go基础】协程管理 - xinranzero</title>
 
   
-    <meta name="description" content="常见操作1.常见管道阶段   分类 运算符 作用 &#x2F; 说明 常见场景    过滤 $match 按条件筛选文档，类似 find 的 query 只要上架商品、只要本月数据   投影&#x2F;加字段 $project &#x2F; $addFields &#x2F; $set 控制输出字段、重命名字段、增加计算字段 只返回必要字段、计算 finalPrice   分组统计 $group">
+    <meta name="description" content="从一个错误案例开始起因是在工作中看到一段代码，感觉是程序遇到异常而卡住的原因，起了两个协程，其中一个等待另一个完成后开始，二者通过channel进行消息传递。后一个协程在完成时使用了goto语句。程序最后为select{}永久卡死，等待前面启动的两个协程去跑完就完事了。 原来的代码（铁有问题，不能用在生产上）： 123456789101112131415161718	ticker :&#x3D; time.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【mongoDB】聚合框架">
-<meta property="og:url" content="http://xinranzero.com/2025/11/28/%E3%80%90mongoDB%E3%80%91%E8%81%9A%E5%90%88%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:title" content="【go基础】协程管理">
+<meta property="og:url" content="http://xinranzero.com/2025/12/06/%E3%80%90go%E5%9F%BA%E7%A1%80%E3%80%91%E5%8D%8F%E7%A8%8B%E7%AE%A1%E7%90%86/index.html">
 <meta property="og:site_name" content="xinranzero">
-<meta property="og:description" content="常见操作1.常见管道阶段   分类 运算符 作用 &#x2F; 说明 常见场景    过滤 $match 按条件筛选文档，类似 find 的 query 只要上架商品、只要本月数据   投影&#x2F;加字段 $project &#x2F; $addFields &#x2F; $set 控制输出字段、重命名字段、增加计算字段 只返回必要字段、计算 finalPrice   分组统计 $group">
+<meta property="og:description" content="从一个错误案例开始起因是在工作中看到一段代码，感觉是程序遇到异常而卡住的原因，起了两个协程，其中一个等待另一个完成后开始，二者通过channel进行消息传递。后一个协程在完成时使用了goto语句。程序最后为select{}永久卡死，等待前面启动的两个协程去跑完就完事了。 原来的代码（铁有问题，不能用在生产上）： 123456789101112131415161718	ticker :&#x3D; time.">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2025-11-28T12:28:01.000Z">
-<meta property="article:modified_time" content="2025-11-29T06:18:44.080Z">
+<meta property="article:published_time" content="2025-12-06T10:59:18.000Z">
+<meta property="article:modified_time" content="2025-12-07T01:49:50.361Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
   
@@ -76,199 +76,39 @@
   <div class="content">
     <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a>
 <span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div>
-<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-11-28T12:28:01.000Z">2025-11-28</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-11-29T06:18:44.080Z">2025-11-29</time></span></div></div></div>
+<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-12-06T10:59:18.000Z">2025-12-06</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-12-07T01:49:50.361Z">2025-12-07</time></span></div></div></div>
     
     <div class="bottom only-title">
       
       <div class="text-area">
-        <h1 class="text title"><span>【mongoDB】聚合框架</span></h1>
+        <h1 class="text title"><span>【go基础】协程管理</span></h1>
         
       </div>
     </div>
     
   </div>
-  </div><article class="md-text content"><h1 id="常见操作"><a href="#常见操作" class="headerlink" title="常见操作"></a>常见操作</h1><h2 id="1-常见管道阶段"><a href="#1-常见管道阶段" class="headerlink" title="1.常见管道阶段"></a>1.常见管道阶段</h2><table>
-<thead>
-<tr>
-<th>分类</th>
-<th>运算符</th>
-<th>作用 &#x2F; 说明</th>
-<th>常见场景</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>过滤</td>
-<td>$match</td>
-<td>按条件筛选文档，类似 find 的 query</td>
-<td>只要上架商品、只要本月数据</td>
-</tr>
-<tr>
-<td>投影&#x2F;加字段</td>
-<td>$project &#x2F; $addFields &#x2F; $set</td>
-<td>控制输出字段、重命名字段、增加计算字段</td>
-<td>只返回必要字段、计算 finalPrice</td>
-</tr>
-<tr>
-<td>分组统计</td>
-<td><strong>$group</strong></td>
-<td>按 _id 分组并做聚合（求和、计数、均值等）</td>
-<td>按用户&#x2F;按天统计金额、数量</td>
-</tr>
-<tr>
-<td>排序&#x2F;分页</td>
-<td><strong>$sort &#x2F; $skip &#x2F; $limit</strong></td>
-<td>排序、跳过 N 条、限制返回条数</td>
-<td>列表页排序 + 分页</td>
-</tr>
-<tr>
-<td>展开数组</td>
-<td>$unwind</td>
-<td>把数组里的每个元素“拆成多行”</td>
-<td>订单里的 items 一条一条展开</td>
-</tr>
-<tr>
-<td>关联集合</td>
-<td>$lookup</td>
-<td>类似左连接，把另一集合的数据查出来放到数组字段里</td>
-<td>订单关联用户信息</td>
-</tr>
-<tr>
-<td>多路统计</td>
-<td>$facet</td>
-<td>一次遍历，同时走多条子管道，返回多个统计结果</td>
-<td>一次请求返回多种统计面板</td>
-</tr>
-<tr>
-<td>分组计数排序</td>
-<td>$sortByCount</td>
-<td>对某个字段分组计数并按数量排序，相当于 $group + $sort</td>
-<td>统计每个标签出现次数</td>
-</tr>
-<tr>
-<td>计数</td>
-<td>$count</td>
-<td>统计当前管道流经文档总数，输出 { total: <number> }</number></td>
-<td>快速得到总数</td>
-</tr>
-</tbody></table>
-<p>一般常见使用顺序：<strong>原则：始终注意聚合管道的效率，确保限制文档数量。</strong></p>
-<p>1.匹配 $match | 相当于find，用来筛选符合条件的文档。</p>
-<p>2.排序 $sort | 如果顺序很重要，一般会放在前面。</p>
-<p>3.分页 $skip $limit | 表示从第几个开始，限制返回多少个。</p>
-<p>4.投影 $project | 限制返回的字段。</p>
-<p>例子：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">db.orders.aggregate([</span><br><span class="line">  // 只要本月订单</span><br><span class="line">  &#123;</span><br><span class="line">    $match: &#123;</span><br><span class="line">      createdAt: &#123;</span><br><span class="line">        $gte: ISODate(&quot;2025-11-01T00:00:00Z&quot;),</span><br><span class="line">        $lt: ISODate(&quot;2025-12-01T00:00:00Z&quot;)</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  // 按 userId 分组统计</span><br><span class="line">  &#123;</span><br><span class="line">    $group: &#123;</span><br><span class="line">      _id: &quot;$userId&quot;,</span><br><span class="line">      orderCount: &#123; $sum: 1 &#125;,</span><br><span class="line">      totalAmount: &#123; $sum: &quot;$amount&quot; &#125;,</span><br><span class="line">      avgAmount: &#123; $avg: &quot;$amount&quot; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  // 只要订单数 ≥ 3 的用户</span><br><span class="line">  &#123; $match: &#123; orderCount: &#123; $gte: 3 &#125; &#125; &#125;,</span><br><span class="line">  // 输出格式美化</span><br><span class="line">  &#123;</span><br><span class="line">    $project: &#123;</span><br><span class="line">      _id: 0,</span><br><span class="line">      userId: &quot;$_id&quot;,</span><br><span class="line">      orderCount: 1,</span><br><span class="line">      totalAmount: 1,</span><br><span class="line">      avgAmount: 1</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123; $sort: &#123; totalAmount: -1 &#125; &#125;</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+  </div><article class="md-text content"><h1 id="从一个错误案例开始"><a href="#从一个错误案例开始" class="headerlink" title="从一个错误案例开始"></a>从一个错误案例开始</h1><p>起因是在工作中看到一段代码，感觉是程序遇到异常而卡住的原因，起了两个协程，其中一个等待另一个完成后开始，二者通过channel进行消息传递。后一个协程在完成时使用了goto语句。程序最后为select{}永久卡死，等待前面启动的两个协程去跑完就完事了。</p>
+<p>原来的代码（铁有问题，不能用在生产上）：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">	ticker := time.NewTicker(<span class="number">5</span> * <span class="number">60</span> * time.Second)</span><br><span class="line">	<span class="keyword">defer</span> ticker.Stop()</span><br><span class="line">loop:</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> &lt;-h.ctx.Done():</span><br><span class="line">			mlog.Info(<span class="string">&quot;asset infer handler stop&quot;</span>)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		<span class="keyword">case</span> &lt;-ticker.C:</span><br><span class="line">			<span class="keyword">if</span> h.NeedRun() &#123;</span><br><span class="line">				<span class="keyword">go</span> h.AssetInfer()</span><br><span class="line">				<span class="keyword">go</span> h.GenMiddleTable()</span><br><span class="line">				<span class="keyword">break</span> loop</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">select</span> &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="2-常见聚合函数"><a href="#2-常见聚合函数" class="headerlink" title="2.常见聚合函数"></a>2.常见聚合函数</h2><p>（累加器，主要在 $group 中）</p>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>运算符</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>统计类</td>
-<td>$sum</td>
-<td>求和；$sum: 1 时等价于计数</td>
-</tr>
-<tr>
-<td></td>
-<td>$avg</td>
-<td>求平均值</td>
-</tr>
-<tr>
-<td></td>
-<td>$min &#x2F; $max</td>
-<td>组内最小值 &#x2F; 最大值</td>
-</tr>
-<tr>
-<td></td>
-<td>$first &#x2F; $last</td>
-<td>组内第一条 &#x2F; 最后一条文档的字段值（依赖排序）</td>
-</tr>
-<tr>
-<td>收集类</td>
-<td>$push</td>
-<td>把每个值放进数组（允许重复）</td>
-</tr>
-<tr>
-<td></td>
-<td>$addToSet</td>
-<td>把不重复的值放进数组（自动去重）</td>
-</tr>
-</tbody></table>
-<h2 id="3-常见表达式运算符"><a href="#3-常见表达式运算符" class="headerlink" title="3.常见表达式运算符"></a>3.常见表达式运算符</h2><p>（在 $project &#x2F; $addFields &#x2F; $group 等里用）</p>
-<table>
-<thead>
-<tr>
-<th>分类</th>
-<th>运算符示例</th>
-<th>说明 &#x2F; 用途</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数学运算</td>
-<td>$add &#x2F; $subtract &#x2F; $multiply &#x2F; $divide &#x2F; $mod</td>
-<td>加减乘除、取余；如算含税价、差值等</td>
-</tr>
-<tr>
-<td>字符串</td>
-<td>$concat</td>
-<td>拼接字符串（如 firstName + lastName）</td>
-</tr>
-<tr>
-<td></td>
-<td>$substr &#x2F; $substrBytes &#x2F; $substrCP</td>
-<td>截取字符串</td>
-</tr>
-<tr>
-<td></td>
-<td>$toUpper &#x2F; $toLower</td>
-<td>大小写转换</td>
-</tr>
-<tr>
-<td>日期</td>
-<td>$year &#x2F; $month &#x2F; $dayOfMonth &#x2F; $hour</td>
-<td>从日期中抽取年份、月份、日、小时等</td>
-</tr>
-<tr>
-<td></td>
-<td>$dateToString</td>
-<td>格式化日期为字符串（如 YYYY-MM-DD）</td>
-</tr>
-<tr>
-<td>条件判断</td>
-<td>$cond</td>
-<td>if-else：condition ? then : else</td>
-</tr>
-<tr>
-<td></td>
-<td>$ifNull</td>
-<td>字段为 null&#x2F;不存在时给默认值</td>
-</tr>
-<tr>
-<td></td>
-<td>$switch</td>
-<td>多分支条件判断</td>
-</tr>
-<tr>
-<td>数组相关</td>
-<td>$size</td>
-<td>数组长度</td>
-</tr>
-<tr>
-<td></td>
-<td>$slice</td>
-<td>取数组前 N 个元素</td>
-</tr>
-<tr>
-<td></td>
-<td>$in</td>
-<td>判断某值是否在数组中</td>
-</tr>
-</tbody></table>
+<p>用ai帮忙修改了相应的程序，但是其写的代码在go包装协程中启动了工作协程：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">	ticker := time.NewTicker(<span class="number">5</span> * <span class="number">60</span> * time.Second)</span><br><span class="line">	<span class="keyword">defer</span> ticker.Stop()</span><br><span class="line">	<span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> &lt;-h.ctx.Done():</span><br><span class="line">			mlog.Info(<span class="string">&quot;asset infer handler stop&quot;</span>)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		<span class="keyword">case</span> &lt;-ticker.C:</span><br><span class="line">			<span class="keyword">if</span> h.NeedRun() &#123;</span><br><span class="line">				wg.Add(<span class="number">2</span>)</span><br><span class="line">				<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span>&#123;</span><br><span class="line">					<span class="keyword">defer</span> wg.Done()</span><br><span class="line">					<span class="keyword">go</span> h.AssetInfer()</span><br><span class="line">				&#125;()</span><br><span class="line">				<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span>&#123;</span><br><span class="line">					<span class="keyword">defer</span> wg.Done()</span><br><span class="line">					<span class="keyword">go</span> h.GenMiddleTable()</span><br><span class="line">				&#125;()</span><br><span class="line">				wg.Wait()</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个程序还是会有问题，用 WaitGroup 启了两个 wrapper 协程，wrapper 里又 go 出实际工作协程，导致 WaitGroup 很快结束，真正的工作协程无人管理，后续 tick 还会继续再起新协程，既难以追踪生命周期也可能造成 goroutine 泄漏。</p>
+<blockquote>
+<p><strong>1.不允许在go 协程里面嵌套协程</strong>  </p>
+<p><strong>2.必须要遵守一处并发、统一等待的原则</strong></p>
+</blockquote>
+<p>修改后的程序：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">ticker := time.NewTicker(<span class="number">5</span> * <span class="number">60</span> * time.Second)</span><br><span class="line"><span class="keyword">defer</span> ticker.Stop()</span><br><span class="line"><span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> &lt;-h.ctx.Done():</span><br><span class="line">		mlog.Info(<span class="string">&quot;asset infer handler stop&quot;</span>)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	<span class="keyword">case</span> &lt;-ticker.C:</span><br><span class="line">		<span class="keyword">if</span> h.NeedRun() &#123;</span><br><span class="line">			wg.Add(<span class="number">2</span>)</span><br><span class="line">			<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">				<span class="keyword">defer</span> wg.Done()</span><br><span class="line">				h.AssetInfer()</span><br><span class="line">			&#125;()</span><br><span class="line">			<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">				<span class="keyword">defer</span> wg.Done()</span><br><span class="line">				h.GenMiddleTable()</span><br><span class="line">			&#125;()</span><br><span class="line">			wg.Wait()</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>进一步，还可以使用 errgroup 进行并发任务管理：waitGroup–&gt;errGroup</p>
+<p>原来的：<a target="_blank" rel="noopener" href="https://pkg.go.dev/sync#example-WaitGroup-AddAndDone">sync package - sync - Go Packages</a></p>
+<p>简化后：<a target="_blank" rel="noopener" href="https://pkg.go.dev/golang.org/x/sync/errgroup#example-Group-JustErrors">errgroup package - golang.org&#x2F;x&#x2F;sync&#x2F;errgroup - Go Packages</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">    ticker := time.NewTicker(<span class="number">5</span> * <span class="number">60</span> * time.Second)</span><br><span class="line">    <span class="keyword">defer</span> ticker.Stop()</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> h.NeedRun() &#123;</span><br><span class="line">			g, _ := errgroup.WithContext(h.ctx)</span><br><span class="line">			g.Go(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> <span class="type">error</span> &#123;</span><br><span class="line">				h.AssetInfer()</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">			&#125;)</span><br><span class="line">			g.Go(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> <span class="type">error</span> &#123;</span><br><span class="line">				h.GenMiddleTable()</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">			&#125;)</span><br><span class="line">			<span class="keyword">if</span> err := g.Wait(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">				mlog.Warnf(<span class="string">&quot;asset infer run exit: %v&quot;</span>, err)</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> &lt;-h.ctx.Done():</span><br><span class="line">			mlog.Info(<span class="string">&quot;asset infer handler stop&quot;</span>)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		<span class="keyword">case</span> &lt;-ticker.C:</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>不需要，原来的loop版本，就是等待NeedRun，为true，就去执行两个协程，然后</p>
+<p>[mysql] 2025&#x2F;11&#x2F;22 23:04:45 packets.go:36: unexpected EOF<br>{“level”:”warn”,”time”:”2025-11-22T23:04:45.769+0800”,”position”:”handler&#x2F;asset_infer_handler.go:848”,”function”:”sangfor.com&#x2F;xdr&#x2F;asm-cron&#x2F;internal&#x2F;assetinfer&#x2F;handler.(<em>AssetInferHandler).genMiddleResult”,”message”:”query:SELECT dstAssetId, regexp_extract(responseBody, ‘<title>(.</title></em>?)‘, 1) as title, CAST(count(*) AS BIGINT), max(recordTimestamp) as maxRecordTimestamp, any_value(if(instr(url, ‘?’) &gt; 0, substring(url, 1, instr(url, ‘?’) - 1), url)) As url FROM business.http_log WHERE respStatus &#x3D; 200 AND recordTimestamp &gt;&#x3D; 1763654400 AND recordTimestamp &lt; 1763740800 AND respContentType &#x3D; ‘text&#x2F;html’ AND instr(responseBody, ‘<title>‘) &gt; 0 GROUP BY dstAssetId, title LIMIT 300000;, query failed,err:Error 1064: Failed to allocate resource to query: org.apache.thrift.transport.TTransportException: Socket is closed by peer., will retry 3 times”}</title></p>
 
 <div class="article-footer fs14">
     <section id="license">
@@ -278,7 +118,7 @@
     </section>
     </div>
 </article>
-<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">Newer</div><a href="/2025/11/28/%E3%80%90mongoDB%E3%80%91%E5%88%86%E7%89%87/">【mongoDB】分片</a></div><div class="item" id="next"><div class="note">Older</div><a href="/2025/04/02/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AE%97%E6%B3%95LRU-LFU/">【算法】缓存淘汰算法LRU/LFU</a></div></section></div>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">Newer</div><a href="/2025/12/14/%E3%80%90Github%E3%80%91%E8%BF%9B%E9%98%B6%E6%8A%80%E5%B7%A7/">【Github】进阶技巧</a></div><div class="item" id="next"><div class="note">Older</div><a href="/2025/12/03/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%AD%98%E7%AE%97%E4%B8%80%E4%BD%93%E5%88%B0%E5%AD%98%E7%AE%97%E5%88%86%E7%A6%BB/">【数据库】存算一体到存算分离</a></div></section></div>
 
 
 
@@ -292,7 +132,7 @@
 
 
 
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E6%93%8D%E4%BD%9C"><span class="toc-text">常见操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%B8%B8%E8%A7%81%E7%AE%A1%E9%81%93%E9%98%B6%E6%AE%B5"><span class="toc-text">1.常见管道阶段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%B8%B8%E8%A7%81%E8%81%9A%E5%90%88%E5%87%BD%E6%95%B0"><span class="toc-text">2.常见聚合函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%B8%B8%E8%A7%81%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-text">3.常见表达式运算符</span></a></li></ol></li></ol></div><div class="widget-footer">
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%8E%E4%B8%80%E4%B8%AA%E9%94%99%E8%AF%AF%E6%A1%88%E4%BE%8B%E5%BC%80%E5%A7%8B"><span class="toc-text">从一个错误案例开始</span></a></li></ol></div><div class="widget-footer">
 
 <a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>Scroll to Top</span></a></div></widget>
 </div></aside><div class='float-panel blur'>
