@@ -1,0 +1,751 @@
+
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1" theme-name="Stellar" theme-version="1.29.1">
+  
+  <meta name="generator" content="Hexo 7.1.1">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  
+  <title>【通用工具】Makefile：自动化编译说明书 - xinranzero</title>
+
+  
+    <meta name="description" content="这是什么？Makefile 是一个自动化编译工具的“说明书”。 在开发大型软件项目时，通常会有成百上千个源代码文件。如果你每次改动一点代码都要手动输入命令去编译每一个文件，不仅低效，还容易出错。Makefile 的出现就是为了解决这个问题。 1. Makefile 的核心作用 自动化编译：只需输入一个简单的命令（通常是 make），它就会根据 Makefile 里的规则，自动调用编译器（如 gcc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【通用工具】Makefile：自动化编译说明书">
+<meta property="og:url" content="http://xinranzero.com/2025/12/20/%E3%80%90%E9%80%9A%E7%94%A8%E5%B7%A5%E5%85%B7%E3%80%91Makefile%EF%BC%9A%E8%87%AA%E5%8A%A8%E5%8C%96%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E%E4%B9%A6/index.html">
+<meta property="og:site_name" content="xinranzero">
+<meta property="og:description" content="这是什么？Makefile 是一个自动化编译工具的“说明书”。 在开发大型软件项目时，通常会有成百上千个源代码文件。如果你每次改动一点代码都要手动输入命令去编译每一个文件，不仅低效，还容易出错。Makefile 的出现就是为了解决这个问题。 1. Makefile 的核心作用 自动化编译：只需输入一个简单的命令（通常是 make），它就会根据 Makefile 里的规则，自动调用编译器（如 gcc">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2025-12-20T05:49:52.000Z">
+<meta property="article:modified_time" content="2025-12-20T07:44:54.877Z">
+<meta property="article:author" content="Rong Zhao">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  
+
+  <!-- feed -->
+  
+
+  <link rel="stylesheet" href="/css/main.css?v=1.29.1">
+
+  
+
+  
+
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="l_body s:aa content tech" id="start" layout="post" ><aside class="l_left"><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="undefined" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">xinranzero</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="Search"></form><div id="search-result"></div><div class="search-no-result">No Results!</div></div>
+
+
+<nav class="menu dis-select"></nav>
+</div>
+<div class="widgets">
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">Recent Update</span></div><div class="widget-body fs14"><a class="item title" href="/2025/12/20/%E3%80%90%E9%80%9A%E7%94%A8%E5%B7%A5%E5%85%B7%E3%80%91Makefile%EF%BC%9A%E8%87%AA%E5%8A%A8%E5%8C%96%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E%E4%B9%A6/"><span class="title">【通用工具】Makefile：自动化编译说明书</span></a><a class="item title" href="/2025/12/14/%E3%80%90Github%E3%80%91%E8%BF%9B%E9%98%B6%E6%8A%80%E5%B7%A7/"><span class="title">【Github】进阶技巧</span></a><a class="item title" href="/2025/12/06/%E3%80%90go%E5%9F%BA%E7%A1%80%E3%80%91%E5%8D%8F%E7%A8%8B%E7%AE%A1%E7%90%86/"><span class="title">【go基础】协程管理</span></a><a class="item title" href="/2025/12/03/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%91%E5%AD%98%E7%AE%97%E4%B8%80%E4%BD%93%E5%88%B0%E5%AD%98%E7%AE%97%E5%88%86%E7%A6%BB/"><span class="title">【数据库】存算一体到存算分离</span></a><a class="item title" href="/2025/11/29/%E3%80%90%E5%88%86%E5%B8%83%E5%BC%8F%E3%80%91%E8%8A%82%E7%82%B9%E6%95%B0%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AE%BE%E7%BD%AE%E6%88%90%E5%A5%87%E6%95%B0%EF%BC%9F/"><span class="title">【分布式】节点数为什么设置成奇数？</span></a><a class="item title" href="/2025/11/28/%E3%80%90mongoDB%E3%80%91%E8%81%9A%E5%90%88%E6%A1%86%E6%9E%B6/"><span class="title">【mongoDB】聚合框架</span></a><a class="item title" href="/2025/11/28/%E3%80%90mongoDB%E3%80%91%E5%88%86%E7%89%87/"><span class="title">【mongoDB】分片</span></a><a class="item title" href="/2025/04/02/%E3%80%90%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E3%80%91%E5%A6%82%E4%BD%95%E5%AE%9A%E4%BD%8DRedis%E7%83%ADkey/"><span class="title">【系统设计】如何定位Redis热key</span></a><a class="item title" href="/2025/04/02/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AE%97%E6%B3%95LRU-LFU/"><span class="title">【算法】缓存淘汰算法LRU/LFU</span></a><a class="item title" href="/2025/03/28/%E3%80%90%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E3%80%91%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E4%B8%8E%E6%8A%80%E6%9C%AF/"><span class="title">【系统设计】秒杀系统实现方案与技术</span></a></div></widget>
+</div>
+
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-12-20T05:49:52.000Z">2025-12-20</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-12-20T07:44:54.877Z">2025-12-20</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>【通用工具】Makefile：自动化编译说明书</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><h1 id="这是什么？"><a href="#这是什么？" class="headerlink" title="这是什么？"></a>这是什么？</h1><p><strong>Makefile 是一个自动化编译工具的“说明书”</strong>。</p>
+<p>在开发大型软件项目时，通常会有成百上千个源代码文件。如果你每次改动一点代码都要手动输入命令去编译每一个文件，不仅低效，还容易出错。Makefile 的出现就是为了解决这个问题。</p>
+<h2 id="1-Makefile-的核心作用"><a href="#1-Makefile-的核心作用" class="headerlink" title="1. Makefile 的核心作用"></a>1. Makefile 的核心作用</h2><ul>
+<li><strong>自动化编译</strong>：只需输入一个简单的命令（通常是 <code>make</code>），它就会根据 Makefile 里的规则，自动调用编译器（如 gcc, g++）完成整个项目的构建。</li>
+<li><strong>增量编译（按需编译）</strong>：这是它最强大的地方。Makefile 会检查文件的时间戳。<strong>它只编译那些被修改过的文件</strong>以及受其影响的文件，而不会浪费时间去重新编译没变动的部分。</li>
+<li><strong>管理依赖关系</strong>：它能清晰地定义文件之间的依赖关系。比如 A 文件引用了 B 文件的函数，当 B 改变时，Makefile 知道必须重新编译 A。</li>
+</ul>
+<h2 id="2-Makefile-的基本结构"><a href="#2-Makefile-的基本结构" class="headerlink" title="2. Makefile 的基本结构"></a>2. Makefile 的基本结构</h2><p>Makefile 的核心逻辑由一系列“规则”组成，格式如下：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">目标(target): 依赖文件(prerequisites)</span></span><br><span class="line">	命令(command)  <span class="comment"># 注意：前面必须是一个 Tab 制表符</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="举个栗子："><a href="#举个栗子：" class="headerlink" title="举个栗子："></a>举个栗子：</h4><p>假设你有一个项目，包含 <code>main.c</code> 和 <code>tool.c</code> 两个文件。</p>
+<p>Makefile</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 最终目标是生成可执行文件 my_program</span></span><br><span class="line"><span class="section">my_program: main.o tool.o</span></span><br><span class="line">	gcc -o my_program main.o tool.o</span><br><span class="line"></span><br><span class="line"><span class="comment"># main.o 依赖于 main.c</span></span><br><span class="line"><span class="section">main.o: main.c</span></span><br><span class="line">	gcc -c main.c</span><br><span class="line"></span><br><span class="line"><span class="comment"># tool.o 依赖于 tool.c</span></span><br><span class="line"><span class="section">tool.o: tool.c</span></span><br><span class="line">	gcc -c tool.c</span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理编译产生的垃圾文件</span></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">	rm *.o my_program</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-为什么现在还要学它？"><a href="#3-为什么现在还要学它？" class="headerlink" title="3. 为什么现在还要学它？"></a>3. 为什么现在还要学它？</h2><p>虽然现在有很多现代化的构建工具（如 <strong>CMake</strong>, <strong>Bazel</strong>），但 Makefile 依然是基石：</p>
+<ol>
+<li><strong>工程必备</strong>：绝大多数 Linux 内核和开源项目（如 Redis, Nginx）都直接使用 Makefile。</li>
+<li><strong>跨语言通用</strong>：虽然它常用于 C&#x2F;C++，但其实你可以用它管理任何文件的转换任务（比如自动压缩图片、编译 LaTeX 文档等）。</li>
+<li><strong>CMake 的底层</strong>：在 Linux 环境下，CMake 通常也是先生成 Makefile，然后再调用 <code>make</code> 来执行。</li>
+</ol>
+<h2 id="4-总结：它的价值"><a href="#4-总结：它的价值" class="headerlink" title="4. 总结：它的价值"></a>4. 总结：它的价值</h2><table>
+<thead>
+<tr>
+<th><strong>维度</strong></th>
+<th><strong>手动编译</strong></th>
+<th><strong>使用 Makefile</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>速度</strong></td>
+<td>每次都要全量编译，慢</td>
+<td>仅编译变动部分，快</td>
+</tr>
+<tr>
+<td><strong>准确性</strong></td>
+<td>容易漏掉某个文件</td>
+<td>严格按依赖逻辑，准</td>
+</tr>
+<tr>
+<td><strong>复杂度</strong></td>
+<td>命令又长又难记</td>
+<td>一个 <code>make</code> 搞定</td>
+</tr>
+</tbody></table>
+<h1 id="为啥python项目里也有？"><a href="#为啥python项目里也有？" class="headerlink" title="为啥python项目里也有？"></a>为啥python项目里也有？</h1><p>按理说，Python 是解释型语言，不需要像 C&#x2F;C++ 那样经历复杂的“编译”过程，但 Makefile 在 Python 项目中依然非常流行，原因在于：<strong>它把 Makefile 当作了一个“快捷指令集（Task Runner）”来使用。</strong></p>
+<blockquote>
+<p>在 Python 开发中，Makefile 主要解决的是<strong>“命令太长记不住”</strong>和<strong>“环境初始化太繁琐”</strong>的问题。</p>
+</blockquote>
+<h2 id="1-Python-项目中-Makefile-的常见用途"><a href="#1-Python-项目中-Makefile-的常见用途" class="headerlink" title="1. Python 项目中 Makefile 的常见用途"></a>1. Python 项目中 Makefile 的常见用途</h2><p>Python 项目虽然不编译，但有很多重复性的“脏活累活”：</p>
+<ul>
+<li><strong>环境管理</strong>：创建虚拟环境、安装依赖包。</li>
+<li><strong>清理垃圾</strong>：删除生成的 <code>__pycache__</code>、<code>.pyc</code> 文件或构建产物。</li>
+<li><strong>质量检查</strong>：运行代码格式化（<code>black</code>）、静态检查（<code>flake8</code>）、类型检查（<code>mypy</code>）。</li>
+<li><strong>运行测试</strong>：启动 <code>pytest</code> 并生成覆盖率报告。</li>
+<li><strong>打包发布</strong>：构建 Docker 镜像或上传包到 PyPI。</li>
+</ul>
+<h2 id="2-一个典型的-Python-Makefile-示例"><a href="#2-一个典型的-Python-Makefile-示例" class="headerlink" title="2. 一个典型的 Python Makefile 示例"></a>2. 一个典型的 Python Makefile 示例</h2><p>你可以看看你项目里的 Makefile，是不是很像下面这种结构：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义变量</span></span><br><span class="line">PYTHON = python3</span><br><span class="line">PIP = pip</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 安装依赖</span></span><br><span class="line"><span class="section">install:</span></span><br><span class="line">	<span class="variable">$(PIP)</span> install -r requirements.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 运行测试</span></span><br><span class="line"><span class="section">test:</span></span><br><span class="line">	pytest tests/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 代码格式化</span></span><br><span class="line"><span class="section">format:</span></span><br><span class="line">	black .</span><br><span class="line">	isort .</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 清理 Python 产生的临时文件</span></span><br><span class="line"><span class="section">clean:</span></span><br><span class="line">	find . -type d -name <span class="string">&quot;__pycache__&quot;</span> -exec rm -rf &#123;&#125; +</span><br><span class="line">	rm -rf .pytest_cache</span><br><span class="line">	rm -rf dist</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 一键启动项目</span></span><br><span class="line"><span class="section">run:</span></span><br><span class="line">	<span class="variable">$(PYTHON)</span> main.py</span><br></pre></td></tr></table></figure>
+
+<p>这样一来，你只需要输入 <code>make test</code> 就能跑测试，输入 <code>make clean</code> 就能清理环境，而不需要记住后面那一串复杂的参数。</p>
+<h2 id="3-为什么不用-Shell-脚本（-sh）？"><a href="#3-为什么不用-Shell-脚本（-sh）？" class="headerlink" title="3. 为什么不用 Shell 脚本（.sh）？"></a>3. 为什么不用 Shell 脚本（.sh）？</h2><p>既然只是快捷指令，为啥不用 <code>.sh</code> 脚本呢？</p>
+<ol>
+<li><p><strong>统一入口</strong>：Makefile 提供了一个标准的入口。不管新同事是用什么系统，只要看到 Makefile，就知道输入 <code>make install</code> 就能开始干活。</p>
+</li>
+<li><p><strong>依赖逻辑</strong>：Makefile 依然可以处理依赖。例如，你可以规定：运行测试前必须先安装依赖。</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">test: install</span></span><br><span class="line">    pytest</span><br></pre></td></tr></table></figure>
+
+<p>当你执行 <code>make test</code> 时，如果 <code>install</code> 没跑过，它会自动先跑 <code>install</code>。</p>
+</li>
+<li><p><strong>习惯使然</strong>：在 Linux&#x2F;Unix 世界里，<code>make</code> 是装机自带的，不需要额外安装工具。</p>
+</li>
+</ol>
+<h2 id="4-现代替代品"><a href="#4-现代替代品" class="headerlink" title="4. 现代替代品"></a>4. 现代替代品</h2><p>虽然 Makefile 很香，但现在 Python 社区也有一些更“原生”的替代方案：</p>
+<ul>
+<li><strong>Invoke</strong>: 用纯 Python 写的任务执行器。</li>
+<li><strong>Poetry&#x2F;Pdm</strong>: 自带了部分脚本管理功能。</li>
+<li><strong>Tox&#x2F;Nox</strong>: 专门用于管理多版本 Python 测试环境。</li>
+</ul>
+<h1 id="项目实战"><a href="#项目实战" class="headerlink" title="项目实战"></a>项目实战</h1><h2 id="整体层级结构"><a href="#整体层级结构" class="headerlink" title="整体层级结构"></a>整体层级结构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    %% 第一层：Makefile 入口</span><br><span class="line">    subgraph Makefile_Layer [Makefile 指挥层]</span><br><span class="line">        A[make build] --&gt;|调用| B1(build.sh)</span><br><span class="line">        A1[make enc_build] --&gt;|带参数 -u| B1</span><br><span class="line">        A2[make cov_build] --&gt;|带参数 -c| B1</span><br><span class="line">        A3[make pythonlib] --&gt;|调用| B2(pythonlib.sh)</span><br><span class="line">    end</span><br><span class="line">    %% 第二层：脚本逻辑层</span><br><span class="line">subgraph Script_Layer [Shell 脚本执行层]</span><br><span class="line">    B1 --&gt; C1&#123;解析参数&#125;</span><br><span class="line">    C1 --&gt;|默认| D1[标准编译: go build]</span><br><span class="line">    C1 --&gt;|-u| D2[加密编译: garble build]</span><br><span class="line">    C1 --&gt;|-c| D3[覆盖率编译: goc build]</span><br><span class="line">    </span><br><span class="line">    B2 --&gt; E1[清理旧包: clean]</span><br><span class="line">    E1 --&gt; E2[生成 RPC 代码: protoc]</span><br><span class="line">    E2 --&gt; E3[修复导入路径: sed]</span><br><span class="line">    E3 --&gt; E4[打包: build.sh]</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">%% 第三层：细节处理</span><br><span class="line">subgraph Build_Detail [编译细节注入]</span><br><span class="line">    D1 &amp; D2 &amp; D3 --&gt; F1[注入版本信息: -ldflags]</span><br><span class="line">    F1 --&gt; F2[遍历 cmd/* 目录]</span><br><span class="line">    F2 --&gt; F3[检查 main.go]</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">%% 第四层：最终产物</span><br><span class="line">subgraph Output_Layer [最终产物]</span><br><span class="line">    F3 --&gt; G1[dist/ 目录二进制文件]</span><br><span class="line">    E4 --&gt; G2[Python Wheel/Egg 包]</span><br><span class="line">    G1 --&gt; G3[写入 CI_COMMIT_SHA 等元数据]</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">%% 样式美化</span><br><span class="line">style Makefile_Layer fill:#f9f,stroke:#333,stroke-width:2px</span><br><span class="line">style Script_Layer fill:#bbf,stroke:#333,stroke-width:2px</span><br><span class="line">style Output_Layer fill:#bfb,stroke:#333,stroke-width:2px</span><br></pre></td></tr></table></figure>
+<p>要点解析：</p>
+<ol>
+<li><strong>参数透传</strong>：Makefile 里的不同命令（如 <code>enc_build</code>）本质上是在调用 <code>build.sh</code> 时塞入了不同的“旗标”（Flag），比如 <code>-u</code>。</li>
+<li><strong>环境准备</strong>：在 <code>build.sh</code> 内部，它会先通过 <code>source</code> 加载环境，确保 Go 版本正确，并自动下载缺少的工具（如 <code>garble</code> 或 <code>grpcurl</code>）。</li>
+<li><strong>版本溯源</strong>：无论走哪条路径，最终都会经过 <code>VER_FLAGS</code> 注入。这意味着你拿到的任何一个二进制文件，都能通过内部变量追溯到它是哪次 Git 提交。</li>
+<li><strong>并行与依赖</strong>：Makefile 保证了“先清理、后编译”的逻辑顺序（例如 <code>pythonlib</code> 依赖 <code>clean</code>），而 <code>build.sh</code> 则负责具体的“体力活”（循环遍历目录并一个个编译）。</li>
+</ol>
+<p><strong>有了这张图，当你下次需要定位编译报错时，只需看报错阶段处于哪个层级，就能快速锁定是 Makefile 规则写错了，还是 Shell 脚本逻辑有问题。</strong></p>
+<h2 id="生成其他项目的依赖包"><a href="#生成其他项目的依赖包" class="headerlink" title="生成其他项目的依赖包"></a>生成其他项目的依赖包</h2><p>注意，两个build.sh并不一样，idt的那个只是用来生成wheel文件的！生成完之后可以上传到内部的镜像仓库。</p>
+<p>重点是这个语句：<code>python3 setup.py bdist_wheel</code>，其中setup.py自己写，一般是去指定版本号等，避免重复。</p>
+<p>上传命令：<code>[凭证环境变量] rsync [参数] [源文件] [协议]://[用户名]@[地址]/[目标模块]/</code></p>
+<p>例如，<code>RSYNC_PASSWORD=&lt;密码&gt; rsync a.txt rsync://[用户名]@[地址]/[目标模块]/</code></p>
+<p>整个完整周期为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    %% 第一阶段：代码生成</span><br><span class="line">    subgraph Stage1 [1. 接口转换阶段]</span><br><span class="line">        A[identifier.proto] --&gt;|grpc_tools.protoc| B[PB 代码生成]</span><br><span class="line">        B --&gt; B1[identifier_pb2.py]</span><br><span class="line">        B --&gt; B2[identifier_pb2_grpc.py]</span><br><span class="line">        B1 &amp; B2 --&gt; C[sed 修正导入路径]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    %% 第二阶段：元数据准备</span><br><span class="line">    subgraph Stage2 [2. 元数据准备阶段]</span><br><span class="line">        D[&quot;idt/__init__.py&quot;] --&gt;|提供名称/作者| E[setup.py]</span><br><span class="line">        F[datetime.now] --&gt;|提供日期后缀| E</span><br><span class="line">        C --&gt;|放入包目录| G[&quot;idt/pb/&quot;]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    %% 第三阶段：构建打包</span><br><span class="line">    subgraph Stage3 [3. 构建打包阶段]</span><br><span class="line">        E --&gt;|python3 setup.py bdist_wheel| H&#123;Setuptools 工厂&#125;</span><br><span class="line">        G --&gt; H</span><br><span class="line">        H --&gt; I[build/ 临时编译目录]</span><br><span class="line">        H --&gt; J[idt.egg-info/ 依赖记录]</span><br><span class="line">        H --&gt; K[dist/xxxx.whl 最终成品]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    %% 第四阶段：分发</span><br><span class="line">    subgraph Stage4 [4. 远程分发阶段]</span><br><span class="line">        K --&gt; L[rsync 上传]</span><br><span class="line">        L --&gt; M[&quot;www.ngsoc.site/pip/&quot;]</span><br><span class="line">        M --&gt; N[其他同事: pip install]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    %% 样式美化</span><br><span class="line">    style Stage3 fill:#f96,stroke:#333</span><br><span class="line">    style K fill:#00ff00,stroke:#333,stroke-width:4px</span><br></pre></td></tr></table></figure>
+
+<p>而使用侧只需要在其脚本中指定版本号，就能下载到最新的wheel包。一般就是通过前面的版本号，&gt;&#x3D;某个版本号，就会自动拉取到最新的时间戳对应的wheel包。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    subgraph Your_Side [你的侧: 产出]</span><br><span class="line">        A[make pythonlib] --&gt; B[生成 whl: v1.0.0.20231215]</span><br><span class="line">        B --&gt; C[rsync 上传至镜像站]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph Mirror_Site [镜像站/文件服务器]</span><br><span class="line">        C --&gt; D[www.ngsoc.site/pip/ 下的文件列表]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    subgraph Colleague_Side [同事侧: 消费]</span><br><span class="line">        E[运行管理脚本] --&gt; F&#123;版本号逻辑判断&#125;</span><br><span class="line">        F --&gt;|符合区间 &gt;= v1.0| G[从镜像站拉取对应 whl]</span><br><span class="line">        G --&gt; H[静默安装: pip install idt.whl]</span><br><span class="line">        H --&gt; I[启动业务程序]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    style D fill:#f9f,stroke:#333</span><br><span class="line">    style F fill:#bbf,stroke:#333</span><br><span class="line">    style H fill:#dfd,stroke:#333</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="整个项目的build-sh的流程"><a href="#整个项目的build-sh的流程" class="headerlink" title="整个项目的build.sh的流程"></a>整个项目的build.sh的流程</h2><p>​    </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">flowchart TD</span><br><span class="line">    Start([开始执行 scripts/build.sh]) --&gt; Init[初始化路径 CURDIR/PRODIR]</span><br><span class="line">    Init --&gt; LoadCommon[Source 加载 common/devenvrc 配置]</span><br><span class="line">LoadCommon --&gt; ParseArgs&#123;getopts 解析参数&#125;</span><br><span class="line">ParseArgs --&gt;|无参数| Default[默认: 标准编译]</span><br><span class="line">ParseArgs --&gt;|-o| SetOut[指定输出目录]</span><br><span class="line">ParseArgs --&gt;|-c| SetCov[开启覆盖率模式 cov=1]</span><br><span class="line">ParseArgs --&gt;|-u| SetEnc[开启加密模式 encFlag=1]</span><br><span class="line"></span><br><span class="line">SetOut &amp; SetCov &amp; SetEnc &amp; Default --&gt; PreStep[执行 GO_MOD_TIDY &amp; install_tools]</span><br><span class="line"></span><br><span class="line">PreStep --&gt; CovCheck&#123;是否开启覆盖率?&#125;</span><br><span class="line">CovCheck --&gt;|Yes| DownloadGoc[下载 goc 工具]</span><br><span class="line">CovCheck --&gt;|No| ScanDir[遍历 cmd/ 和 tools/ 目录]</span><br><span class="line">DownloadGoc --&gt; ScanDir</span><br><span class="line"></span><br><span class="line">ScanDir --&gt; LoopStart[循环每一个 app 子目录]</span><br><span class="line">LoopStart --&gt; CheckMain&#123;是否存在 main.go?&#125;</span><br><span class="line"></span><br><span class="line">CheckMain --&gt;|No| Skip[LOG WARN: 跳过该目录]</span><br><span class="line">CheckMain --&gt;|Yes| Version[构造 VER_FLAGS: 注入版本/Git/日期]</span><br><span class="line"></span><br><span class="line">Version --&gt; BranchMode&#123;判断编译模式&#125;</span><br><span class="line"></span><br><span class="line">BranchMode --&gt;|cov=1| BuildCov[调用 goc build 编译]</span><br><span class="line">BranchMode --&gt;|encFlag=1| BuildEnc[安装并运行 garble 混淆编译]</span><br><span class="line">BranchMode --&gt;|Default| BuildStd[标准 go build -ldflags]</span><br><span class="line"></span><br><span class="line">BuildCov &amp; BuildEnc &amp; BuildStd --&gt; Install[install 命令创建目录并移动二进制文件]</span><br><span class="line"></span><br><span class="line">Install --&gt; LoopNext&#123;是否有下一个 app?&#125;</span><br><span class="line">LoopNext --&gt;|Yes| LoopStart</span><br><span class="line">LoopNext --&gt;|No| End([输出 LOG INFO: Build Success!])</span><br><span class="line"></span><br><span class="line">%% 样式美化</span><br><span class="line">style BranchMode fill:#f96,stroke:#333</span><br><span class="line">style ParseArgs fill:#bbf,stroke:#333</span><br><span class="line">style BuildEnc fill:#f66,stroke:#333</span><br></pre></td></tr></table></figure>
+<p>这个 <code>build.sh</code> 脚本是整个 Go 项目的<strong>核心编译大脑</strong>。它的任务不仅仅是运行 <code>go build</code>，还包含了<strong>版本注入、代码混淆、覆盖率统计和工具链管理</strong>等工业级生产任务。</p>
+<p>以下是该脚本的详细功能拆解：</p>
+<h3 id="1-核心编译模式（三种模式）"><a href="#1-核心编译模式（三种模式）" class="headerlink" title="1. 核心编译模式（三种模式）"></a>1. 核心编译模式（三种模式）</h3><p>脚本通过 <code>getopts</code> 接收参数（如 <code>-c</code>, <code>-u</code>），决定了程序以哪种方式“出生”：</p>
+<table>
+<thead>
+<tr>
+<th><strong>模式</strong></th>
+<th><strong>触发参数</strong></th>
+<th><strong>使用的工具</strong></th>
+<th><strong>核心目的</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>标准模式</strong></td>
+<td>默认</td>
+<td><code>go build</code></td>
+<td>正常的开发与生产环境运行。</td>
+</tr>
+<tr>
+<td><strong>代码混淆模式</strong></td>
+<td><code>-u</code> (encrypt)</td>
+<td><strong>Garble</strong></td>
+<td><strong>防止逆向工程</strong>。通过混淆代码中的字面量和函数名，让别人拿到二进制文件也难以反编译。</td>
+</tr>
+<tr>
+<td><strong>覆盖率模式</strong></td>
+<td><code>-c</code> (coverage)</td>
+<td><strong>Goc</strong></td>
+<td><strong>自动化测试</strong>。配合测试平台统计代码运行到了哪几行，通常用于 QA 或集成测试阶段。</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="2-关键功能点解析"><a href="#2-关键功能点解析" class="headerlink" title="2. 关键功能点解析"></a>2. 关键功能点解析</h3><h4 id="A-动态版本注入-VER-FLAGS"><a href="#A-动态版本注入-VER-FLAGS" class="headerlink" title="A. 动态版本注入 (VER_FLAGS)"></a>A. 动态版本注入 (<code>VER_FLAGS</code>)</h4><p>脚本中有一段很长的 <code>VER_FLAGS</code>，利用了 Go 的 <code>-ldflags</code> 特性：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-X sangfor.com/xdr/go-idt/internal/version.version=<span class="variable">$&#123;PROJECT_VERSION&#125;</span> ...</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>作用</strong>：在编译时，强行把当前代码的版本号、Git 提交记录（Commit ID）、编译日期等信息<strong>塞进</strong> Go 的变量里。</li>
+<li><strong>效果</strong>：当你运行 <code>./my_app -v</code> 时，它能准确报出自己是哪天在哪个分支编译的。</li>
+</ul>
+<h4 id="B-自动化扫描与构建"><a href="#B-自动化扫描与构建" class="headerlink" title="B. 自动化扫描与构建"></a>B. 自动化扫描与构建</h4><p>脚本并没有写死要编译哪个文件，而是遍历了 <code>cmd/</code> 和 <code>tools/</code> 目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apps=$(<span class="built_in">ls</span> -d -- <span class="variable">$&#123;inDir&#125;</span>/*/)</span><br><span class="line"><span class="keyword">for</span> app <span class="keyword">in</span> <span class="variable">$&#123;apps&#125;</span>; <span class="keyword">do</span> ...</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>逻辑</strong>：它会自动寻找这两个文件夹下的每一个子目录。只要目录下有 <code>main.go</code>，它就会为其创建一个文件夹并完成编译。</li>
+<li><strong>好处</strong>：你每增加一个微服务或工具，只需在 <code>cmd/</code> 下建个文件夹，脚本会自动识别并打包。</li>
+</ul>
+<h4 id="C-工具链自给自足-install-tools"><a href="#C-工具链自给自足-install-tools" class="headerlink" title="C. 工具链自给自足 (install_tools)"></a>C. 工具链自给自足 (<code>install_tools</code>)</h4><p>脚本会检查并安装 <code>grpcurl</code>（一个类似 curl 但用于调试 gRPC 的工具）：</p>
+<ul>
+<li><strong>逻辑</strong>：如果 <code>dist</code> 目录下没有这个工具，它会自动 <code>go install</code> 并在本地备份。这保证了任何开发环境只要运行一次编译，调试工具就全齐了。</li>
+</ul>
+<h3 id="3-脚本执行流程图"><a href="#3-脚本执行流程图" class="headerlink" title="3. 脚本执行流程图"></a>3. 脚本执行流程图</h3><ol>
+<li><strong>环境检查</strong>：加载 <code>devenvrc</code>，指定使用 Go 1.21 版本。</li>
+<li><strong>清理与预备</strong>：运行 <code>go mod tidy</code> 整理依赖。</li>
+<li><strong>判断路径</strong>：<ul>
+<li>如果带了 <code>-u</code>：安装并执行 <code>garble</code> 混淆编译。</li>
+<li>如果带了 <code>-c</code>：从内部仓库（Nexus）下载 <code>goc</code> 并进行带统计信息的编译。</li>
+<li>默认：执行 <code>go build -ldflags &quot;-s -w&quot;</code>（其中 <code>-s -w</code> 是为了减小生成的二进制体积，删掉调试符号）。</li>
+</ul>
+</li>
+<li><strong>产物输出</strong>：所有编译好的二进制文件会被统一放在 <code>dist/</code> 目录下。</li>
+</ol>
+<h3 id="4-总结：为什么要写这么复杂的脚本？"><a href="#4-总结：为什么要写这么复杂的脚本？" class="headerlink" title="4. 总结：为什么要写这么复杂的脚本？"></a>4. 总结：为什么要写这么复杂的脚本？</h3><p>如果你只写一个 <code>go build</code>，你得到的是一个“裸”的程序。而通过这个脚本，你得到的是：</p>
+<ol>
+<li><strong>可追踪的</strong>（知道是谁在什么时候编译的）。</li>
+<li><strong>安全的</strong>（如果是发布给外部，代码已被混淆）。</li>
+<li><strong>可监控的</strong>（支持覆盖率测试）。</li>
+<li><strong>标准化的</strong>（所有开发者产出的二进制格式完全一致）。</li>
+</ol>
+<p><strong>你想知道在 Makefile 里是如何给这个脚本传递 <code>-u</code> 或 <code>-c</code> 参数的吗？（提示：这对应你之前看到的 <code>enc_build</code> 和 <code>cov_build</code> 目标）</strong></p>
+
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>License</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">Older</div><a href="/2025/12/14/%E3%80%90Github%E3%80%91%E8%BF%9B%E9%98%B6%E6%8A%80%E5%B7%A7/">【Github】进阶技巧</a></div></section></div>
+
+
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Rong Zhao</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1">Stellar 1.29.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+<div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%99%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-text">这是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Makefile-%E7%9A%84%E6%A0%B8%E5%BF%83%E4%BD%9C%E7%94%A8"><span class="toc-text">1. Makefile 的核心作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Makefile-%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84"><span class="toc-text">2. Makefile 的基本结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BE%E4%B8%AA%E6%A0%97%E5%AD%90%EF%BC%9A"><span class="toc-text">举个栗子：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%8E%B0%E5%9C%A8%E8%BF%98%E8%A6%81%E5%AD%A6%E5%AE%83%EF%BC%9F"><span class="toc-text">3. 为什么现在还要学它？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%80%BB%E7%BB%93%EF%BC%9A%E5%AE%83%E7%9A%84%E4%BB%B7%E5%80%BC"><span class="toc-text">4. 总结：它的价值</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%BA%E5%95%A5python%E9%A1%B9%E7%9B%AE%E9%87%8C%E4%B9%9F%E6%9C%89%EF%BC%9F"><span class="toc-text">为啥python项目里也有？</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Python-%E9%A1%B9%E7%9B%AE%E4%B8%AD-Makefile-%E7%9A%84%E5%B8%B8%E8%A7%81%E7%94%A8%E9%80%94"><span class="toc-text">1. Python 项目中 Makefile 的常见用途</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%B8%80%E4%B8%AA%E5%85%B8%E5%9E%8B%E7%9A%84-Python-Makefile-%E7%A4%BA%E4%BE%8B"><span class="toc-text">2. 一个典型的 Python Makefile 示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E7%94%A8-Shell-%E8%84%9A%E6%9C%AC%EF%BC%88-sh%EF%BC%89%EF%BC%9F"><span class="toc-text">3. 为什么不用 Shell 脚本（.sh）？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%8E%B0%E4%BB%A3%E6%9B%BF%E4%BB%A3%E5%93%81"><span class="toc-text">4. 现代替代品</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98"><span class="toc-text">项目实战</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E5%B1%82%E7%BA%A7%E7%BB%93%E6%9E%84"><span class="toc-text">整体层级结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E5%85%B6%E4%BB%96%E9%A1%B9%E7%9B%AE%E7%9A%84%E4%BE%9D%E8%B5%96%E5%8C%85"><span class="toc-text">生成其他项目的依赖包</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%B8%AA%E9%A1%B9%E7%9B%AE%E7%9A%84build-sh%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="toc-text">整个项目的build.sh的流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A0%B8%E5%BF%83%E7%BC%96%E8%AF%91%E6%A8%A1%E5%BC%8F%EF%BC%88%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="toc-text">1. 核心编译模式（三种模式）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%85%B3%E9%94%AE%E5%8A%9F%E8%83%BD%E7%82%B9%E8%A7%A3%E6%9E%90"><span class="toc-text">2. 关键功能点解析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#A-%E5%8A%A8%E6%80%81%E7%89%88%E6%9C%AC%E6%B3%A8%E5%85%A5-VER-FLAGS"><span class="toc-text">A. 动态版本注入 (VER_FLAGS)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#B-%E8%87%AA%E5%8A%A8%E5%8C%96%E6%89%AB%E6%8F%8F%E4%B8%8E%E6%9E%84%E5%BB%BA"><span class="toc-text">B. 自动化扫描与构建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#C-%E5%B7%A5%E5%85%B7%E9%93%BE%E8%87%AA%E7%BB%99%E8%87%AA%E8%B6%B3-install-tools"><span class="toc-text">C. 工具链自给自足 (install_tools)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="toc-text">3. 脚本执行流程图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%80%BB%E7%BB%93%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%86%99%E8%BF%99%E4%B9%88%E5%A4%8D%E6%9D%82%E7%9A%84%E8%84%9A%E6%9C%AC%EF%BC%9F"><span class="toc-text">4. 总结：为什么要写这么复杂的脚本？</span></a></li></ol></li></ol></li></ol></div><div class="widget-footer">
+
+<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>Scroll to Top</span></a></div></widget>
+</div></aside><div class='float-panel blur'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+<script type="text/javascript">
+  const ctx = {
+    date_suffix: {
+      just: `Just`,
+      min: `minutes ago`,
+      hour: `hours ago`,
+      day: `days ago`,
+    },
+    root : `/`,
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+  };
+  const deps = {
+    jquery: `https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js`,
+    marked: `https://cdn.jsdelivr.net/npm/marked@13.0.1/lib/marked.umd.min.js`
+  }
+  
+
+</script>
+
+<script type="text/javascript">
+  const utils = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = ctx.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    jq: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+    },
+    
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      let retryTimes = 3;
+      utils.onLoading(el);
+      function req() {
+        return new Promise((resolve, reject) => {
+          let status = 0; // 0 等待 1 完成 2 超时
+          let timer = setTimeout(() => {
+            if (status === 0) {
+              status = 2;
+              timer = null;
+              reject('请求超时');
+              if (retryTimes == 0) {
+                onFailure();
+              }
+            }
+          }, 5000);
+          fetch(url).then(function(response) {
+            if (status !== 2) {
+              clearTimeout(timer);
+              resolve(response);
+              timer = null;
+              status = 1;
+            }
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          }).then(function(data) {
+            retryTimes = 0;
+            utils.onLoadSuccess(el);
+            callback(data);
+          }).catch(function(error) {
+            if (retryTimes > 0) {
+              retryTimes -= 1;
+              setTimeout(() => {
+                req();
+              }, 5000);
+            } else {
+              utils.onLoadFailure(el);
+              onFailure();
+            }
+          });
+        });
+      }
+      req();
+    },
+  };
+</script>
+
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+
+<!-- required -->
+<script src="/js/main.js?v=1.29.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `Switched to Light Mode`,
+      dark: `Switched to Dark Mode`,
+      auto: `Switched to Auto Mode`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
+
+<!-- optional -->
+
+
+
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+</script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error)';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const els = document.getElementsByClassName('ds-memos');
+    if (els != undefined && els.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
+
+
+<!-- inject -->
+
+</div></body></html>
