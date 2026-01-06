@@ -17,20 +17,22 @@
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
   <meta name="theme-color" content="#f9fafb">
   
-  <title>【系统设计】如何定位Redis热key - xinranzero</title>
+  <title>【消息队列】基本概念与设计理念 - xinranzero</title>
 
   
-    <meta name="description" content="热key指一段时间内被频繁访问或操作的键。通常出现在商品限时抢购、瞬时新闻热点等业务场景，可能会对系统的稳定性和可用性造成影响，比如对应节点的网卡带宽被打满，出现丢包重传，请求波动耗时大幅上升，甚至影响到业务的正常使用，引发用户的不满。因此，不可能等到热Key出现已经拖垮了服务再去处理，那个时候业务一定已经受到影响，因此需要提前尽可能在设计和开发时避免引入全局热key，另外，真实的生成环境还是可能">
+    <meta name="description" content="消息队列1. 消息队列是什么？如何选型？ 定义的广义化： 消息队列本质上是具有 “缓冲作用” 和 “发布&#x2F;订阅能力” 的存储引擎。 技术的发展由 需求 和 底层架构 双重驱动： 需求面（功能演进）：消息 (异步&#x2F;解耦) –&gt; 流 (高吞吐&#x2F;削峰) –&gt; 消息和流融合 (一站式解决) 架构面（技术演进）：单机 –&gt; 分布式 (分区&#x2F;副本)">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【系统设计】如何定位Redis热key">
-<meta property="og:url" content="http://xinranzero.com/2025/04/02/%E3%80%90%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E3%80%91%E5%A6%82%E4%BD%95%E5%AE%9A%E4%BD%8DRedis%E7%83%ADkey/index.html">
+<meta property="og:title" content="【消息队列】基本概念与设计理念">
+<meta property="og:url" content="http://xinranzero.com/2025/12/27/%E3%80%90%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E3%80%91%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%8E%E8%AE%BE%E8%AE%A1%E7%90%86%E5%BF%B5/index.html">
 <meta property="og:site_name" content="xinranzero">
-<meta property="og:description" content="热key指一段时间内被频繁访问或操作的键。通常出现在商品限时抢购、瞬时新闻热点等业务场景，可能会对系统的稳定性和可用性造成影响，比如对应节点的网卡带宽被打满，出现丢包重传，请求波动耗时大幅上升，甚至影响到业务的正常使用，引发用户的不满。因此，不可能等到热Key出现已经拖垮了服务再去处理，那个时候业务一定已经受到影响，因此需要提前尽可能在设计和开发时避免引入全局热key，另外，真实的生成环境还是可能">
+<meta property="og:description" content="消息队列1. 消息队列是什么？如何选型？ 定义的广义化： 消息队列本质上是具有 “缓冲作用” 和 “发布&#x2F;订阅能力” 的存储引擎。 技术的发展由 需求 和 底层架构 双重驱动： 需求面（功能演进）：消息 (异步&#x2F;解耦) –&gt; 流 (高吞吐&#x2F;削峰) –&gt; 消息和流融合 (一站式解决) 架构面（技术演进）：单机 –&gt; 分布式 (分区&#x2F;副本)">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2025-04-02T02:38:23.000Z">
-<meta property="article:modified_time" content="2025-04-03T06:53:10.607Z">
+<meta property="og:image" content="http://xinranzero.com/2025/12/27/%E3%80%90%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E3%80%91%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%8E%E8%AE%BE%E8%AE%A1%E7%90%86%E5%BF%B5/845c85d7f3d55cd47c894f0b8eb7ab06.jpg">
+<meta property="article:published_time" content="2025-12-27T05:57:03.000Z">
+<meta property="article:modified_time" content="2025-12-27T08:10:01.452Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xinranzero.com/2025/12/27/%E3%80%90%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E3%80%91%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%8E%E8%AE%BE%E8%AE%A1%E7%90%86%E5%BF%B5/845c85d7f3d55cd47c894f0b8eb7ab06.jpg">
   
   
   
@@ -76,74 +78,122 @@
   <div class="content">
     <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a>
 <span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div>
-<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-04-02T02:38:23.000Z">2025-04-02</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-04-03T06:53:10.607Z">2025-04-03</time></span></div></div></div>
+<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-12-27T05:57:03.000Z">2025-12-27</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-12-27T08:10:01.452Z">2025-12-27</time></span></div></div></div>
     
     <div class="bottom only-title">
       
       <div class="text-area">
-        <h1 class="text title"><span>【系统设计】如何定位Redis热key</span></h1>
+        <h1 class="text title"><span>【消息队列】基本概念与设计理念</span></h1>
         
       </div>
     </div>
     
   </div>
-  </div><article class="md-text content"><p>热key指一段时间内被<strong>频繁访问或操作的键</strong>。通常出现在商品限时抢购、瞬时新闻热点等业务场景，可能会对系统的稳定性和可用性造成影响，比如对应节点的网卡带宽被打满，出现丢包重传，请求波动耗时大幅上升，甚至影响到业务的正常使用，引发用户的不满。因此，不可能等到热Key出现已经拖垮了服务再去处理，那个时候业务一定已经受到影响，因此需要提前尽可能在设计和开发时避免引入全局热key，另外，真实的生成环境还是可能存在边界case、非预期的流量等，因此快速定位热key仍然需要研究。</p>
-<p>需要做到高并发和高性能，对于高频变化的动态数据通常采用多级缓存，搭配缓存预热、缓存失效时长等手段控制。</p>
-<p>按照实现的原理，我们可以尝试利用内置的命令或工具，或者外部流量工具，甚至代码层面开统计key的访问频率，进而对热key做进一步操作。</p>
-<h1 id="一、探测思路"><a href="#一、探测思路" class="headerlink" title="一、探测思路"></a>一、探测思路</h1><p>从Redis请求路径的节点入手。</p>
-<h2 id="1-客户端收集上报"><a href="#1-客户端收集上报" class="headerlink" title="1. 客户端收集上报"></a>1. 客户端收集上报</h2><p>改动 Redis SDK，记录每个请求，定时把收集到的数据上报，然后由一个统一的服务进行聚合计算。</p>
-<ul>
-<li>优点：方案直观简单</li>
-<li>缺点：没法适应多语言架构，一方面多语言 SDK 对齐是个问题，另外一方面后期 SDK 的维护升级会面临比较大的困难，成本很高</li>
+  </div><article class="md-text content"><hr>
+<h1 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h1><h2 id="1-消息队列是什么？如何选型？"><a href="#1-消息队列是什么？如何选型？" class="headerlink" title="1. 消息队列是什么？如何选型？"></a>1. 消息队列是什么？如何选型？</h2><ul>
+<li><strong>定义的广义化：</strong> 消息队列本质上是具有 <strong>“缓冲作用”</strong> 和 <strong>“发布&#x2F;订阅能力”</strong> 的存储引擎。</li>
+<li>技术的发展由 <strong>需求</strong> 和 <strong>底层架构</strong> 双重驱动：<ul>
+<li>需求面（功能演进）：消息 (异步&#x2F;解耦) –&gt; 流 (高吞吐&#x2F;削峰) –&gt; 消息和流融合 (一站式解决)</li>
+<li>架构面（技术演进）：单机 –&gt; 分布式 (分区&#x2F;副本) –&gt; 云原生&#x2F;Serverless (计算存储分离&#x2F;按量付费)</li>
 </ul>
-<h2 id="2-代理层收集上报"><a href="#2-代理层收集上报" class="headerlink" title="2. 代理层收集上报"></a>2. 代理层收集上报</h2><p>如果所有的 Redis 请求都经过代理的话，可以考虑改动 Proxy 代码进行收集，思路与客户端基本类似。</p>
-<ul>
-<li>优点：对使用方完全透明，能够解决客户端 SDK 的语言异构和版本升级问题</li>
-<li>缺点：开发成本会比客户端高些</li>
-</ul>
-<h2 id="3-Redis-数据定时扫描"><a href="#3-Redis-数据定时扫描" class="headerlink" title="3. Redis 数据定时扫描"></a>3. Redis 数据定时扫描</h2><p>利用Redis自带的工具，优点：无需进行二次开发，能够直接利用现成的工具。</p>
-<p>（1）<code>--hotkeys</code> 参数</p>
-<p>Redis在4.0版本后提供了<code>hotkeys</code>功能，可以通过<code>redis-cli --hotkeys</code>命令获取当前keyspace的热点key，实现上是通过 scan + object freq 完成的。</p>
-<ul>
-<li>缺点：<ul>
-<li>由于需要扫描整个 keyspace，<strong>实时性上比较差</strong>;</li>
-<li>扫描时间与 key 的数量正相关，如果 key 的数量比较多，<strong>耗时</strong>可能会非常<strong>长</strong>。</li>
+</li>
+<li><strong>选型标准：</strong> 取决于 <strong>数据量</strong> 和 <strong>业务复杂度</strong>。<ul>
+<li><strong>非标准方案：</strong> 如果数据结构简单、流量不大，用 <strong>Redis (List&#x2F;PubSub)</strong> 或 <strong>MySQL</strong> 模拟消息队列更省运维成本。</li>
+<li><strong>标准方案：</strong> 只有在面临 <strong>大消息、高并发、持久化堆积</strong> 等复杂需求时，才必须引入专门的消息队列产品。</li>
 </ul>
 </li>
 </ul>
-<p>（2） <code>monitor</code>命令</p>
-<p>通过 <code>redis-cli monitor</code>实时抓取出 Redis 服务器接收到的命令，同时结合一些现成的分析工具，比如 <a target="_blank" rel="noopener" href="https://github.com/facebookarchive/redis-faina">redis-faina</a>，统计出热 Key。</p>
+<blockquote>
+<p>追求大数据下的绝对稳定，选 Kafka；如果你是国内微服务业务架构，选 RocketMQ；如果你想尝试最新的云原生架构并解决扩容痛点，可以关注 Pulsar。</p>
+</blockquote>
+<h2 id="2-消息队列的基本特性与基本概念"><a href="#2-消息队列的基本特性与基本概念" class="headerlink" title="2. 消息队列的基本特性与基本概念"></a>2. 消息队列的基本特性与基本概念</h2><h3 id="基本特性"><a href="#基本特性" class="headerlink" title="基本特性"></a>基本特性</h3><p>基本特性：<strong>高性能、高吞吐、低延时</strong>。</p>
+<p>常见的使用场景：</p>
 <ul>
-<li>缺点：在高并发的条件下，有<strong>内存暴增的隐患</strong>，还会<strong>降低</strong> Redis 的<strong>性能</strong>。</li>
+<li>一份数据需要被多个下游系统处理，单流程是一个典型的 <strong>系统解耦</strong>、 <strong>消息分发</strong> 的场景。</li>
+<li>日志采集流程，一般日志数据都很大，直接发到下游，下游系统可能会扛不住崩溃，所以会把数据先缓存到消息队列中。</li>
 </ul>
-<p>（3）慢查询日志</p>
-<p>使用<code>redis-cli slowlog</code>命令查看慢查询日志，记录执行时间超过阈值的命令。<strong>间接</strong>发现热Key，侧重慢查询，非高频访问。</p>
-<h2 id="4-Redis-节点抓包解析"><a href="#4-Redis-节点抓包解析" class="headerlink" title="4. Redis 节点抓包解析"></a>4. Redis 节点抓包解析</h2><p>在可能存在热 key 的节点上(流量倾斜判断)，通过 tcpdump 抓取一段时间内的流量并上报，然后由一个外部的程序进行解析、聚合和计算。</p>
+<h3 id="架构层面的基本概念"><a href="#架构层面的基本概念" class="headerlink" title="架构层面的基本概念"></a>架构层面的基本概念</h3><p><img class="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABGdBTUEAALGPC/xhBQAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAAaADAAQAAAABAAAAAQAAAADa6r/EAAAAC0lEQVQIHWNgAAIAAAUAAY27m/MAAAAASUVORK5CYII=" data-src="/2025/12/27/%E3%80%90%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E3%80%91%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%8E%E8%AE%BE%E8%AE%A1%E7%90%86%E5%BF%B5/845c85d7f3d55cd47c894f0b8eb7ab06.jpg"></p>
+<ol>
+<li><p><strong>Broker</strong> <strong>：</strong> Broker 本质上是一个进程，比如 RocketMQ 的 Broker 就是指RocketMQ Server 启动成功后的一个进程。在实际部署过程中，通常一个物理节点只会起一个进程，所以大部分情况下我们认为 Broker 就表示一个节点，但是在一些特殊场景下，一个物理节点中也可以起多个进程，就表示一台节点有多个Broker。</p>
+</li>
+<li><p><strong>Topic（主题）</strong> <strong>：</strong> 在大部分消息队列中，Topic 都是指用来组织分区关系的一个逻辑概念。通常情况下，一个 Topic 会包含多个分区。但是 RabbitMQ 是一个例外，Topic 是指具体某一种主题模式。</p>
+</li>
+<li><p><strong>Partition&#x2F;Queue&#x2F;MessageQueue（分区&#x2F;分片）：</strong> 在消息队列中，分区、分片、Partiton、Queue、MessageQueue 是一个概念，后面统一用分区来称呼，都是用来表示数据存储的最小单位。一般可以直接将消息写入到一个分区中，也可以将消息写入到Topic，再分发到具体某个分区。一个Topic 通常会包含一个或多个分区。</p>
+</li>
+<li><p><strong>Producer（生产者）</strong>： 生产者指消息的发送方，即发送消息的客户端，也叫生产端。</p>
+</li>
+<li><p><strong>Consumer（消费者）</strong>：消费者指消息的接收方，即接收消息的客户端，也叫消费端。</p>
+</li>
+<li><p><strong>ConsumerGroup&#x2F;Subscription（消费分组&#x2F;订阅）</strong>：一般情况下，消息队列中消费分组和订阅是同一个概念，后面统一用消费分组来称呼。它是用来组织消费者和分区关系的逻辑概念，也有保存消费进度的作用。</p>
+</li>
+<li><p><strong>Message（消息）</strong>：指一条真实的业务数据，消息队列的每条数据一般都叫做一条消息。</p>
+</li>
+<li><p><strong>Offset&#x2F;ConsumerOffset&#x2F;Cursor（位点&#x2F;消费位点&#x2F;游标）：</strong> 指消费者消费分区的进度，即每个消费者都会去消费分区，为了避免重复消费进度，都会保存消费者消费分区的进度信息。</p>
+</li>
+<li><p><strong>ACK&#x2F;OffsetCommit（确认&#x2F;位点提交）</strong>：确认和位点提交一般都是指提交消费进度的操作，即数据消费成功后，提交当前的消费位点，确保不重复消费。</p>
+</li>
+<li><p><strong>Leader&#x2F;Follower（领导者&#x2F;追随者，主副本&#x2F;从副本）</strong>：Leader 和 Follower一般是分区维度副本的概念，即集群中的分区一般会有多个副本。此时就会有主从副本的概念，一般是一个主副本配上一个或多个从副本。</p>
+</li>
+<li><p><strong>Segment（段&#x2F;数据分段）</strong>：段是指消息数据在底层具体存储时，分为多个文件存储时的文件，这个文件就叫做分区的数据段。即比如每超过 1G 的文件就新起一个文件来存储，这个文件就是Segment。基本所有的消息队列都有段的概念，比如Kakfa的Segment、Pulsar的Ledger等等。</p>
+</li>
+<li><p><strong>StartOffset&#x2F;EndOffset（起始位点&#x2F;结束位点）</strong>：起始位点和结束位点是分区维度的概念。即数据是顺序写入到分区的，一般从0的位置开始往后写，此时起始位点就是0。因为数据有过期的概念，分区维度较早的数据会被清理。此时起始位点就会往后移，表示当前阶段最早那条有效消息的位点。结束位点是指最新的那条数据的写入位置。因为数据一直在写入分区，所以起始位点和结束位点是一直动态变化的。</p>
+</li>
+<li><p><strong>ACL（访问控制技术）</strong>：ACL 全称是Access Control List，用来对集群中的资源进行权限控制，比如控制分区或Topic的读和写等。</p>
+</li>
+</ol>
+<h3 id="功能层面的基本概念"><a href="#功能层面的基本概念" class="headerlink" title="功能层面的基本概念"></a>功能层面的基本概念</h3><p>相比于数据库的基本操作是增删改查，消息队列的基本操作就是生产和消费，即读和写。消息队列一般是不支持客户端修改和删除单条数据的。接下来我们就从功能的角度，来了解一些常见的基本概念。</p>
+<ol>
+<li><p><strong>顺序消息：</strong> 是指从生产者和消费者的视角来看，生产者按顺序写入Topic的消息，在消费者这边能不能按生产者写入的顺序消费到消息，如果能就是顺序消息。</p>
+</li>
+<li><p><strong>延时消息&#x2F;定时消息</strong>：都是指生产者发送消息到 Broker 时，可以设置这条消息在多久后能被消费到，当时间到了后，消息就会被消费到。延时的意思就是指以 Broker 收到消息的时间为准，多久后消息能被消费者消费，比如消息发送成功后的30分钟才能被消费。定时是指可以指定消息在设置的时间才能被看到，比如设置明天的20:00才能被消费。从技术上来看，两者是一样的；从客户端的角度，功能上稍微有细微的差别；从内核的角度，一般两种消息是以同一个概念出现的。</p>
+</li>
+<li><p><strong>事务消息</strong>：消息队列的事务因为在不同的消息队列中的实现方式不一样，所以定义也不太一样。正常情况下，事务表示多个操作的原子性，即一批操作要么一起成功，要么一起失败。在消息队列中，一般指发送一批消息，要么同时成功，要么同时失败。</p>
+</li>
+<li><p><strong>消息重试</strong>：消息重试分为生产者重试和消费者重试。生产者重试是指当消息发送失败后，可以设置重试逻辑，比如重试几次、多久后重试、重试间隔多少。消费者重试是指当消费的消息处理失败后，会自动重试消费消息。</p>
+</li>
+<li><p><strong>消息回溯</strong>：是指当允许消息被多次消费，即某条消息消费成功后，这条消息不会被删除，还能再重复到这条消息。</p>
+</li>
+<li><p><strong>广播消费</strong>：广播听起来是一个主动的，即 Broker 将一条消息广播发送给多个消费者。但是在消息队列中，广播本质上是指一条消息能不能被很多个消费者消费到。只要能被多个消费者消费到，就能起到广播消费的效果，就可以叫做广播消费。</p>
+</li>
+<li><p><strong>死信队列</strong>：死信队列是一个功能，不是一个像分区一样的实体概念。它是指当某条消息无法处理成功时，则把这条消息写入到死信队列，将这条消息保存起来，从而可以处理后续的消息的功能。大部分情况下，死信队列在消费端使用得比较多，即消费到的消息无法处理成功，则将数据先保存到死信队列，然后可以继续处理其他消息。当然，在生产的时候也会有死信队列的概念，即某条消息无法写入Topic，则可以先写入到死信队列。从功能上来看，死信队列的功能业务也可以自己去实现。消息队列中死信队列的意思是，消息队列的SDK已经集成了这部分功能，从而让业务使用起来就很简单。</p>
+</li>
+<li><p><strong>优先级队列</strong>：优先级队列是指可以给在一个分区或队列中的消息设置权重，权重大的消息能够被优先消费到。大部分情况下，消息队列的消息处理是FIFO先进先出的规则。此时如果某些消息需要被优先处理，基于这个规则就无法实现。所以就有了优先级队列的概念，优先级是消息维度设置的。</p>
+</li>
+<li><p><strong>消息过滤</strong>：是指可以给每条消息打上标签，在消费的时候可以根据标签信息去消费消息。可以理解为一个简单的查询消息的功能，即通过标签去查询过滤消息。消息过滤主要在消费端生效。</p>
+</li>
+<li><p><strong>消息过期&#x2F;删除（TTL）</strong>：是指消息队列中的消息会在一定时间或者超过一定大小后会被删除。因为消息队列主要是缓冲作用，所以一般会要求消息在一定的策略后会自动被清理。</p>
+</li>
+<li><p><strong>消息轨迹</strong>：是指记录一条消息从生产端发送、服务端保存、消费端消费的全生命周期的流程信息。用来追溯消息什么时候被发送、是否发送成功、什么时候发送成功、服务端是否保存成功、什么时候保存成功、被哪些消费者消费、是否消费成功、什么时候被消费等等信息。</p>
+</li>
+<li><p><strong>消息查询</strong>：是指能够根据某些信息查询到消息队列中的信息。比如根据消息ID或根据消费位点来查询消息，可以理解为数据库里面的固定条件的select操作。</p>
+</li>
+<li><p><strong>消息压缩</strong>：是指生产端发送消息的时候，是否支持将消息进行压缩，以节省物理资源（比如网卡、硬盘）。压缩可以在SDK完成，也可以在Broker完成，并没有严格限制。通常来看，压缩在客户端完成会比较合理。</p>
+</li>
+<li><p><strong>多租户</strong>：是指同一个集群是否有逻辑隔离，比如一个物理集群能否创建两个名称都为test的主题。此时一般会有一个逻辑概念 Namespace（命名空间）和 Tenant（租户）来做隔离，一般有这两个概念的就是支持多租户。</p>
+</li>
+<li><p><strong>消息持久化</strong>：是指消息发送到Broker后，会不会持久化存储，比如存储到硬盘。有些消息队列为了保证性能，只会把消息存储在内存，此时节点重启后数据就会丢失。</p>
+</li>
+<li><p><strong>消息流控</strong>：是指能否对写入集群的消息进行限制。一般会支持Topic、分区、消费分组、集群等维度的限流。</p>
+</li>
+</ol>
+<h1 id="消息队列的核心模块"><a href="#消息队列的核心模块" class="headerlink" title="消息队列的核心模块"></a>消息队列的核心模块</h1><p>需要知道的一共是5块：通信协议、网络、存储、生产端、消费端。</p>
+<h1 id="pulsar基本理解"><a href="#pulsar基本理解" class="headerlink" title="pulsar基本理解"></a>pulsar基本理解</h1><p>在 Pulsar 中，一个完整的消费关系通常表达为：**<code>订阅名称-persistent://租户/命名空间/主题</code>**。</p>
+<ol>
+<li><strong>订阅名称 (Subscription Name)<strong>：<code>-</code> 之前的部分，代表</strong>“谁”</strong>在消费。</li>
+<li><strong>协议与租户&#x2F;命名空间</strong>：<code>persistent://xdr-tenant01/asset/</code>。<ul>
+<li><code>persistent</code>：数据持久化存储。</li>
+<li><code>xdr-tenant01</code>：租户名（通常对应一个项目或部门）。</li>
+<li><code>asset</code>：命名空间（通常对应一个子系统）。</li>
+</ul>
+</li>
+<li>**主题名称 (Topic Name)**：<code>event_change</code>，代表消息的内容分类。</li>
+</ol>
+<p>可以指向同一个订阅：</p>
 <ul>
-<li>优点：该方案<strong>无需侵入</strong>现有的 SDK 或者 Proxy 中间件，<strong>开发维护成本可控</strong></li>
-<li>缺点：热 key 节点的<strong>网络流量和系统负载</strong>已经比较高了，抓包可能会情况进一步<strong>恶化</strong></li>
+<li><strong>一份数据，多种用途</strong>：底层的资产变更数据只有一份（<code>event_change</code>），但下游有四个不同的功能模块需要它。</li>
+<li><strong>进度独立</strong>：每个订阅名称都有自己独立的 <strong>Cursor（进度指针）</strong>。即使“漏洞关联”处理得慢，也不会影响“定时告警”的消费进度。</li>
+<li><strong>互不干扰</strong>：删除其中一个订阅（比如不再需要 Cron 任务），不会影响其他三个订阅的运行。</li>
 </ul>
-<h1 id="二、热key的治理"><a href="#二、热key的治理" class="headerlink" title="二、热key的治理"></a>二、热key的治理</h1><h1 id="三、生产案例"><a href="#三、生产案例" class="headerlink" title="三、生产案例"></a>三、生产案例</h1><h2 id="阿里"><a href="#阿里" class="headerlink" title="阿里"></a>阿里</h2><p>第二层，代理层上报</p>
-<h2 id="京东-Jdhotkey"><a href="#京东-Jdhotkey" class="headerlink" title="京东 Jdhotkey"></a>京东 Jdhotkey</h2><p>解决的是广义的热key问题，不属于探测思路章节中四种中的任何一种，不修改Redis SDK、不依赖Proxy、不扫描Redis数据、也不抓包。它通过<strong>独立的ETCD+Worker集群</strong>实现热key探测，与Redis无耦合。</p>
-<p>相关补充：</p>
-<p>DAU（Daily Active Users，日活跃用户数），指一天内（24小时内）使用产品或服务的独立用户数量，是衡量产品活跃度和用户粘性的重要指标之一。具体由产品的体量决定，例如20w的DAU，对于淘宝就很小，对于小众论坛就很大。</p>
-<p>补充：在Windows如何启动redis？</p>
-<ol>
-<li>进入安装目录并<code>cmd</code></li>
-<li>运行命令<code>redis-server.exe redis.windows.conf</code>。如果报错，依次执行第一条指令：<code>redis-cli.exe</code>，第二条指令：<code>shutdown</code>，第三条指令：<code>exit</code></li>
-</ol>
-<p>参考资料：</p>
-<ol>
-<li><a target="_blank" rel="noopener" href="https://dongzl.github.io/2021/01/14/03-Redis-Hot-Key/index.html">Redis 热 Key 发现以及解决办法</a></li>
-<li><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/845166">如何快速定位 Redis 热 key（上）-阿里云开发者社区</a></li>
-</ol>
-<p>工具推荐：</p>
-<ol>
-<li><p>Redis-faina:<a target="_blank" rel="noopener" href="https://github.com/facebookarchive/redis-faina">facebookarchive&#x2F;redis-faina: A query analyzer that parses Redis’ MONITOR command for counter&#x2F;timing stats about query patterns (github.com)</a></p>
-</li>
-<li><p>京东热key探测框架：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/xOzEj5HtCeh_ezHDPHw6Jw">京东毫秒级热key探测框架设计与实践，已实战于618大促</a></p>
-</li>
-</ol>
 
 <div class="article-footer fs14">
     <section id="license">
@@ -153,7 +203,7 @@
     </section>
     </div>
 </article>
-<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">Newer</div><a href="/2025/04/02/%E3%80%90%E7%AE%97%E6%B3%95%E3%80%91%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E7%AE%97%E6%B3%95LRU-LFU/">【算法】缓存淘汰算法LRU/LFU</a></div><div class="item" id="next"><div class="note">Older</div><a href="/2025/03/28/%E3%80%90%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E3%80%91%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E4%B8%8E%E6%8A%80%E6%9C%AF/">【系统设计】秒杀系统实现方案与技术</a></div></section></div>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"><div class="note">Newer</div><a href="/2026/01/06/%E3%80%90%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E3%80%91%E5%B4%A9%E6%BA%83%E4%B8%80%E8%87%B4%E6%80%A7/">【系统设计】崩溃一致性</a></div><div class="item" id="next"><div class="note">Older</div><a href="/2025/12/21/%E3%80%90Kubernetes%E3%80%91%E8%B5%84%E6%BA%90%E9%85%8D%E7%BD%AE%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/">【Kubernetes】资源配置相关知识</a></div></section></div>
 
 
 
@@ -167,7 +217,7 @@
 
 
 
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%8E%A2%E6%B5%8B%E6%80%9D%E8%B7%AF"><span class="toc-text">一、探测思路</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%94%B6%E9%9B%86%E4%B8%8A%E6%8A%A5"><span class="toc-text">1. 客户端收集上报</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E4%BB%A3%E7%90%86%E5%B1%82%E6%94%B6%E9%9B%86%E4%B8%8A%E6%8A%A5"><span class="toc-text">2. 代理层收集上报</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-Redis-%E6%95%B0%E6%8D%AE%E5%AE%9A%E6%97%B6%E6%89%AB%E6%8F%8F"><span class="toc-text">3. Redis 数据定时扫描</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Redis-%E8%8A%82%E7%82%B9%E6%8A%93%E5%8C%85%E8%A7%A3%E6%9E%90"><span class="toc-text">4. Redis 节点抓包解析</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%83%ADkey%E7%9A%84%E6%B2%BB%E7%90%86"><span class="toc-text">二、热key的治理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%94%9F%E4%BA%A7%E6%A1%88%E4%BE%8B"><span class="toc-text">三、生产案例</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%98%BF%E9%87%8C"><span class="toc-text">阿里</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%AC%E4%B8%9C-Jdhotkey"><span class="toc-text">京东 Jdhotkey</span></a></li></ol></li></ol></div><div class="widget-footer">
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="toc-text">消息队列</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F%E5%A6%82%E4%BD%95%E9%80%89%E5%9E%8B%EF%BC%9F"><span class="toc-text">1. 消息队列是什么？如何选型？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%89%B9%E6%80%A7%E4%B8%8E%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">2. 消息队列的基本特性与基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%89%B9%E6%80%A7"><span class="toc-text">基本特性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E5%B1%82%E9%9D%A2%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">架构层面的基本概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E5%B1%82%E9%9D%A2%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">功能层面的基本概念</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E7%9A%84%E6%A0%B8%E5%BF%83%E6%A8%A1%E5%9D%97"><span class="toc-text">消息队列的核心模块</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#pulsar%E5%9F%BA%E6%9C%AC%E7%90%86%E8%A7%A3"><span class="toc-text">pulsar基本理解</span></a></li></ol></div><div class="widget-footer">
 
 <a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>Scroll to Top</span></a></div></widget>
 </div></aside><div class='float-panel blur'>
