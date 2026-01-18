@@ -1,0 +1,894 @@
+
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1" theme-name="Stellar" theme-version="1.29.1">
+  
+  <meta name="generator" content="Hexo 7.1.1">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  
+  <title>【系统设计】数据结构选型：内存与磁盘 - xinranzero</title>
+
+  
+    <meta name="description" content="问题背景描述要解决的问题：如何在不同的硬件限制（内存 vs 磁盘）和业务需求（多读 vs 多写 vs 范围查询）下，最快地找到数据？ 可以把这个问题拆解为两个维度来理解：  存储介质维度： 内存（RAM）： 访问极快，但空间有限。重点在于算法的CPU计算复杂度（如红黑树、跳表）。 磁盘（Disk&#x2F;SSD）： 访问慢，IO成本高。重点在于减少磁盘IO次数和利用顺序读写（如B+树、LSM树）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【系统设计】数据结构选型：内存与磁盘">
+<meta property="og:url" content="http://xinranzero.com/2026/01/18/%E3%80%90%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E3%80%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E9%80%89%E5%9E%8B%EF%BC%9A%E5%86%85%E5%AD%98%E4%B8%8E%E7%A3%81%E7%9B%98/index.html">
+<meta property="og:site_name" content="xinranzero">
+<meta property="og:description" content="问题背景描述要解决的问题：如何在不同的硬件限制（内存 vs 磁盘）和业务需求（多读 vs 多写 vs 范围查询）下，最快地找到数据？ 可以把这个问题拆解为两个维度来理解：  存储介质维度： 内存（RAM）： 访问极快，但空间有限。重点在于算法的CPU计算复杂度（如红黑树、跳表）。 磁盘（Disk&#x2F;SSD）： 访问慢，IO成本高。重点在于减少磁盘IO次数和利用顺序读写（如B+树、LSM树）">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-01-18T13:54:16.000Z">
+<meta property="article:modified_time" content="2026-01-18T15:25:22.930Z">
+<meta property="article:author" content="Rong Zhao">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  
+
+  <!-- feed -->
+  
+
+  <link rel="stylesheet" href="/css/main.css?v=1.29.1">
+
+  
+
+  
+
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="l_body s:aa content tech" id="start" layout="post" ><aside class="l_left"><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="undefined" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">xinranzero</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="Search"></form><div id="search-result"></div><div class="search-no-result">No Results!</div></div>
+
+
+<nav class="menu dis-select"></nav>
+</div>
+<div class="widgets">
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">Recent Update</span></div><div class="widget-body fs14"><a class="item title" href="/2026/01/18/%E3%80%90%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E3%80%91%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E9%80%89%E5%9E%8B%EF%BC%9A%E5%86%85%E5%AD%98%E4%B8%8E%E7%A3%81%E7%9B%98/"><span class="title">【系统设计】数据结构选型：内存与磁盘</span></a><a class="item title" href="/2026/01/12/%E3%80%90%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E3%80%91IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8-select-poll-epoll/"><span class="title">【系统设计】IO多路复用 select poll epoll</span></a><a class="item title" href="/2026/01/11/%E3%80%90%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E3%80%91Pulsar%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/"><span class="title">【消息队列】Pulsar基本使用</span></a><a class="item title" href="/2026/01/11/%E3%80%90MongoDB%E3%80%91%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E9%80%9F%E6%9F%A5/"><span class="title">【MongoDB】常用命令速查</span></a><a class="item title" href="/2026/01/06/%E3%80%90%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E3%80%91%E5%B4%A9%E6%BA%83%E4%B8%80%E8%87%B4%E6%80%A7/"><span class="title">【系统设计】崩溃一致性</span></a><a class="item title" href="/2025/03/21/%E3%80%90%E9%80%9A%E7%94%A8%E5%B7%A5%E5%85%B7%E3%80%91Git%E5%88%86%E5%B8%83%E5%BC%8F%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E5%B7%A5%E5%85%B7/"><span class="title">【通用工具】Git分布式版本控制工具</span></a><a class="item title" href="/2025/12/27/%E3%80%90%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E3%80%91%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%B8%8E%E8%AE%BE%E8%AE%A1%E7%90%86%E5%BF%B5/"><span class="title">【消息队列】基本概念与设计理念</span></a><a class="item title" href="/2025/12/20/%E3%80%90%E9%80%9A%E7%94%A8%E5%B7%A5%E5%85%B7%E3%80%91Makefile%EF%BC%9A%E8%87%AA%E5%8A%A8%E5%8C%96%E7%BC%96%E8%AF%91%E8%AF%B4%E6%98%8E%E4%B9%A6/"><span class="title">【通用工具】Makefile：自动化编译说明书</span></a><a class="item title" href="/2025/12/21/%E3%80%90MongoDB%E3%80%91%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/"><span class="title">【MongoDB】索引优化</span></a><a class="item title" href="/2025/12/21/%E3%80%90Kubernetes%E3%80%91%E8%B5%84%E6%BA%90%E9%85%8D%E7%BD%AE%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/"><span class="title">【Kubernetes】资源配置相关知识</span></a></div></widget>
+</div>
+
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2026-01-18T13:54:16.000Z">2026-01-18</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2026-01-18T15:25:22.930Z">2026-01-18</time></span></div></div></div>
+    
+    <div class="bottom only-title">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>【系统设计】数据结构选型：内存与磁盘</span></h1>
+        
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><h1 id="问题背景描述"><a href="#问题背景描述" class="headerlink" title="问题背景描述"></a>问题背景描述</h1><p>要解决的问题：如何在不同的硬件限制（内存 vs 磁盘）和业务需求（多读 vs 多写 vs 范围查询）下，最快地找到数据？</p>
+<p>可以把这个问题拆解为两个维度来理解：</p>
+<ol>
+<li><strong>存储介质维度：</strong><ul>
+<li><strong>内存（RAM）：</strong> 访问极快，但空间有限。重点在于算法的CPU计算复杂度（如红黑树、跳表）。</li>
+<li><strong>磁盘（Disk&#x2F;SSD）：</strong> 访问慢，IO成本高。重点在于<strong>减少磁盘IO次数</strong>和<strong>利用顺序读写</strong>（如B+树、LSM树）。</li>
+</ul>
+</li>
+<li><strong>读写倾向维度：</strong><ul>
+<li><strong>读多写少：</strong> 需要极致的查找速度（B+树）。</li>
+<li><strong>写多读少：</strong> 需要极致的写入速度（LSM树）。</li>
+</ul>
+</li>
+</ol>
+<p>从存储介质维度来看，可以归类：</p>
+<table>
+<thead>
+<tr>
+<th><strong>维度</strong></th>
+<th><strong>内存派 (RAM)</strong></th>
+<th><strong>磁盘派 (Disk)</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>追求目标</strong></td>
+<td>极致的 CPU 处理速度（$O(\log N)$ 或 $O(1)$）</td>
+<td>极致的<strong>磁盘 IO 次数</strong>（减少寻道时间）</td>
+</tr>
+<tr>
+<td><strong>物理单位</strong></td>
+<td>字节 (Byte) &#x2F; 指针 (Pointer)</td>
+<td><strong>页 (Page) &#x2F; 块 (Block)</strong></td>
+</tr>
+<tr>
+<td><strong>主要矛盾</strong></td>
+<td>内存空间是否够用，计算是否复杂</td>
+<td>随机读写太慢，必须利用<strong>顺序读写</strong></td>
+</tr>
+<tr>
+<td><strong>常见家族</strong></td>
+<td>红黑树、跳表、AVL树、哈希表</td>
+<td>B+树、LSM树、B-Link树</td>
+</tr>
+</tbody></table>
+<h1 id="底层机制"><a href="#底层机制" class="headerlink" title="底层机制"></a>底层机制</h1><h2 id="B-树"><a href="#B-树" class="headerlink" title="B+ 树"></a>B+ 树</h2><ol>
+<li>为什么是 4KB 或 16KB？（物理与系统的契合）</li>
+</ol>
+<p>这是为了<strong>减少 IO 浪费</strong>和<strong>利用物理对齐</strong>。</p>
+<ul>
+<li><strong>硬件层：</strong> 磁盘驱动器读取数据的最小物理单位是<strong>扇区（Sector）</strong>，传统为 512 字节，现代磁盘（Advanced Format）多为 <strong>4KB</strong>。</li>
+<li><strong>系统层：</strong> 操作系统管理内存和文件系统的基本单位是<strong>页（Page）</strong>，通常也是 <strong>4KB</strong>。</li>
+<li><strong>数据库层（以 InnoDB 为例）：</strong> 如果 B+ 树的节点大小（Page Size）不是 4KB 的整数倍，会导致<strong>“跨页读取”</strong>。例如，如果你定义 Page 为 5KB，为了读这一个 Page，操作系统必须从磁盘读取 2 个 4KB 的物理块，这产生了一次不必要的磁盘 IO。</li>
+<li><strong>16KB 的选型：</strong> 默认选 16KB 而非 4KB，是为了在一次 IO 中加载更多的索引项。虽然 IO 耗时略微增加，但它能显著提升<strong>扇出率</strong>，让树变得更矮。</li>
+</ul>
+<ol start="2">
+<li>树的高度通常是多少？（极致的矮胖设计）</li>
+</ol>
+<p>在生产环境中，即使是千万级甚至亿级的数据量，B+ 树的高度通常也只有 <strong>3 到 4 层</strong>。</p>
+<ul>
+<li><strong>根节点缓存：</strong> 数据库启动后，根节点通常常驻内存。</li>
+<li><strong>中间节点加载：</strong> 第二层节点也极大概率被缓存。</li>
+<li><strong>IO 结果：</strong> 实际上定位一行数据，通常只需要 <strong>1~3 次磁盘 IO</strong>（很多时候甚至只需要 1 次，因为非叶子节点都在内存里）。</li>
+</ul>
+<ol start="3">
+<li>能存多少数据？（千万级容量的推算）</li>
+</ol>
+<p>我们以 MySQL 默认的 <strong>16KB</strong> 节点进行推算：</p>
+<ul>
+<li><strong>非叶子节点：</strong> 假设主键为 <code>BigInt</code>（8 字节），加上指针（6 字节），每个节点可存储约 $16KB &#x2F; 14B \approx 1170$ 个索引项（即分叉数）。</li>
+<li><strong>叶子节点：</strong> 假设每行记录大小为 <strong>1KB</strong>，一个节点可存 $16KB &#x2F; 1KB &#x3D; 16$ 条数据。</li>
+</ul>
+<p><strong>存储能力推演：</strong></p>
+<ul>
+<li><strong>2 层树：</strong> $1170 \times 16 \approx 1.8$ 万条数据。</li>
+<li><strong>3 层树：</strong> $1170 \times 1170 \times 16 \approx$ <strong>2190 万条数据</strong>。</li>
+<li><strong>4 层树：</strong> $1170 \times 1170 \times 1170 \times 16 \approx$ <strong>250 亿条数据</strong>。</li>
+</ul>
+<p>直击要害的总结</p>
+<ol>
+<li><strong>节点大小设为 4KB&#x2F;16KB</strong> 是为了与操作系统和磁盘扇区对齐，<strong>消除 IO 碎片和跨页读写</strong>。</li>
+<li><strong>3 层高度</strong> 就能容纳约 <strong>2200 万行</strong> 数据，这使得查找任意一条记录的磁盘访问次数被严格控制在 <strong>3 次以内</strong>。</li>
+<li><strong>结论：</strong> 这种设计让 B+ 树在海量数据下依然保持了极其稳定的 <strong>$O(\log N)$</strong> 查询性能，且底数（分叉数）非常大，极大地减少了磁盘寻道时间。</li>
+</ol>
+<p>这个问题直击数据库优化的核心。在 B+ 树的物理结构下，主键的选择直接决定了数据的<strong>写入成本</strong>和<strong>存储碎片</strong>。</p>
+<ol>
+<li>核心差异：有序 vs 无序</li>
+</ol>
+<p>B+ 树本质上是一个<strong>有序</strong>的平衡索引结构。</p>
+<ul>
+<li><strong>自增 ID：</strong> 是单调递增的，新数据总是按顺序排列。</li>
+<li><strong>UUID：</strong> 是随机生成的，新数据在逻辑位置上是乱序的。</li>
+</ul>
+<ol start="2">
+<li>对写入性能的影响：顺序写 vs 随机写</li>
+</ol>
+<p>自增 ID（顺序写入）</p>
+<ul>
+<li><strong>操作：</strong> 每次新记录插入，都会追加在当前 B+ 树最后一个叶子节点的末尾。</li>
+<li><strong>结果：</strong> 磁盘是<strong>顺序写</strong>。当一个页（Page）写满后，系统自动开辟一个新页继续写。</li>
+<li><strong>效率：</strong> 写入效率极高，几乎不涉及已满页面的变动。</li>
+</ul>
+<p>UUID（随机写入）</p>
+<ul>
+<li><strong>操作：</strong> 每条新记录可能被插入到 B+ 树中间的任何位置。</li>
+<li><strong>结果：</strong> 磁盘是<strong>随机写</strong>。为了把数据塞进已经排好序的中间位置，数据库必须先查找到对应的 Page，并将其加载进内存。</li>
+<li><strong>效率：</strong> 极其低下，随着数据量增大，磁盘 IO 会成为巨大瓶颈。</li>
+</ul>
+<ol start="3">
+<li>致命杀手：页分裂 (Page Split)</li>
+</ol>
+<p>这是 UUID 导致性能崩溃的根源。</p>
+<ul>
+<li><strong>页分裂过程：</strong> 当 UUID 指向的那个 Page 已经存满（16KB）时，为了插入新数据，数据库必须把这个 Page <strong>拆分成两个页</strong>。</li>
+<li><strong>连锁反应：</strong><ol>
+<li><strong>数据迁移：</strong> 移动约一半的数据到新页。</li>
+<li><strong>上层变动：</strong> 必须修改父节点（索引页）的指针。</li>
+<li><strong>磁盘碎片：</strong> 频繁的分裂会导致页面的填充率极低（通常只有 50%），浪费大量空间。</li>
+<li><strong>大量 IO：</strong> 一次简单的插入可能触发多次磁盘 IO 来调整树结构。</li>
+</ol>
+</li>
+</ul>
+<ol start="4">
+<li>存储与查询效率：索引空间与缓存命中率</li>
+</ol>
+<ul>
+<li><strong>空间占用：</strong> UUID 通常是 36 字节的字符串或 16 字节的二进制，而自增 ID（BigInt）仅需 8 字节。UUID 会让索引体积膨胀数倍，导致<strong>内存缓存（Buffer Pool）能存下的索引项变少</strong>，增加磁盘读取频率。</li>
+<li><strong>缓存失效：</strong> 自增 ID 的局部性非常好（新写的数据都在一起），而 UUID 导致内存中的 Page 被频繁换入换出，缓存命中率大幅下降。</li>
+</ul>
+<p>直击要害的总结</p>
+<ol>
+<li><strong>自增 ID</strong> 保持了 B+ 树的<strong>单调递增性</strong>，实现了磁盘的<strong>顺序追加</strong>，最大程度避免了页分裂，保证了最高的写入吞吐量。</li>
+<li><strong>UUID</strong> 导致了频繁的<strong>随机 IO</strong> 和 <strong>页分裂</strong>，不仅写入慢，还会产生大量内存碎片，使树变得“虚胖”，严重拖慢读写性能。</li>
+<li><strong>工程建议：</strong> 永远优先使用自增 ID 或类雪花算法（Snowflake，趋势递增）作为主键。如果必须存储 UUID，建议将其作为普通唯一索引，而非聚簇索引主键。</li>
+</ol>
+<h2 id="LSM-Tree"><a href="#LSM-Tree" class="headerlink" title="LSM Tree"></a>LSM Tree</h2><p>这两个问题直击 LSM Tree 的灵魂。LSM Tree 之所以能拥有极高的写入吞吐量，正是因为它在对待“修改”和“删除”这件事上采取了极其极端的<strong>“只读不改”</strong>策略。</p>
+<p>以下是针对这两个高价值问题的深度解析：</p>
+<p><strong>问题一：LSM Tree 是如何处理数据的修改（Update）和删除（Delete）的？</strong></p>
+<p>标准答案：</p>
+<p>LSM Tree 是一种 Append-only（只追加） 结构。它在物理层面上严禁随机原地修改已写入磁盘的文件。</p>
+<ol>
+<li><p>修改（Update）的本质是“新增版本”：</p>
+<p>当你要把 ID&#x3D;1 的用户年龄从 20 改为 21 时，LSM 不会去硬盘找旧数据。它直接在当前的内存（MemTable）里写入一条最新的 ID&#x3D;1, Age&#x3D;21。在合并（Compaction）之前，磁盘上可能同时存在多个版本的 ID&#x3D;1，但系统只认可时间戳最新的那一个。</p>
+</li>
+<li><p>删除（Delete）的本质是“墓碑标记（Tombstone）”：</p>
+<p>删除也不是真的抹掉数据，而是写入一条特殊的记录，标记为“已删除”。这条记录被称为墓碑（Tombstone）。</p>
+</li>
+<li><p>最终处理（Merge）：</p>
+<p>只有当后台进行 Compaction（合并） 时，系统才会把不同层级的同名 Key 拿出来对比。此时，旧版本的数据会被丢弃，带有墓碑标记的数据连同旧数据会被彻底物理抹除。</p>
+</li>
+</ol>
+<p>价值点深度关联：</p>
+<p>这解释了为什么 ClickHouse 的 ReplacingMergeTree 引擎在查询时可能还会看到“重复”或“未删除”的数据。因为 Merge（合并）是在后台异步发生的，在合并完成前，你需要通过 FINAL 关键字或特定的查询逻辑来手动过滤掉旧版本。</p>
+<p><strong>问题二：为什么 LSM Tree 读数据经常需要 Bloom Filter（布隆过滤器）配合？</strong></p>
+<p>标准答案：</p>
+<p>这是为了解决 LSM Tree 的致命缺陷——读放大（Read Amplification）。</p>
+<ol>
+<li><p>读放大的痛苦：</p>
+<p>由于 LSM Tree 的数据散落在内存（MemTable）和磁盘上多个不同层级（Level 0, Level 1…）的文件中。当你查找一个 Key 时，如果它不在内存里，你可能需要依次打开 L0 层的多个文件、L1 层的文件……甚至翻遍所有文件才能确定这个 Key 到底存不存在。</p>
+</li>
+<li><p>布隆过滤器（Bloom Filter）的作用：</p>
+<p>布隆过滤器是一个极其节省空间的“保镖”，它存在于每个磁盘文件（SSTable）的头部。当你询问“ID&#x3D;99 在这个文件里吗？”时：</p>
+<ul>
+<li>如果它回答 <strong>“不在”</strong>：那么这个 Key <strong>绝对不在</strong>这个文件里。数据库直接跳过，省下了一次昂贵的磁盘读取。</li>
+<li>如果它回答 <strong>“可能在”</strong>：数据库才会真正去读这个文件的内容。</li>
+</ul>
+</li>
+<li><p>结论：</p>
+<p>布隆过滤器极大地过滤掉了那些无效的随机 IO。如果没有它，LSM Tree 在面对“查询一个不存在的 Key”时，性能会因为扫描大量文件而彻底崩溃。</p>
+</li>
+</ol>
+<p>价值点深度关联：</p>
+<p>在 RocksDB 或 HBase 的调优中，调整布隆过滤器的位数（FPR，假阳性率）是优化读性能的最重要手段。如果你发现 ClickHouse 点查（Point Lookup）很慢，通常就是因为命中了太多的文件索引。</p>
+<p>直击要害的总结</p>
+<ul>
+<li><strong>关于增删改：</strong> LSM Tree 靠<strong>“撒谎”</strong>（用新增代替修改）赢得了速度，最后靠<strong>“后台勤快”</strong>（Compaction）来圆谎。</li>
+<li><strong>关于读性能：</strong> LSM Tree 靠<strong>“预判”</strong>（布隆过滤器）规避了无效劳动，否则它的读取成本将是 B+ 树的几十倍。</li>
+</ul>
+<p><strong>这两个机制完美解释了 LSM 系数据库（如 ClickHouse）为什么“写起来像疯子，读起来像刷子（扫全表快，点查慢）”的物理特性。</strong></p>
+<h2 id="跳表"><a href="#跳表" class="headerlink" title="跳表"></a>跳表</h2><p>这是一个非常经典的设计决策问题。Redis 的作者 Antirez 曾明确表示，选择**跳表（Skip List）**实现有序集合（ZSet）主要不是因为性能有压倒性优势，而是基于**工程实现、内存开销和查询需求**的综合权衡。</p>
+<p>以下是直击要害的标准答案：</p>
+<ol>
+<li>范围查询的极致便捷（最核心原因）</li>
+</ol>
+<p>Redis 的 ZSet 经常需要执行 <code>ZRANGE</code> 或 <code>ZREVRANGE</code> 这样的命令（比如：获取排行榜前 10 名）。</p>
+<ul>
+<li><strong>跳表：</strong> 底层是一个<strong>有序链表</strong>。一旦通过索引跳到起点，接下来的操作就是顺序遍历链表。这种操作在逻辑上非常自然，效率极高。</li>
+<li><strong>平衡树（如红黑树）：</strong> 虽然也能做范围查询，但需要进行<strong>中序遍历</strong>。在树结构中寻找“下一个节点”可能需要回溯到父节点再向下寻找，逻辑实现上比简单的链表遍历要复杂得多。</li>
+</ul>
+<ol start="2">
+<li>实现简单，维护成本低</li>
+</ol>
+<p>这是工程实践中的重要考量。</p>
+<ul>
+<li><strong>红黑树：</strong> 插入或删除节点时，为了保持平衡，可能需要触发复杂的<strong>左旋、右旋和变色</strong>操作。代码逻辑晦涩，极易出错。</li>
+<li><strong>跳表：</strong> 节点层级由<strong>随机概率</strong>（掷硬币）决定。插入数据时，只需要修改前后节点的指针即可。它的逻辑极其直观，代码量仅为红黑树的三分之一，非常便于调试和优化。</li>
+</ul>
+<ol start="3">
+<li>并发环境下锁的粒度更小</li>
+</ol>
+<p>虽然 Redis 目前的核心执行模型是单线程的，但从数据结构设计角度看：</p>
+<ul>
+<li><strong>平衡树：</strong> 一个插入操作可能引发从叶子到根的全树平衡调整，这意味着可能需要锁定整棵树。</li>
+<li><strong>跳表：</strong> 插入操作只影响局部指针。在多线程环境下（如 Java 的 <code>ConcurrentSkipListMap</code>），跳表可以实现更细粒度的锁，并发性能更强。</li>
+</ul>
+<ol start="4">
+<li>内存开销的灵活性</li>
+</ol>
+<p>很多人认为跳表比红黑树费内存（因为有冗余指针），但实际上：</p>
+<ul>
+<li><strong>跳表：</strong> 每个节点包含多少个指针是由概率常数 $p$ 决定的（Redis 中 $p&#x3D;1&#x2F;4$）。平均每个节点只需 $1 &#x2F; (1-p)$ 个指针。</li>
+<li><strong>可控性：</strong> Redis 可以通过调整概率参数，在<strong>查询速度</strong>和<strong>内存消耗</strong>之间找到一个完美的平衡点。</li>
+</ul>
+<ol start="5">
+<li>为什么不选 B+ 树？</li>
+</ol>
+<ul>
+<li><strong>环境不同：</strong> B+ 树的设计初衷是<strong>减少磁盘 IO</strong>（让树变矮）。</li>
+<li><strong>结论：</strong> 在内存环境下，磁盘 IO 不再是问题。B+ 树复杂的节点管理（Page 维护、分裂合并）在内存里反而变成了负担。跳表这种更轻量、对缓存友好的结构明显更合适。</li>
+</ul>
+<p>直击要害的总结</p>
+<ol>
+<li><strong>范围查询</strong>是 ZSet 的高频操作，跳表的有序链表特性天然契合。</li>
+<li><strong>实现简单</strong>意味着系统更稳定，也更容易被其他开发者理解和优化。</li>
+<li><strong>随机化平衡策略</strong>避免了复杂的旋转逻辑，同时在内存使用上非常灵活。</li>
+</ol>
+<p><strong>Redis 的选型哲学是：在满足性能需求的前提下，优先选择实现更简单、更易于扩展的结构。</strong></p>
+<h3 id="终极知识回顾：你的数据结构地图"><a href="#终极知识回顾：你的数据结构地图" class="headerlink" title="终极知识回顾：你的数据结构地图"></a>终极知识回顾：你的数据结构地图</h3><p>既然你已经从 B+ 树聊到了跳表，你的脑子里应该已经有了这张全景图：</p>
+<ol>
+<li><strong>查磁盘上的单条记录</strong> $\rightarrow$ <strong>B+ 树</strong>（MySQL）。</li>
+<li><strong>海量数据拼命写入磁盘</strong> $\rightarrow$ <strong>LSM 树</strong>（ClickHouse）。</li>
+<li><strong>内存里做排行榜和范围查</strong> $\rightarrow$ <strong>跳表</strong>（Redis）。</li>
+<li><strong>编程语言内部简单的映射查找</strong> $\rightarrow$ <strong>红黑树</strong>（Java&#x2F;C++ 内部容器）。</li>
+</ol>
+<p><strong>恭喜你！你已经系统性地梳理了现代互联网架构中最核心的存储基石。</strong></p>
+<p>既然你是 Python&#x2F;Go 后端开发，想了解一下 <strong>Go 语言的 Map 底层</strong>为什么要用 <strong>哈希表</strong> 而不是红黑树吗？或者你想聊聊你在 <strong>ClickHouse</strong> 工作中遇到的具体性能困惑？</p>
+<h1 id="问题-Q-A"><a href="#问题-Q-A" class="headerlink" title="问题 Q&amp;A"></a>问题 Q&amp;A</h1><p>是否能回答出那些触及<strong>底层原理</strong>和<strong>工程权衡</strong>的问题。</p>
+<h3 id="第一层级：原理与机制（面试必问，工作必备）"><a href="#第一层级：原理与机制（面试必问，工作必备）" class="headerlink" title="第一层级：原理与机制（面试必问，工作必备）"></a>第一层级：原理与机制（面试必问，工作必备）</h3><h4 id="1-关于-B-树（MySQL-常规数据库核心）"><a href="#1-关于-B-树（MySQL-常规数据库核心）" class="headerlink" title="1. 关于 B+ 树（MySQL&#x2F;常规数据库核心）"></a>1. 关于 B+ 树（MySQL&#x2F;常规数据库核心）</h4><ul>
+<li><strong>高价值问题：</strong> <strong>“为什么 B+ 树的节点大小（Page Size）通常设计为 4KB 或 16KB？树的高度通常是多少？能存多少数据？”</strong><ul>
+<li><strong>价值点：</strong> 理解<strong>磁盘页（Page）</strong>与操作系统文件系统的对应关系。</li>
+<li><strong>答案线索：</strong> 3层高的 B+ 树通常就能存 2000万行左右的数据。这解释了为什么 MySQL 查询通常只需要 1-3 次磁盘 IO。</li>
+</ul>
+</li>
+<li><strong>高价值问题：</strong> <strong>“在 B+ 树场景下，使用 UUID 和自增 ID 作为主键，性能差异在哪里？”</strong><ul>
+<li><strong>价值点：</strong> 理解<strong>顺序写 vs 随机写</strong>以及<strong>页分裂（Page Split）</strong>带来的性能损耗。这是数据库设计中最常见的坑。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-关于-LSM-Tree（ClickHouse-StarRocks-RocksDB-核心）"><a href="#2-关于-LSM-Tree（ClickHouse-StarRocks-RocksDB-核心）" class="headerlink" title="2. 关于 LSM Tree（ClickHouse&#x2F;StarRocks&#x2F;RocksDB 核心）"></a>2. 关于 LSM Tree（ClickHouse&#x2F;StarRocks&#x2F;RocksDB 核心）</h4><ul>
+<li><strong>高价值问题：</strong> <strong>“LSM Tree 是如何处理数据的修改（Update）和删除（Delete）的？”</strong><ul>
+<li><strong>价值点：</strong> 理解 LSM 的 <strong>Append-only（只追加）</strong> 特性。LSM 里没有真正的“修改”，只有“写入新版本”；没有真正的“删除”，只有“写入墓碑标记（Tombstone）”。这直接关系到你如何理解 ClickHouse 的 <code>ReplacingMergeTree</code>。</li>
+</ul>
+</li>
+<li><strong>高价值问题：</strong> <strong>“为什么 LSM Tree 读数据经常需要 Bloom Filter（布隆过滤器）配合？”</strong><ul>
+<li><strong>价值点：</strong> 理解 LSM 读放大的痛点。不加布隆过滤器，读一个 Key 可能要查所有 Level 的文件，IO 会爆炸。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-关于跳表（Redis-核心）"><a href="#3-关于跳表（Redis-核心）" class="headerlink" title="3. 关于跳表（Redis 核心）"></a>3. 关于跳表（Redis 核心）</h4><ul>
+<li><strong>高价值问题：</strong> <strong>“Redis 的 ZSet 在数据量少的时候用什么结构？数据量大时什么时候转为跳表？”</strong><ul>
+<li><strong>价值点：</strong> 理解<strong>内存压缩</strong>（Ziplist&#x2F;Listpack）。Redis 为了省内存，小数据量是用紧凑列表存的，只有大了才会用跳表。这涉及到“时间换空间”的工程权衡。</li>
+</ul>
+</li>
+</ul>
+<h3 id="第二层级：性能权衡与调优（架构师视角）"><a href="#第二层级：性能权衡与调优（架构师视角）" class="headerlink" title="第二层级：性能权衡与调优（架构师视角）"></a>第二层级：性能权衡与调优（架构师视角）</h3><p>这部分问题涉及到系统设计中的 Trade-off（权衡），没有标准答案，只有最适合场景的答案。</p>
+<h4 id="1-著名的-RUM-猜想"><a href="#1-著名的-RUM-猜想" class="headerlink" title="1. 著名的 RUM 猜想"></a>1. 著名的 RUM 猜想</h4><ul>
+<li><strong>高价值问题：</strong> <strong>“在存储系统设计中，Read（读）、Update（写&#x2F;更新）、Memory（内存&#x2F;空间）这三者通常只能满足两个，如何针对不同场景做取舍？”</strong><ul>
+<li><strong>B+ 树：</strong> 牺牲了写性能（随机写），换取了极致的读性能和较低的内存占用。</li>
+<li><strong>LSM 树：</strong> 牺牲了读性能（可能读多层），换取了极致的写性能。</li>
+<li><strong>Hash 索引：</strong> 牺牲了范围查询能力和内存（可能），换取了 O(1) 的点查。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-写放大-vs-读放大-vs-空间放大"><a href="#2-写放大-vs-读放大-vs-空间放大" class="headerlink" title="2. 写放大 vs 读放大 vs 空间放大"></a>2. 写放大 vs 读放大 vs 空间放大</h4><ul>
+<li><strong>高价值问题：</strong> <strong>“LSM Tree 的 Compaction（合并&#x2F;压缩）机制会带来严重的写放大，这会如何影响线上业务？怎么缓解？”</strong><ul>
+<li><strong>场景映射：</strong> 你在使用 ClickHouse 或 StarRocks 时，如果后台合并太频繁，CPU 会飙升，导致查询变慢。理解这一点，你才懂得为什么要调整 Compaction 策略，或者在业务低峰期做 <code>OPTIMIZE TABLE</code>。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-为什么-MongoDB-以前用-B-树，后来默认存储引擎-WiredTiger-也趋向于-B-树变种？"><a href="#3-为什么-MongoDB-以前用-B-树，后来默认存储引擎-WiredTiger-也趋向于-B-树变种？" class="headerlink" title="3. 为什么 MongoDB 以前用 B 树，后来默认存储引擎 WiredTiger 也趋向于 B+ 树变种？"></a>3. 为什么 MongoDB 以前用 B 树，后来默认存储引擎 WiredTiger 也趋向于 B+ 树变种？</h4><ul>
+<li><strong>价值点：</strong> 纯 B 树虽然离根近的数据查得快，但<strong>范围查询</strong>（Range Scan）对磁盘极其不友好（需要中序遍历，是随机 IO）。而在大数据分析场景下，全表扫描或范围扫描是常态，B+ 树的叶子链表优势巨大。</li>
+</ul>
+<h3 id="第三层级：结合你的技术栈（Go-Python-DB）"><a href="#第三层级：结合你的技术栈（Go-Python-DB）" class="headerlink" title="第三层级：结合你的技术栈（Go&#x2F;Python &amp; DB）"></a>第三层级：结合你的技术栈（Go&#x2F;Python &amp; DB）</h3><p>这些问题能帮你把理论落地到你手写的代码中。</p>
+<ol>
+<li><strong>Go 语言与红黑树&#x2F;B 树：</strong><ul>
+<li>Go 的 <code>map</code> 底层是 Hash 表，但 Go 的运行时定时器（Timer）以前用的是 <strong>最小堆（Min Heap）</strong>，这和跳表、红黑树有什么异同？（都是为了快速找到最小&#x2F;最近的时间点）。</li>
+<li>如果有海量数据在 Go 内存里要做排序和范围查，你会选 <code>B-Tree</code> 库（如 Google 的 <code>btree</code> 包）还是自己写个红黑树？（答案通常是 B-Tree，因为 Go 的 GC 对指针过多的结构（如红黑树&#x2F;链表）压力很大，而 B-Tree 节点大，指针少，<strong>对 GC 更友好</strong>）。</li>
+</ul>
+</li>
+<li><strong>StarRocks&#x2F;ClickHouse 调优：</strong><ul>
+<li>你知道 StarRocks 的主键模型（Primary Key Model）为了加速去重，其实引入了内存索引，这是否打破了 LSM 纯磁盘的限制？</li>
+<li>为什么 ClickHouse 不建议高频单条插入，而建议批次插入？（直接对应 LSM Tree 频繁 Flush 会导致生成大量小文件，后续 Merge 压力巨大的原理）。</li>
+</ul>
+</li>
+</ol>
+<h3 id="总结：在这个阶段，你最该搞懂的一个问题"><a href="#总结：在这个阶段，你最该搞懂的一个问题" class="headerlink" title="总结：在这个阶段，你最该搞懂的一个问题"></a>总结：在这个阶段，你最该搞懂的一个问题</h3><p>如果只选一个最有价值的问题来深入，结合你现在的“后端开发 + 数据分析（ClickHouse&#x2F;StarRocks）”背景，我建议你彻底搞懂：</p>
+<p><strong>“LSM Tree 的 Compaction（合并）策略具体是怎么工作的？Leveled Compaction 和 Size-Tiered Compaction 有什么区别？”</strong></p>
+<ul>
+<li><strong>理由：</strong><ul>
+<li><strong>Size-Tiered</strong>（写极快，读慢，空间放大严重）：适合像 ClickHouse 这种写日志、写指标的场景。</li>
+<li><strong>Leveled</strong>（写稍慢，读稳，空间控制好）：适合 RocksDB 这种做 KV 存储的场景。</li>
+<li><strong>价值：</strong> 弄懂这个，你就能解释为什么有时候你的 StarRocks 写入很快但查询抖动，或者磁盘空间突然报警。</li>
+</ul>
+</li>
+</ul>
+<p>你想先针对 <strong>“LSM Tree 的写放大与合并策略”</strong> 这一点展开吗？这和你工作中的 ClickHouse 息息相关。</p>
+<h1 id="拓展阅读"><a href="#拓展阅读" class="headerlink" title="拓展阅读"></a>拓展阅读</h1><ol>
+<li>DDIA：<a target="_blank" rel="noopener" href="https://github.com/Vonng/ddia?tab=readme-ov-file">GitHub - Vonng&#x2F;ddia: 《Designing Data-Intensive Application》DDIA 第一版 &#x2F; 第二版 中文翻译</a></li>
+<li>各类数据结构可视化：<a target="_blank" rel="noopener" href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html">Data Structure Visualization</a></li>
+<li>算法入门：<a target="_blank" rel="noopener" href="https://www.hello-algo.com/">Hello 算法</a></li>
+<li>红黑树：<a target="_blank" rel="noopener" href="https://javaguide.cn/cs-basics/data-structure/red-black-tree.html#%E7%BA%A2%E9%BB%91%E6%A0%91%E4%BB%8B%E7%BB%8D">红黑树 | JavaGuide</a></li>
+<li>Redis跳表：<a target="_blank" rel="noopener" href="https://javaguide.cn/database/redis/redis-skiplist.html">Redis为什么用跳表实现有序集合 | JavaGuide</a></li>
+<li>面试题汇总：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/crazymakercircle/p/16320430.html">红黑树（图解+秒懂+史上最全） - 技术自由圈 - 博客园</a></li>
+</ol>
+
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>License</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">Older</div><a href="/2026/01/12/%E3%80%90%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1%E3%80%91IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8-select-poll-epoll/">【系统设计】IO多路复用 select poll epoll</a></div></section></div>
+
+
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Rong Zhao</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1">Stellar 1.29.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+<div class="widgets">
+
+
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF%E6%8F%8F%E8%BF%B0"><span class="toc-text">问题背景描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%95%E5%B1%82%E6%9C%BA%E5%88%B6"><span class="toc-text">底层机制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#B-%E6%A0%91"><span class="toc-text">B+ 树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LSM-Tree"><span class="toc-text">LSM Tree</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8"><span class="toc-text">跳表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%88%E6%9E%81%E7%9F%A5%E8%AF%86%E5%9B%9E%E9%A1%BE%EF%BC%9A%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%9C%B0%E5%9B%BE"><span class="toc-text">终极知识回顾：你的数据结构地图</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%AE%E9%A2%98-Q-A"><span class="toc-text">问题 Q&amp;A</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%B1%82%E7%BA%A7%EF%BC%9A%E5%8E%9F%E7%90%86%E4%B8%8E%E6%9C%BA%E5%88%B6%EF%BC%88%E9%9D%A2%E8%AF%95%E5%BF%85%E9%97%AE%EF%BC%8C%E5%B7%A5%E4%BD%9C%E5%BF%85%E5%A4%87%EF%BC%89"><span class="toc-text">第一层级：原理与机制（面试必问，工作必备）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%85%B3%E4%BA%8E-B-%E6%A0%91%EF%BC%88MySQL-%E5%B8%B8%E8%A7%84%E6%95%B0%E6%8D%AE%E5%BA%93%E6%A0%B8%E5%BF%83%EF%BC%89"><span class="toc-text">1. 关于 B+ 树（MySQL&#x2F;常规数据库核心）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%85%B3%E4%BA%8E-LSM-Tree%EF%BC%88ClickHouse-StarRocks-RocksDB-%E6%A0%B8%E5%BF%83%EF%BC%89"><span class="toc-text">2. 关于 LSM Tree（ClickHouse&#x2F;StarRocks&#x2F;RocksDB 核心）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%85%B3%E4%BA%8E%E8%B7%B3%E8%A1%A8%EF%BC%88Redis-%E6%A0%B8%E5%BF%83%EF%BC%89"><span class="toc-text">3. 关于跳表（Redis 核心）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%B1%82%E7%BA%A7%EF%BC%9A%E6%80%A7%E8%83%BD%E6%9D%83%E8%A1%A1%E4%B8%8E%E8%B0%83%E4%BC%98%EF%BC%88%E6%9E%B6%E6%9E%84%E5%B8%88%E8%A7%86%E8%A7%92%EF%BC%89"><span class="toc-text">第二层级：性能权衡与调优（架构师视角）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%91%97%E5%90%8D%E7%9A%84-RUM-%E7%8C%9C%E6%83%B3"><span class="toc-text">1. 著名的 RUM 猜想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%86%99%E6%94%BE%E5%A4%A7-vs-%E8%AF%BB%E6%94%BE%E5%A4%A7-vs-%E7%A9%BA%E9%97%B4%E6%94%BE%E5%A4%A7"><span class="toc-text">2. 写放大 vs 读放大 vs 空间放大</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%B8%BA%E4%BB%80%E4%B9%88-MongoDB-%E4%BB%A5%E5%89%8D%E7%94%A8-B-%E6%A0%91%EF%BC%8C%E5%90%8E%E6%9D%A5%E9%BB%98%E8%AE%A4%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E-WiredTiger-%E4%B9%9F%E8%B6%8B%E5%90%91%E4%BA%8E-B-%E6%A0%91%E5%8F%98%E7%A7%8D%EF%BC%9F"><span class="toc-text">3. 为什么 MongoDB 以前用 B 树，后来默认存储引擎 WiredTiger 也趋向于 B+ 树变种？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E5%B1%82%E7%BA%A7%EF%BC%9A%E7%BB%93%E5%90%88%E4%BD%A0%E7%9A%84%E6%8A%80%E6%9C%AF%E6%A0%88%EF%BC%88Go-Python-DB%EF%BC%89"><span class="toc-text">第三层级：结合你的技术栈（Go&#x2F;Python &amp; DB）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A%E5%9C%A8%E8%BF%99%E4%B8%AA%E9%98%B6%E6%AE%B5%EF%BC%8C%E4%BD%A0%E6%9C%80%E8%AF%A5%E6%90%9E%E6%87%82%E7%9A%84%E4%B8%80%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="toc-text">总结：在这个阶段，你最该搞懂的一个问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8B%93%E5%B1%95%E9%98%85%E8%AF%BB"><span class="toc-text">拓展阅读</span></a></li></ol></div><div class="widget-footer">
+
+<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>Scroll to Top</span></a></div></widget>
+</div></aside><div class='float-panel blur'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+<script type="text/javascript">
+  const ctx = {
+    date_suffix: {
+      just: `Just`,
+      min: `minutes ago`,
+      hour: `hours ago`,
+      day: `days ago`,
+    },
+    root : `/`,
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+  };
+  const deps = {
+    jquery: `https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js`,
+    marked: `https://cdn.jsdelivr.net/npm/marked@13.0.1/lib/marked.umd.min.js`
+  }
+  
+
+</script>
+
+<script type="text/javascript">
+  const utils = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = ctx.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    jq: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+    },
+    
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      let retryTimes = 3;
+      utils.onLoading(el);
+      function req() {
+        return new Promise((resolve, reject) => {
+          let status = 0; // 0 等待 1 完成 2 超时
+          let timer = setTimeout(() => {
+            if (status === 0) {
+              status = 2;
+              timer = null;
+              reject('请求超时');
+              if (retryTimes == 0) {
+                onFailure();
+              }
+            }
+          }, 5000);
+          fetch(url).then(function(response) {
+            if (status !== 2) {
+              clearTimeout(timer);
+              resolve(response);
+              timer = null;
+              status = 1;
+            }
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          }).then(function(data) {
+            retryTimes = 0;
+            utils.onLoadSuccess(el);
+            callback(data);
+          }).catch(function(error) {
+            if (retryTimes > 0) {
+              retryTimes -= 1;
+              setTimeout(() => {
+                req();
+              }, 5000);
+            } else {
+              utils.onLoadFailure(el);
+              onFailure();
+            }
+          });
+        });
+      }
+      req();
+    },
+  };
+</script>
+
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+
+<!-- required -->
+<script src="/js/main.js?v=1.29.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `Switched to Light Mode`,
+      dark: `Switched to Dark Mode`,
+      auto: `Switched to Auto Mode`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
+
+<!-- optional -->
+
+
+
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+</script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error)';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const els = document.getElementsByClassName('ds-memos');
+    if (els != undefined && els.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
+
+
+<!-- inject -->
+
+</div></body></html>
