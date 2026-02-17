@@ -28,7 +28,7 @@
 <meta property="og:description" content="问题背景描述要解决的问题：如何在不同的硬件限制（内存 vs 磁盘）和业务需求（多读 vs 多写 vs 范围查询）下，最快地找到数据？ 可以把这个问题拆解为两个维度来理解：  存储介质维度： 内存（RAM）： 访问极快，但空间有限。重点在于算法的CPU计算复杂度（如红黑树、跳表）。 磁盘（Disk&#x2F;SSD）： 访问慢，IO成本高。重点在于减少磁盘IO次数和利用顺序读写（如B+树、LSM树）">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2026-01-18T13:54:16.000Z">
-<meta property="article:modified_time" content="2026-01-18T15:25:22.930Z">
+<meta property="article:modified_time" content="2026-01-30T16:27:53.000Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
   
@@ -76,7 +76,7 @@
   <div class="content">
     <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a>
 <span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div>
-<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2026-01-18T13:54:16.000Z">2026-01-18</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2026-01-18T15:25:22.930Z">2026-01-18</time></span></div></div></div>
+<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2026-01-18T13:54:16.000Z">2026-01-18</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2026-01-30T16:27:53.000Z">2026-01-31</time></span></div></div></div>
     
     <div class="bottom only-title">
       
@@ -219,7 +219,7 @@
 <ol>
 <li><strong>自增 ID</strong> 保持了 B+ 树的<strong>单调递增性</strong>，实现了磁盘的<strong>顺序追加</strong>，最大程度避免了页分裂，保证了最高的写入吞吐量。</li>
 <li><strong>UUID</strong> 导致了频繁的<strong>随机 IO</strong> 和 <strong>页分裂</strong>，不仅写入慢，还会产生大量内存碎片，使树变得“虚胖”，严重拖慢读写性能。</li>
-<li><strong>工程建议：</strong> 永远优先使用自增 ID 或类雪花算法（Snowflake，趋势递增）作为主键。如果必须存储 UUID，建议将其作为普通唯一索引，而非聚簇索引主键。</li>
+<li><strong>工程建议：</strong> 永远优先使用自增 ID 或类雪花算法（Snowflake，趋势递增<strong>【时钟回拨问题】</strong>）作为主键。如果必须存储 UUID，建议将其作为普通唯一索引，而非聚簇索引主键。</li>
 </ol>
 <h2 id="LSM-Tree"><a href="#LSM-Tree" class="headerlink" title="LSM Tree"></a>LSM Tree</h2><p>这两个问题直击 LSM Tree 的灵魂。LSM Tree 之所以能拥有极高的写入吞吐量，正是因为它在对待“修改”和“删除”这件事上采取了极其极端的<strong>“只读不改”</strong>策略。</p>
 <p>以下是针对这两个高价值问题的深度解析：</p>
@@ -392,6 +392,174 @@
 </li>
 </ul>
 <p>你想先针对 <strong>“LSM Tree 的写放大与合并策略”</strong> 这一点展开吗？这和你工作中的 ClickHouse 息息相关。</p>
+<h1 id="MySQL-mongo"><a href="#MySQL-mongo" class="headerlink" title="MySQL &amp; mongo"></a>MySQL &amp; mongo</h1><p>为什么mongo要使用B树作为存储结构，而mysql是使用B+树呢?</p>
+<p>这是一个非常经典的数据库底层原理问题，核心区别在于 <strong>应用场景（Data Model &amp; Access Pattern）的不同</strong>。</p>
+<p>简单来说：<strong>MySQL（关系型）重在“范围查询”和“排序”，而 MongoDB（文档型）重在“单条记录的快速读写”。</strong></p>
+<p>为了更直观地理解，我们需要对比 B-Tree 和 B+Tree 的结构差异：</p>
+<hr>
+<h3 id="1-核心区别：数据存在哪里？"><a href="#1-核心区别：数据存在哪里？" class="headerlink" title="1. 核心区别：数据存在哪里？"></a>1. 核心区别：数据存在哪里？</h3><ul>
+<li><strong>MySQL (InnoDB) 使用 B+Tree：</strong><ul>
+<li><strong>非叶子节点</strong>只存索引（Key），不存数据。</li>
+<li><strong>叶子节点</strong>存储所有的数据（Value），并且叶子节点之间通过<strong>双向链表</strong>连接。</li>
+</ul>
+</li>
+<li><strong>MongoDB (早期&#x2F;经典模型) 使用 B-Tree：</strong><ul>
+<li><strong>每个节点（包括非叶子节点）</strong> 都存储数据（Key + Value）。</li>
+<li>数据分布在树的各个层级中，叶子节点之间<strong>没有</strong>指针连接。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="2-为什么要这样设计？（场景决定结构）"><a href="#2-为什么要这样设计？（场景决定结构）" class="headerlink" title="2. 为什么要这样设计？（场景决定结构）"></a>2. 为什么要这样设计？（场景决定结构）</h3><h4 id="MySQL-为什么选-B-Tree？（为“关系”服务）"><a href="#MySQL-为什么选-B-Tree？（为“关系”服务）" class="headerlink" title="MySQL 为什么选 B+Tree？（为“关系”服务）"></a>MySQL 为什么选 B+Tree？（为“关系”服务）</h4><p>SQL 数据库最常见的操作不仅仅是 <code>WHERE id = 1</code>，更多的是：</p>
+<ol>
+<li><strong>范围查询</strong>：<code>SELECT * FROM users WHERE age &gt; 18</code>。</li>
+<li><strong>全表&#x2F;全索引扫描</strong>：<code>COUNT(*)</code> 或不带索引的查询。</li>
+<li><strong>排序</strong>：<code>ORDER BY create_time</code>。</li>
+</ol>
+<ul>
+<li><strong>优势</strong>：在 B+Tree 中，只要找到范围的起点，顺着叶子节点的<strong>链表</strong>往后遍历即可，效率极高。</li>
+<li><strong>稳定性</strong>：查询任何数据都需要走到叶子节点，IO 次数是固定的（通常 2-3 次），性能非常稳定。</li>
+<li><strong>页利用率</strong>：因为非叶子节点不存数据，能存更多的索引键值。这意味着树的<strong>层高（Height）更低</strong>，减少磁盘 IO。</li>
+</ul>
+<h4 id="MongoDB-为什么选-B-Tree？（为“文档”服务）"><a href="#MongoDB-为什么选-B-Tree？（为“文档”服务）" class="headerlink" title="MongoDB 为什么选 B-Tree？（为“文档”服务）"></a>MongoDB 为什么选 B-Tree？（为“文档”服务）</h4><p>MongoDB 是非关系型数据库，它的核心理念是 <strong>Document（文档）</strong>。</p>
+<ol>
+<li><strong>单条获取</strong>：Mongo 最典型的用法是通过 <code>_id</code> 获取整个 JSON 文档。数据往往是聚合好的（比如用户信息里直接包含地址列表），不需要像 SQL 那样 Join。</li>
+<li><strong>局部性原理</strong>：如果你经常访问某些“热数据”，在 B-Tree 中，这些热数据可能直接存在于<strong>根节点</strong>或靠近根节点的层级。</li>
+</ol>
+<ul>
+<li><strong>优势</strong>：<ul>
+<li><strong>查询可能更快</strong>：如果运气好，数据在根节点或第二层，只需要 1 次 IO 就能拿到数据，不需要像 B+Tree 那样必须走到最底层的叶子节点。</li>
+<li><strong>写入优势</strong>：对于写入操作，B-Tree 不需要像 B+Tree 那样频繁地维护叶子节点的链表平衡，对于某些高频写入场景有一定优势。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="3-这里的“误区”与现代真相-WiredTiger-引擎"><a href="#3-这里的“误区”与现代真相-WiredTiger-引擎" class="headerlink" title="3. 这里的“误区”与现代真相 (WiredTiger 引擎)"></a>3. 这里的“误区”与现代真相 (WiredTiger 引擎)</h3><p>虽然面试中大家常说“Mongo 用 B-Tree，MySQL 用 B+Tree”，但这个说法在现代 MongoDB 中<strong>并不完全准确</strong>。</p>
+<p>MongoDB 早期的存储引擎 <strong>MMAPv1</strong> 确实使用了类似 B-Tree 的结构。但是，从 MongoDB 3.2 开始，默认引擎变成了 <strong>WiredTiger</strong>。</p>
+<p><strong>WiredTiger 的实现其实更接近 B+Tree：</strong></p>
+<ol>
+<li><strong>磁盘上的数据</strong>：WiredTiger 在磁盘上存储数据时，采用的结构类似于 B+Tree，数据主要集中在叶子页面（Leaf Pages），内部页面（Internal Pages）主要用于导航。</li>
+<li><strong>内存中的表现</strong>：WiredTiger 加载到内存后，会使用一种特殊的 B-Tree 变体，甚至结合了跳表（Skip List）的思想来处理并发修改。</li>
+</ol>
+<p><strong>所以，为什么现在大家还认为 Mongo 是 B-Tree？</strong></p>
+<ul>
+<li><strong>历史原因</strong>：早期架构的惯性认知。</li>
+<li><strong>非关系型特性</strong>：Mongo 依然不支持像 SQL 那样高效的 Join 和复杂的范围分析，它的设计初衷依然是“Key-Value”式的文档存取，这符合 B-Tree 的原始设计哲学（尽快找到 Key 对应的 Value）。</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><table>
+<thead>
+<tr>
+<th><strong>特性</strong></th>
+<th><strong>MySQL (B+Tree)</strong></th>
+<th><strong>MongoDB (B-Tree 理念)</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>数据位置</strong></td>
+<td>只有叶子节点存数据</td>
+<td>所有节点都可能存数据</td>
+</tr>
+<tr>
+<td><strong>范围查询</strong></td>
+<td><strong>极快</strong>（利用叶子节点链表）</td>
+<td>较慢（需要中序遍历整棵树）</td>
+</tr>
+<tr>
+<td><strong>单点查询</strong></td>
+<td>稳定（必须走到叶子节点）</td>
+<td><strong>波动</strong>（最好情况 O(1)，最差 O(logN)）</td>
+</tr>
+<tr>
+<td><strong>树的高度</strong></td>
+<td>矮胖（非叶子节点能存更多索引）</td>
+<td>稍高（节点存了数据，占空间大）</td>
+</tr>
+<tr>
+<td><strong>核心场景</strong></td>
+<td>复杂 SQL，Range，Order，Join</td>
+<td>Get By ID，海量写入，JSON 文档</td>
+</tr>
+</tbody></table>
+<p>简单一句话：<strong>MySQL 假设你会经常遍历数据，所以把数据铺平在底部连起来；MongoDB 假设你只关心特定的某一个文档，所以把数据散落在树的各个节点，让你尽快遇到它。</strong></p>
+<h1 id="MongoDB-存储引擎"><a href="#MongoDB-存储引擎" class="headerlink" title="MongoDB 存储引擎"></a>MongoDB 存储引擎</h1><p>为什么mongo的存储结构向B+树演进？WiredTiger 在磁盘上存储数据时，采用的结构类似于 B+Tree，那么到底和B+树有何不同？</p>
+<p>这是一个非常深刻的问题，触及了数据库存储引擎设计的核心取舍。</p>
+<p>简单来说，MongoDB 从早期的 B-Tree 理念转向 WiredTiger 的 B+Tree 变体，是因为<strong>现代硬件特性（磁盘 I&#x2F;O 和 CPU 缓存）以及业务场景（范围查询和压缩需求）的变化</strong>。</p>
+<p>WiredTiger 虽然在磁盘上使用 B+Tree 结构，但它引入了<strong>“写时复制（Copy on Write）”、“变长页面”和“前缀压缩”</strong>，这使得它与传统的（如 InnoDB 的）B+Tree 也就是所谓的“定长原地更新 B+Tree”有很大不同。</p>
+<hr>
+<h3 id="一、-为什么-Mongo-的存储结构向-B-Tree-演进？"><a href="#一、-为什么-Mongo-的存储结构向-B-Tree-演进？" class="headerlink" title="一、 为什么 Mongo 的存储结构向 B+Tree 演进？"></a>一、 为什么 Mongo 的存储结构向 B+Tree 演进？</h3><p>早期 MongoDB 使用 B-Tree 是为了“单点查询极快”，但在大规模生产环境中，B+Tree 的优势逐渐压倒了 B-Tree：</p>
+<h4 id="1-缓存命中率与树高（Cache-Friendliness）"><a href="#1-缓存命中率与树高（Cache-Friendliness）" class="headerlink" title="1. 缓存命中率与树高（Cache Friendliness）"></a>1. 缓存命中率与树高（Cache Friendliness）</h4><ul>
+<li><strong>B-Tree 问题</strong>：非叶子节点也存 Data（文档）。MongoDB 的文档是 JSON，通常很大（几 KB 到几 MB）。这意味着一个 16KB 的内存页，如果用来存非叶子节点，可能只能存几个 Key + Data。结果就是<strong>分叉率（Fan-out）低，树很高</strong>。</li>
+<li><strong>B+Tree 优势</strong>：非叶子节点只存 Key（索引）。Key 通常很小（几十字节）。一个 16KB 的页可以存上千个 Key。这意味着<strong>树非常矮</strong>（通常 3 层就能存几十亿数据），大大减少了磁盘 I&#x2F;O。</li>
+</ul>
+<h4 id="2-范围查询（Range-Scan）的碾压"><a href="#2-范围查询（Range-Scan）的碾压" class="headerlink" title="2. 范围查询（Range Scan）的碾压"></a>2. 范围查询（Range Scan）的碾压</h4><ul>
+<li><strong>B-Tree 问题</strong>：要做范围查询（例如 <code>age &gt; 20</code>），B-Tree 需要进行“中序遍历”，在树的各层之间跳跃，产生大量的<strong>随机 I&#x2F;O</strong>。</li>
+<li><strong>B+Tree 优势</strong>：叶子节点存了所有数据且物理（或逻辑）相邻。范围查询只需要找到起点，然后顺序读取磁盘块（Sequential I&#x2F;O），这对机械硬盘和 SSD 都极其友好。</li>
+</ul>
+<h4 id="3-磁盘块的利用率"><a href="#3-磁盘块的利用率" class="headerlink" title="3. 磁盘块的利用率"></a>3. 磁盘块的利用率</h4><ul>
+<li>操作系统和磁盘是按“Block（块&#x2F;页）”读写的。B+Tree 将索引和数据分离，使得索引页极其紧凑，数据页也可以集中存储，极大提升了缓冲池（Buffer Pool）的利用效率。</li>
+</ul>
+<hr>
+<h3 id="二、-WiredTiger-的-B-Tree-与传统-B-Tree-InnoDB-有何不同？"><a href="#二、-WiredTiger-的-B-Tree-与传统-B-Tree-InnoDB-有何不同？" class="headerlink" title="二、 WiredTiger 的 B+Tree 与传统 B+Tree (InnoDB) 有何不同？"></a>二、 WiredTiger 的 B+Tree 与传统 B+Tree (InnoDB) 有何不同？</h3><p>虽然大家都是 B+Tree，但 InnoDB 是为<strong>传统 OLTP</strong> 设计的，而 WiredTiger 是为<strong>现代高并发 + 高压缩</strong> 设计的。</p>
+<h4 id="1-页面大小：定长-vs-变长"><a href="#1-页面大小：定长-vs-变长" class="headerlink" title="1. 页面大小：定长 vs. 变长"></a>1. 页面大小：定长 vs. 变长</h4><ul>
+<li>**InnoDB (传统)**：<ul>
+<li>严格的 <strong>16KB</strong>（默认）定长页面。</li>
+<li>如果数据更新导致页面溢出，需要复杂的页分裂（Page Split）和碎片整理。</li>
+</ul>
+</li>
+<li>**WiredTiger (现代)**：<ul>
+<li><strong>磁盘上的页面是变长的</strong>。虽然默认配置可能是 32KB，但它会根据数据压缩后的实际大小动态调整写入磁盘的块大小。</li>
+<li>这使得 WiredTiger 能够极其高效地利用<strong>压缩算法</strong>（如 Snappy, Zstd）。在 InnoDB 中，压缩往往会导致“半满”的页，产生空洞；而 WiredTiger 直接把压缩后的数据紧凑地写盘。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-更新机制：原地更新-vs-写时复制-Copy-on-Write-Checkpoint"><a href="#2-更新机制：原地更新-vs-写时复制-Copy-on-Write-Checkpoint" class="headerlink" title="2. 更新机制：原地更新 vs. 写时复制 (Copy on Write &#x2F; Checkpoint)"></a>2. 更新机制：原地更新 vs. 写时复制 (Copy on Write &#x2F; Checkpoint)</h4><p>这是最本质的区别：</p>
+<ul>
+<li>**InnoDB (Update-in-place)**：<ul>
+<li>修改数据时，直接在 Buffer Pool 的页中修改。</li>
+<li>刷盘时，把原来的页覆盖掉（或者写入 Double Write Buffer 防止崩溃）。</li>
+<li><strong>缺点</strong>：并发控制依赖复杂的行锁和锁存器（Latch）。</li>
+</ul>
+</li>
+<li>**WiredTiger (No-overwrite &#x2F; Reconciliation)**：<ul>
+<li>WiredTiger 采用一种 <strong>Shadow Paging（影子分页）</strong> 的变体。</li>
+<li>当一个页被修改时，WiredTiger 往往<strong>不会</strong>直接覆盖磁盘上的旧页，而是找一个新的位置写入新页，并更新父节点的指针指向新位置。</li>
+<li><strong>优势</strong>：这天然支持了 <strong>Snapshot（快照）隔离级别</strong>。只要旧的页还没被回收，旧的事务就可以读取旧页，完全不需要像 InnoDB 那样去回滚段（Undo Log）里翻旧版本数据。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-内存中的数据结构-Reconciliation-机制"><a href="#3-内存中的数据结构-Reconciliation-机制" class="headerlink" title="3. 内存中的数据结构 (Reconciliation 机制)"></a>3. 内存中的数据结构 (Reconciliation 机制)</h4><p>WiredTiger 最“黑科技”的地方在于：<strong>磁盘上是 B+Tree，但内存里不是 B+Tree</strong>。</p>
+<ul>
+<li><strong>磁盘态</strong>：标准的 B+Tree 页（Extent）。</li>
+<li><strong>内存态</strong>：<ul>
+<li>当一个磁盘页被加载到内存时，WiredTiger 会把它解析成一个 <strong>基准值（Base Data）</strong> 加上一个 <strong>修改链表（Update List &#x2F; Skip List）</strong>。</li>
+<li><strong>读操作</strong>：合并基准值 + 修改链表。</li>
+<li><strong>写操作</strong>：<strong>不修改原始页面</strong>，而是向“修改链表”中追加（Append）一条记录。</li>
+<li><strong>刷盘（Reconciliation）</strong>：只有在 Checkpoint 或内存不够时，WiredTiger 才会把“基准值 + 修改链表”合并，<strong>重新生成</strong>一个新的 B+Tree 磁盘页并写入磁盘。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><strong>形象比喻</strong>：</p>
+<ul>
+<li><strong>InnoDB</strong> 像是在<strong>黑板</strong>上写字，改错了直接擦掉重写（需要锁住黑板不让别人看）。</li>
+<li><strong>WiredTiger</strong> 像是在<strong>书</strong>上贴便利贴。读的时候连着书和便利贴一起看。等到便利贴贴满了，再把整页书重新排版打印一张新的纸插进去。</li>
+</ul>
+</blockquote>
+<h4 id="4-前缀压缩-Prefix-Compression"><a href="#4-前缀压缩-Prefix-Compression" class="headerlink" title="4. 前缀压缩 (Prefix Compression)"></a>4. 前缀压缩 (Prefix Compression)</h4><p>WiredTiger 在磁盘 B+Tree 的叶子节点中，默认开启<strong>Key 前缀压缩</strong>。</p>
+<ul>
+<li>如果有两个 Key：<code>user_001</code>, <code>user_002</code>。</li>
+<li>InnoDB 可能存两份完整的。</li>
+<li>WiredTiger 存 <code>user_001</code>, <code>(match=7, suffix=&#39;2&#39;)</code>。</li>
+<li>这对于像 MongoDB <code>_id</code> 这种通常由时间戳构成、具有高度相似性的 Key，能极大节省空间。</li>
+</ul>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><p>MongoDB 转向 B+Tree 是为了<strong>利用现代 I&#x2F;O 模式处理海量数据</strong>。</p>
+<p>而 WiredTiger 的 B+Tree 与 InnoDB 的区别在于：</p>
+<ol>
+<li><strong>变长页 + 块压缩</strong>：极致的磁盘空间利用率。</li>
+<li>**内存追加写 (Update List)**：写操作在内存中是追加而非覆盖，实现无锁并发。</li>
+<li>**写时复制 (CoW)**：落盘时写新块，天然支持快照，减少了对 Undo Log 的依赖。</li>
+</ol>
+<p>WiredTiger 其实更像是一个 <strong>Log-Structured Merge Tree (LSM) 的思想注入到了 B+Tree 的骨架中</strong>。</p>
 <h1 id="拓展阅读"><a href="#拓展阅读" class="headerlink" title="拓展阅读"></a>拓展阅读</h1><ol>
 <li>DDIA：<a target="_blank" rel="noopener" href="https://github.com/Vonng/ddia?tab=readme-ov-file">GitHub - Vonng&#x2F;ddia: 《Designing Data-Intensive Application》DDIA 第一版 &#x2F; 第二版 中文翻译</a></li>
 <li>各类数据结构可视化：<a target="_blank" rel="noopener" href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html">Data Structure Visualization</a></li>
@@ -423,7 +591,7 @@
 
 
 
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF%E6%8F%8F%E8%BF%B0"><span class="toc-text">问题背景描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%95%E5%B1%82%E6%9C%BA%E5%88%B6"><span class="toc-text">底层机制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#B-%E6%A0%91"><span class="toc-text">B+ 树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LSM-Tree"><span class="toc-text">LSM Tree</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8"><span class="toc-text">跳表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%88%E6%9E%81%E7%9F%A5%E8%AF%86%E5%9B%9E%E9%A1%BE%EF%BC%9A%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%9C%B0%E5%9B%BE"><span class="toc-text">终极知识回顾：你的数据结构地图</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%AE%E9%A2%98-Q-A"><span class="toc-text">问题 Q&amp;A</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%B1%82%E7%BA%A7%EF%BC%9A%E5%8E%9F%E7%90%86%E4%B8%8E%E6%9C%BA%E5%88%B6%EF%BC%88%E9%9D%A2%E8%AF%95%E5%BF%85%E9%97%AE%EF%BC%8C%E5%B7%A5%E4%BD%9C%E5%BF%85%E5%A4%87%EF%BC%89"><span class="toc-text">第一层级：原理与机制（面试必问，工作必备）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%85%B3%E4%BA%8E-B-%E6%A0%91%EF%BC%88MySQL-%E5%B8%B8%E8%A7%84%E6%95%B0%E6%8D%AE%E5%BA%93%E6%A0%B8%E5%BF%83%EF%BC%89"><span class="toc-text">1. 关于 B+ 树（MySQL&#x2F;常规数据库核心）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%85%B3%E4%BA%8E-LSM-Tree%EF%BC%88ClickHouse-StarRocks-RocksDB-%E6%A0%B8%E5%BF%83%EF%BC%89"><span class="toc-text">2. 关于 LSM Tree（ClickHouse&#x2F;StarRocks&#x2F;RocksDB 核心）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%85%B3%E4%BA%8E%E8%B7%B3%E8%A1%A8%EF%BC%88Redis-%E6%A0%B8%E5%BF%83%EF%BC%89"><span class="toc-text">3. 关于跳表（Redis 核心）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%B1%82%E7%BA%A7%EF%BC%9A%E6%80%A7%E8%83%BD%E6%9D%83%E8%A1%A1%E4%B8%8E%E8%B0%83%E4%BC%98%EF%BC%88%E6%9E%B6%E6%9E%84%E5%B8%88%E8%A7%86%E8%A7%92%EF%BC%89"><span class="toc-text">第二层级：性能权衡与调优（架构师视角）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%91%97%E5%90%8D%E7%9A%84-RUM-%E7%8C%9C%E6%83%B3"><span class="toc-text">1. 著名的 RUM 猜想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%86%99%E6%94%BE%E5%A4%A7-vs-%E8%AF%BB%E6%94%BE%E5%A4%A7-vs-%E7%A9%BA%E9%97%B4%E6%94%BE%E5%A4%A7"><span class="toc-text">2. 写放大 vs 读放大 vs 空间放大</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%B8%BA%E4%BB%80%E4%B9%88-MongoDB-%E4%BB%A5%E5%89%8D%E7%94%A8-B-%E6%A0%91%EF%BC%8C%E5%90%8E%E6%9D%A5%E9%BB%98%E8%AE%A4%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E-WiredTiger-%E4%B9%9F%E8%B6%8B%E5%90%91%E4%BA%8E-B-%E6%A0%91%E5%8F%98%E7%A7%8D%EF%BC%9F"><span class="toc-text">3. 为什么 MongoDB 以前用 B 树，后来默认存储引擎 WiredTiger 也趋向于 B+ 树变种？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E5%B1%82%E7%BA%A7%EF%BC%9A%E7%BB%93%E5%90%88%E4%BD%A0%E7%9A%84%E6%8A%80%E6%9C%AF%E6%A0%88%EF%BC%88Go-Python-DB%EF%BC%89"><span class="toc-text">第三层级：结合你的技术栈（Go&#x2F;Python &amp; DB）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A%E5%9C%A8%E8%BF%99%E4%B8%AA%E9%98%B6%E6%AE%B5%EF%BC%8C%E4%BD%A0%E6%9C%80%E8%AF%A5%E6%90%9E%E6%87%82%E7%9A%84%E4%B8%80%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="toc-text">总结：在这个阶段，你最该搞懂的一个问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8B%93%E5%B1%95%E9%98%85%E8%AF%BB"><span class="toc-text">拓展阅读</span></a></li></ol></div><div class="widget-footer">
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF%E6%8F%8F%E8%BF%B0"><span class="toc-text">问题背景描述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%95%E5%B1%82%E6%9C%BA%E5%88%B6"><span class="toc-text">底层机制</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#B-%E6%A0%91"><span class="toc-text">B+ 树</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LSM-Tree"><span class="toc-text">LSM Tree</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B7%B3%E8%A1%A8"><span class="toc-text">跳表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%88%E6%9E%81%E7%9F%A5%E8%AF%86%E5%9B%9E%E9%A1%BE%EF%BC%9A%E4%BD%A0%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%9C%B0%E5%9B%BE"><span class="toc-text">终极知识回顾：你的数据结构地图</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%97%AE%E9%A2%98-Q-A"><span class="toc-text">问题 Q&amp;A</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%B1%82%E7%BA%A7%EF%BC%9A%E5%8E%9F%E7%90%86%E4%B8%8E%E6%9C%BA%E5%88%B6%EF%BC%88%E9%9D%A2%E8%AF%95%E5%BF%85%E9%97%AE%EF%BC%8C%E5%B7%A5%E4%BD%9C%E5%BF%85%E5%A4%87%EF%BC%89"><span class="toc-text">第一层级：原理与机制（面试必问，工作必备）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%85%B3%E4%BA%8E-B-%E6%A0%91%EF%BC%88MySQL-%E5%B8%B8%E8%A7%84%E6%95%B0%E6%8D%AE%E5%BA%93%E6%A0%B8%E5%BF%83%EF%BC%89"><span class="toc-text">1. 关于 B+ 树（MySQL&#x2F;常规数据库核心）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%85%B3%E4%BA%8E-LSM-Tree%EF%BC%88ClickHouse-StarRocks-RocksDB-%E6%A0%B8%E5%BF%83%EF%BC%89"><span class="toc-text">2. 关于 LSM Tree（ClickHouse&#x2F;StarRocks&#x2F;RocksDB 核心）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%85%B3%E4%BA%8E%E8%B7%B3%E8%A1%A8%EF%BC%88Redis-%E6%A0%B8%E5%BF%83%EF%BC%89"><span class="toc-text">3. 关于跳表（Redis 核心）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%B1%82%E7%BA%A7%EF%BC%9A%E6%80%A7%E8%83%BD%E6%9D%83%E8%A1%A1%E4%B8%8E%E8%B0%83%E4%BC%98%EF%BC%88%E6%9E%B6%E6%9E%84%E5%B8%88%E8%A7%86%E8%A7%92%EF%BC%89"><span class="toc-text">第二层级：性能权衡与调优（架构师视角）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E8%91%97%E5%90%8D%E7%9A%84-RUM-%E7%8C%9C%E6%83%B3"><span class="toc-text">1. 著名的 RUM 猜想</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%86%99%E6%94%BE%E5%A4%A7-vs-%E8%AF%BB%E6%94%BE%E5%A4%A7-vs-%E7%A9%BA%E9%97%B4%E6%94%BE%E5%A4%A7"><span class="toc-text">2. 写放大 vs 读放大 vs 空间放大</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E4%B8%BA%E4%BB%80%E4%B9%88-MongoDB-%E4%BB%A5%E5%89%8D%E7%94%A8-B-%E6%A0%91%EF%BC%8C%E5%90%8E%E6%9D%A5%E9%BB%98%E8%AE%A4%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E-WiredTiger-%E4%B9%9F%E8%B6%8B%E5%90%91%E4%BA%8E-B-%E6%A0%91%E5%8F%98%E7%A7%8D%EF%BC%9F"><span class="toc-text">3. 为什么 MongoDB 以前用 B 树，后来默认存储引擎 WiredTiger 也趋向于 B+ 树变种？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E5%B1%82%E7%BA%A7%EF%BC%9A%E7%BB%93%E5%90%88%E4%BD%A0%E7%9A%84%E6%8A%80%E6%9C%AF%E6%A0%88%EF%BC%88Go-Python-DB%EF%BC%89"><span class="toc-text">第三层级：结合你的技术栈（Go&#x2F;Python &amp; DB）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A%E5%9C%A8%E8%BF%99%E4%B8%AA%E9%98%B6%E6%AE%B5%EF%BC%8C%E4%BD%A0%E6%9C%80%E8%AF%A5%E6%90%9E%E6%87%82%E7%9A%84%E4%B8%80%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="toc-text">总结：在这个阶段，你最该搞懂的一个问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL-mongo"><span class="toc-text">MySQL &amp; mongo</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%A0%B8%E5%BF%83%E5%8C%BA%E5%88%AB%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%AD%98%E5%9C%A8%E5%93%AA%E9%87%8C%EF%BC%9F"><span class="toc-text">1. 核心区别：数据存在哪里？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%BF%99%E6%A0%B7%E8%AE%BE%E8%AE%A1%EF%BC%9F%EF%BC%88%E5%9C%BA%E6%99%AF%E5%86%B3%E5%AE%9A%E7%BB%93%E6%9E%84%EF%BC%89"><span class="toc-text">2. 为什么要这样设计？（场景决定结构）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#MySQL-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89-B-Tree%EF%BC%9F%EF%BC%88%E4%B8%BA%E2%80%9C%E5%85%B3%E7%B3%BB%E2%80%9D%E6%9C%8D%E5%8A%A1%EF%BC%89"><span class="toc-text">MySQL 为什么选 B+Tree？（为“关系”服务）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MongoDB-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89-B-Tree%EF%BC%9F%EF%BC%88%E4%B8%BA%E2%80%9C%E6%96%87%E6%A1%A3%E2%80%9D%E6%9C%8D%E5%8A%A1%EF%BC%89"><span class="toc-text">MongoDB 为什么选 B-Tree？（为“文档”服务）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%BF%99%E9%87%8C%E7%9A%84%E2%80%9C%E8%AF%AF%E5%8C%BA%E2%80%9D%E4%B8%8E%E7%8E%B0%E4%BB%A3%E7%9C%9F%E7%9B%B8-WiredTiger-%E5%BC%95%E6%93%8E"><span class="toc-text">3. 这里的“误区”与现代真相 (WiredTiger 引擎)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MongoDB-%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="toc-text">MongoDB 存储引擎</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81-%E4%B8%BA%E4%BB%80%E4%B9%88-Mongo-%E7%9A%84%E5%AD%98%E5%82%A8%E7%BB%93%E6%9E%84%E5%90%91-B-Tree-%E6%BC%94%E8%BF%9B%EF%BC%9F"><span class="toc-text">一、 为什么 Mongo 的存储结构向 B+Tree 演进？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%8E%87%E4%B8%8E%E6%A0%91%E9%AB%98%EF%BC%88Cache-Friendliness%EF%BC%89"><span class="toc-text">1. 缓存命中率与树高（Cache Friendliness）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2%EF%BC%88Range-Scan%EF%BC%89%E7%9A%84%E7%A2%BE%E5%8E%8B"><span class="toc-text">2. 范围查询（Range Scan）的碾压</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E7%A3%81%E7%9B%98%E5%9D%97%E7%9A%84%E5%88%A9%E7%94%A8%E7%8E%87"><span class="toc-text">3. 磁盘块的利用率</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81-WiredTiger-%E7%9A%84-B-Tree-%E4%B8%8E%E4%BC%A0%E7%BB%9F-B-Tree-InnoDB-%E6%9C%89%E4%BD%95%E4%B8%8D%E5%90%8C%EF%BC%9F"><span class="toc-text">二、 WiredTiger 的 B+Tree 与传统 B+Tree (InnoDB) 有何不同？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%A1%B5%E9%9D%A2%E5%A4%A7%E5%B0%8F%EF%BC%9A%E5%AE%9A%E9%95%BF-vs-%E5%8F%98%E9%95%BF"><span class="toc-text">1. 页面大小：定长 vs. 变长</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E6%9B%B4%E6%96%B0%E6%9C%BA%E5%88%B6%EF%BC%9A%E5%8E%9F%E5%9C%B0%E6%9B%B4%E6%96%B0-vs-%E5%86%99%E6%97%B6%E5%A4%8D%E5%88%B6-Copy-on-Write-Checkpoint"><span class="toc-text">2. 更新机制：原地更新 vs. 写时复制 (Copy on Write &#x2F; Checkpoint)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%86%85%E5%AD%98%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-Reconciliation-%E6%9C%BA%E5%88%B6"><span class="toc-text">3. 内存中的数据结构 (Reconciliation 机制)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%89%8D%E7%BC%80%E5%8E%8B%E7%BC%A9-Prefix-Compression"><span class="toc-text">4. 前缀压缩 (Prefix Compression)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-text">总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8B%93%E5%B1%95%E9%98%85%E8%AF%BB"><span class="toc-text">拓展阅读</span></a></li></ol></div><div class="widget-footer">
 
 <a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>Scroll to Top</span></a></div></widget>
 </div></aside><div class='float-panel blur'>

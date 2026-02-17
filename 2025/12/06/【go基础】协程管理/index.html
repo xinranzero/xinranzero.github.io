@@ -28,7 +28,7 @@
 <meta property="og:description" content="从一个错误案例开始起因是在工作中看到一段代码，感觉是程序遇到异常而卡住的原因，起了两个协程，其中一个等待另一个完成后开始，二者通过channel进行消息传递。后一个协程在完成时使用了goto语句。程序最后为select{}永久卡死，等待前面启动的两个协程去跑完就完事了。 原来的代码（铁有问题，不能用在生产上）： 123456789101112131415161718	ticker :&#x3D; time.">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2025-12-06T10:59:18.000Z">
-<meta property="article:modified_time" content="2025-12-07T01:49:50.361Z">
+<meta property="article:modified_time" content="2025-12-07T01:49:50.000Z">
 <meta property="article:author" content="Rong Zhao">
 <meta name="twitter:card" content="summary">
   
@@ -76,7 +76,7 @@
   <div class="content">
     <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a>
 <span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div>
-<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-12-06T10:59:18.000Z">2025-12-06</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-12-07T01:49:50.361Z">2025-12-07</time></span></div></div></div>
+<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2025-12-06T10:59:18.000Z">2025-12-06</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2025-12-07T01:49:50.000Z">2025-12-07</time></span></div></div></div>
     
     <div class="bottom only-title">
       
