@@ -1,0 +1,727 @@
+
+<!DOCTYPE html><html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="hexo-theme" content="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1" theme-name="Stellar" theme-version="1.29.1">
+  
+  <meta name="generator" content="Hexo 7.1.1">
+  <meta http-equiv='x-dns-prefetch-control' content='on' />
+  
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True" >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000">
+  <meta name="theme-color" content="#f9fafb">
+  
+  <title>【AI生成】【代码质量】圈复杂度 Cyclomatic Complexity 详解与实践 - xinranzero</title>
+
+  
+    <meta name="description" content="圈复杂度 Cyclomatic Complexity 详解与实践在软件开发中，代码质量是项目长期成功的关键因素。圈复杂度（Cyclomatic Complexity）作为衡量代码复杂度的经典指标，自 1976 年由 Thomas J. McCabe 提出以来，一直是代码审查、重构和测试的重要参考。本文将深入解析圈复杂度的概念、计算方法以及降低复杂度的实战技巧。 什么是圈复杂度？圈复杂度是一种量化代">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【AI生成】【代码质量】圈复杂度 Cyclomatic Complexity 详解与实践">
+<meta property="og:url" content="http://xinranzero.com/2026/03/29/%E3%80%90%E4%BB%A3%E7%A0%81%E8%B4%A8%E9%87%8F%E3%80%91%E5%9C%88%E5%A4%8D%E6%9D%82%E5%BA%A6-Cyclomatic-Complexity-%E8%AF%A6%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="xinranzero">
+<meta property="og:description" content="圈复杂度 Cyclomatic Complexity 详解与实践在软件开发中，代码质量是项目长期成功的关键因素。圈复杂度（Cyclomatic Complexity）作为衡量代码复杂度的经典指标，自 1976 年由 Thomas J. McCabe 提出以来，一直是代码审查、重构和测试的重要参考。本文将深入解析圈复杂度的概念、计算方法以及降低复杂度的实战技巧。 什么是圈复杂度？圈复杂度是一种量化代">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2026-03-29T14:15:00.000Z">
+<meta property="article:modified_time" content="2026-03-29T14:12:49.786Z">
+<meta property="article:author" content="Rong Zhao">
+<meta property="article:tag" content="圈复杂度">
+<meta property="article:tag" content="代码质量">
+<meta property="article:tag" content="重构">
+<meta property="article:tag" content="McCabe">
+<meta property="article:tag" content="测试">
+<meta property="article:tag" content="静态分析">
+<meta name="twitter:card" content="summary">
+  
+  
+  
+  <meta name="keywords" content="圈复杂度,代码质量,重构,McCabe,测试,静态分析">
+
+  <!-- feed -->
+  
+
+  <link rel="stylesheet" href="/css/main.css?v=1.29.1">
+
+  
+
+  
+
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="l_body s:aa content tech" id="start" layout="post" ><aside class="l_left"><div class="leftbar-container">
+
+
+<header class="header"><div class="logo-wrap"><a class="avatar" href="/about/"><div class="bg" style="opacity:0;background-image:url(https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/rainbow64@3x.webp);"></div><img no-lazy class="avatar" src="undefined" onerror="javascript:this.classList.add('error');this.src='https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/image/2659360.svg';"></a><a class="title" href="/"><div class="main" ff="title">xinranzero</div></a></div></header>
+
+<div class="nav-area">
+<div class="search-wrapper" id="search-wrapper"><form class="search-form"><a class="search-button" onclick="document.getElementById(&quot;search-input&quot;).focus();"><svg t="1705074644177" viewBox="0 0 1025 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1560" width="200" height="200"><path d="M1008.839137 935.96571L792.364903 719.491476a56.783488 56.783488 0 0 0-80.152866 0 358.53545 358.53545 0 1 1 100.857314-335.166073 362.840335 362.840335 0 0 1-3.689902 170.145468 51.248635 51.248635 0 1 0 99.217358 26.444296 462.057693 462.057693 0 1 0-158.255785 242.303546l185.930047 185.725053a51.248635 51.248635 0 0 0 72.568068 0 51.248635 51.248635 0 0 0 0-72.978056z" p-id="1561"></path><path d="M616.479587 615.969233a50.428657 50.428657 0 0 0-61.498362-5.534852 174.655348 174.655348 0 0 1-177.525271 3.484907 49.403684 49.403684 0 0 0-58.833433 6.76482l-3.074918 2.869923a49.403684 49.403684 0 0 0 8.609771 78.10292 277.767601 277.767601 0 0 0 286.992355-5.739847 49.403684 49.403684 0 0 0 8.404776-76.667958z" p-id="1562"></path></svg></a><input type="text" class="search-input" id="search-input" placeholder="Search"></form><div id="search-result"></div><div class="search-no-result">No Results!</div></div>
+
+
+<nav class="menu dis-select"><a class="nav-item active" title="博客" href="/" style="color:#1BCDFC"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg></a><a class="nav-item" title="知识库" href="/notebooks/" style="color:#3DC550"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></a><a class="nav-item" title="专栏" href="/topic/" style="color:#FA6400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></a><a class="nav-item" title="标签" href="/tags/" style="color:#F44336"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg></a><a class="nav-item" title="关于" href="/about/" style="color:#9B59B6"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a></nav>
+</div>
+<div class="widgets">
+
+
+<widget class="widget-wrapper post-list"><div class="widget-header dis-select"><span class="name">Recent Update</span></div><div class="widget-body fs14"><a class="item title" href="/2026/03/29/%E3%80%90%E4%BB%A3%E7%A0%81%E8%B4%A8%E9%87%8F%E3%80%91%E5%9C%88%E5%A4%8D%E6%9D%82%E5%BA%A6-Cyclomatic-Complexity-%E8%AF%A6%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5/"><span class="title">【AI生成】【代码质量】圈复杂度 Cyclomatic Complexity 详解与实践</span></a><a class="item title" href="/2026/03/29/%E3%80%90AI%E5%8D%8F%E8%AE%AE%E3%80%91MCP-Model-Context-Protocol-%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97/"><span class="title">【AI生成】【AI协议】MCP Model Context Protocol 完全指南</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E4%B8%8E%E5%BC%80%E5%8F%91/"><span class="title">【Go基础】环境搭建与开发</span></a><a class="item title" href="/2025/03/21/%E3%80%90%E9%80%9A%E7%94%A8%E5%B7%A5%E5%85%B7%E3%80%91Git%E5%88%86%E5%B8%83%E5%BC%8F%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6%E5%B7%A5%E5%85%B7/"><span class="title">【通用工具】Git分布式版本控制工具</span></a><a class="item title" href="/2026/03/29/%E3%80%90%E6%95%B0%E6%8D%AE%E5%BA%8F%E5%88%97%E5%8C%96%E3%80%91Apache-Avro-%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97/"><span class="title">【AI生成】【数据序列化】Apache Avro 完全指南</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A6%82%E5%BF%B5%E4%B8%8E%E6%BC%94%E8%BF%9B/"><span class="title">【Go基础】微服务概念与演进</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/"><span class="title">【Go基础】并发编程基本概念</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%BC%94%E8%BF%9B%E4%B8%89%E8%89%B2%E6%A0%87%E8%AE%B0%E6%B3%95/"><span class="title">【Go基础】垃圾回收演进 三色标记法</span></a><a class="item title" href="/2025/03/23/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/"><span class="title">【Go基础】分布式事务</span></a><a class="item title" href="/2025/03/19/%E3%80%90Go%E5%9F%BA%E7%A1%80%E3%80%91Go%E5%85%A5%E9%97%A8%E4%B8%8E%E5%AE%9E%E8%B7%B5%E8%B5%84%E6%BA%90%E5%B8%96/"><span class="title">【Go基础】Go入门与实践资源帖</span></a></div></widget>
+</div>
+
+</div></aside><div class="l_main" id="main">
+
+
+
+
+
+<div class="article banner top">
+  <div class="content">
+    <div class="top bread-nav footnote"><div class="left"><div class="flex-row" id="breadcrumb"><a class="cap breadcrumb" href="/">Home</a>
+<span class="sep"></span><a class="cap breadcrumb" href="/">Blog</a></div>
+<div class="flex-row" id="post-meta"><span class="text created">Posted on: <time datetime="2026-03-29T14:15:00.000Z">2026-03-29</time></span><span class="sep updated"></span><span class="text updated">Updated on: <time datetime="2026-03-29T14:12:49.786Z">2026-03-29</time></span></div></div></div>
+    
+    <div class="bottom">
+      
+      <div class="text-area">
+        <h1 class="text title"><span>【AI生成】【代码质量】圈复杂度 Cyclomatic Complexity 详解与实践</span></h1>
+        <div class="text subtitle">掌握圈复杂度的计算方法、降低技巧，提升代码可维护性和测试覆盖率</div>
+      </div>
+    </div>
+    
+  </div>
+  </div><article class="md-text content"><h1 id="圈复杂度-Cyclomatic-Complexity-详解与实践"><a href="#圈复杂度-Cyclomatic-Complexity-详解与实践" class="headerlink" title="圈复杂度 Cyclomatic Complexity 详解与实践"></a>圈复杂度 Cyclomatic Complexity 详解与实践</h1><p>在软件开发中，代码质量是项目长期成功的关键因素。圈复杂度（Cyclomatic Complexity）作为衡量代码复杂度的经典指标，自 1976 年由 Thomas J. McCabe 提出以来，一直是代码审查、重构和测试的重要参考。本文将深入解析圈复杂度的概念、计算方法以及降低复杂度的实战技巧。</p>
+<h2 id="什么是圈复杂度？"><a href="#什么是圈复杂度？" class="headerlink" title="什么是圈复杂度？"></a>什么是圈复杂度？</h2><p>圈复杂度是一种<strong>量化代码复杂度</strong>的度量标准，它表示程序中<strong>线性独立路径</strong>的数量。</p>
+<h3 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h3><ul>
+<li>圈复杂度越高，代码越复杂，理解和维护的难度越大</li>
+<li>高复杂度代码通常意味着更高的缺陷密度</li>
+<li>复杂度高的模块需要更多的测试用例才能达到充分覆盖</li>
+</ul>
+<h3 id="复杂度等级参考"><a href="#复杂度等级参考" class="headerlink" title="复杂度等级参考"></a>复杂度等级参考</h3><table>
+<thead>
+<tr>
+<th>复杂度</th>
+<th>风险等级</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1-10</td>
+<td>低</td>
+<td>简单代码，易于维护</td>
+</tr>
+<tr>
+<td>11-20</td>
+<td>中</td>
+<td>较复杂，需要关注</td>
+</tr>
+<tr>
+<td>21-50</td>
+<td>高</td>
+<td>复杂代码，需要重构</td>
+</tr>
+<tr>
+<td>&gt;50</td>
+<td>极高</td>
+<td>非常危险，必须重构</td>
+</tr>
+</tbody></table>
+<h2 id="圈复杂度的计算方法"><a href="#圈复杂度的计算方法" class="headerlink" title="圈复杂度的计算方法"></a>圈复杂度的计算方法</h2><p>圈复杂度的计算基于<strong>控制流图（Control Flow Graph, CFG）</strong>，有两种常用方法：</p>
+<h3 id="方法一：基于节点和边数"><a href="#方法一：基于节点和边数" class="headerlink" title="方法一：基于节点和边数"></a>方法一：基于节点和边数</h3><p><strong>公式</strong>：<code>V(G) = E - N + 2P</code></p>
+<ul>
+<li><strong>E</strong>：边的数量（控制流转移）</li>
+<li><strong>N</strong>：节点的数量（代码块）</li>
+<li><strong>P</strong>：连通分量数（通常为 1）</li>
+</ul>
+<h3 id="方法二：基于决策节点（推荐）"><a href="#方法二：基于决策节点（推荐）" class="headerlink" title="方法二：基于决策节点（推荐）"></a>方法二：基于决策节点（推荐）</h3><p><strong>公式</strong>：<code>V(G) = 决策节点数 + 1</code></p>
+<p><strong>决策节点包括</strong>：</p>
+<ul>
+<li><code>if</code>、<code>else if</code></li>
+<li><code>while</code>、<code>do-while</code></li>
+<li><code>for</code>、<code>foreach</code></li>
+<li><code>switch</code> &#x2F; <code>case</code></li>
+<li><code>catch</code>、<code>? :</code>（三元运算符）</li>
+<li><code>&amp;&amp;</code>、<code>||</code>（短路运算符）</li>
+</ul>
+<h3 id="计算示例"><a href="#计算示例" class="headerlink" title="计算示例"></a>计算示例</h3><p><strong>示例代码</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">calculateScore</span><span class="params">(<span class="type">int</span> correct, <span class="type">int</span> total, <span class="type">boolean</span> bonus)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">score</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (total &gt; <span class="number">0</span>) &#123;                    <span class="comment">// 决策点 1</span></span><br><span class="line">        score = (correct * <span class="number">100</span>) / total;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (bonus &amp;&amp; correct == total) &#123; <span class="comment">// 决策点 2（&amp;&amp; 算 2 个）</span></span><br><span class="line">            score += <span class="number">10</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        score = -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> score;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>决策节点分析</strong>：</p>
+<ol>
+<li><code>if (total &gt; 0)</code> —— 1 个</li>
+<li><code>if (bonus &amp;&amp; correct == total)</code> —— 1 个</li>
+<li><code>&amp;&amp;</code> 运算符 —— 1 个（短路判断）</li>
+</ol>
+<p><strong>圈复杂度</strong>：<code>3 + 1 = 4</code></p>
+<p><strong>独立路径</strong>：</p>
+<ol>
+<li>total ≤ 0 → 返回 -1</li>
+<li>total &gt; 0, bonus&#x3D;false → 返回基础分</li>
+<li>total &gt; 0, bonus&#x3D;true, correct≠total → 返回基础分</li>
+<li>total &gt; 0, bonus&#x3D;true, correct&#x3D;total → 返回基础分+10</li>
+</ol>
+<h2 id="降低圈复杂度的实战技巧"><a href="#降低圈复杂度的实战技巧" class="headerlink" title="降低圈复杂度的实战技巧"></a>降低圈复杂度的实战技巧</h2><h3 id="1-使用卫语句（Guard-Clauses）"><a href="#1-使用卫语句（Guard-Clauses）" class="headerlink" title="1. 使用卫语句（Guard Clauses）"></a>1. 使用卫语句（Guard Clauses）</h3><p><strong>重构前</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">processOrder</span><span class="params">(Order order)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (order != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (order.isValid()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (order.hasItems()) &#123;</span><br><span class="line">                <span class="comment">// 处理订单</span></span><br><span class="line">                saveOrder(order);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">EmptyOrderException</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">InvalidOrderException</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullOrderException</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 圈复杂度：4</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重构后</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">processOrder</span><span class="params">(Order order)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (order == <span class="literal">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullOrderException</span>();</span><br><span class="line">    <span class="keyword">if</span> (!order.isValid()) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">InvalidOrderException</span>();</span><br><span class="line">    <span class="keyword">if</span> (!order.hasItems()) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">EmptyOrderException</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 处理订单</span></span><br><span class="line">    saveOrder(order);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 圈复杂度：1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-提取方法（Extract-Method）"><a href="#2-提取方法（Extract-Method）" class="headerlink" title="2. 提取方法（Extract Method）"></a>2. 提取方法（Extract Method）</h3><p><strong>重构前</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">double</span> <span class="title function_">calculatePrice</span><span class="params">(Product product, Customer customer)</span> &#123;</span><br><span class="line">    <span class="type">double</span> <span class="variable">basePrice</span> <span class="operator">=</span> product.getPrice();</span><br><span class="line">    <span class="type">double</span> <span class="variable">discount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (customer.isVIP()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (customer.getYears() &gt; <span class="number">5</span>) &#123;</span><br><span class="line">            discount = <span class="number">0.3</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            discount = <span class="number">0.2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (customer.isMember()) &#123;</span><br><span class="line">        discount = <span class="number">0.1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (product.isOnSale()) &#123;</span><br><span class="line">        discount += <span class="number">0.1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> basePrice * (<span class="number">1</span> - discount);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 圈复杂度：5</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重构后</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">double</span> <span class="title function_">calculatePrice</span><span class="params">(Product product, Customer customer)</span> &#123;</span><br><span class="line">    <span class="type">double</span> <span class="variable">basePrice</span> <span class="operator">=</span> product.getPrice();</span><br><span class="line">    <span class="type">double</span> <span class="variable">discount</span> <span class="operator">=</span> calculateCustomerDiscount(customer);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (product.isOnSale()) &#123;</span><br><span class="line">        discount += <span class="number">0.1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> basePrice * (<span class="number">1</span> - discount);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="type">double</span> <span class="title function_">calculateCustomerDiscount</span><span class="params">(Customer customer)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (customer.isVIP()) &#123;</span><br><span class="line">        <span class="keyword">return</span> customer.getYears() &gt; <span class="number">5</span> ? <span class="number">0.3</span> : <span class="number">0.2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (customer.isMember()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0.1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 圈复杂度：calculatePrice=2, calculateCustomerDiscount=3</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-使用多态替代条件判断"><a href="#3-使用多态替代条件判断" class="headerlink" title="3. 使用多态替代条件判断"></a>3. 使用多态替代条件判断</h3><p><strong>重构前</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">double</span> <span class="title function_">calculateArea</span><span class="params">(Shape shape)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (shape.getType().equals(<span class="string">&quot;CIRCLE&quot;</span>)) &#123;</span><br><span class="line">        <span class="keyword">return</span> Math.PI * shape.getRadius() * shape.getRadius();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (shape.getType().equals(<span class="string">&quot;RECTANGLE&quot;</span>)) &#123;</span><br><span class="line">        <span class="keyword">return</span> shape.getWidth() * shape.getHeight();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (shape.getType().equals(<span class="string">&quot;TRIANGLE&quot;</span>)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0.5</span> * shape.getBase() * shape.getHeight();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 圈复杂度：4</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重构后</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="type">double</span> <span class="title function_">calculateArea</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Circle</span> <span class="keyword">extends</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">double</span> radius;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">calculateArea</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> Math.PI * radius * radius;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Rectangle</span> <span class="keyword">extends</span> <span class="title class_">Shape</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">double</span> width, height;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">double</span> <span class="title function_">calculateArea</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> width * height;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">printArea</span><span class="params">(Shape shape)</span> &#123;</span><br><span class="line">    System.out.println(shape.calculateArea());</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 圈复杂度：1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-策略模式处理算法选择"><a href="#4-策略模式处理算法选择" class="headerlink" title="4. 策略模式处理算法选择"></a>4. 策略模式处理算法选择</h3><p><strong>重构前</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">pay</span><span class="params">(String paymentType, <span class="type">double</span> amount)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (paymentType.equals(<span class="string">&quot;CREDIT_CARD&quot;</span>)) &#123;</span><br><span class="line">        processCreditCard(amount);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (paymentType.equals(<span class="string">&quot;PAYPAL&quot;</span>)) &#123;</span><br><span class="line">        processPayPal(amount);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (paymentType.equals(<span class="string">&quot;ALIPAY&quot;</span>)) &#123;</span><br><span class="line">        processAlipay(amount);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (paymentType.equals(<span class="string">&quot;WECHAT&quot;</span>)) &#123;</span><br><span class="line">        processWechat(amount);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 圈复杂度：5</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重构后</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">PaymentStrategy</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">pay</span><span class="params">(<span class="type">double</span> amount)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CreditCardStrategy</span> <span class="keyword">implements</span> <span class="title class_">PaymentStrategy</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">pay</span><span class="params">(<span class="type">double</span> amount)</span> &#123; <span class="comment">/* ... */</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">PaymentContext</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> PaymentStrategy strategy;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setStrategy</span><span class="params">(PaymentStrategy strategy)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.strategy = strategy;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">executePayment</span><span class="params">(<span class="type">double</span> amount)</span> &#123;</span><br><span class="line">        strategy.pay(amount);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 圈复杂度：1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-使用查找表替代条件链"><a href="#5-使用查找表替代条件链" class="headerlink" title="5. 使用查找表替代条件链"></a>5. 使用查找表替代条件链</h3><p><strong>重构前</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> String <span class="title function_">getDayName</span><span class="params">(<span class="type">int</span> day)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (day == <span class="number">1</span>) <span class="keyword">return</span> <span class="string">&quot;Monday&quot;</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (day == <span class="number">2</span>) <span class="keyword">return</span> <span class="string">&quot;Tuesday&quot;</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (day == <span class="number">3</span>) <span class="keyword">return</span> <span class="string">&quot;Wednesday&quot;</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (day == <span class="number">4</span>) <span class="keyword">return</span> <span class="string">&quot;Thursday&quot;</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (day == <span class="number">5</span>) <span class="keyword">return</span> <span class="string">&quot;Friday&quot;</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (day == <span class="number">6</span>) <span class="keyword">return</span> <span class="string">&quot;Saturday&quot;</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (day == <span class="number">7</span>) <span class="keyword">return</span> <span class="string">&quot;Sunday&quot;</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Invalid&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 圈复杂度：8</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重构后</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String[] DAYS = &#123;</span><br><span class="line">    <span class="string">&quot;Invalid&quot;</span>, <span class="string">&quot;Monday&quot;</span>, <span class="string">&quot;Tuesday&quot;</span>, <span class="string">&quot;Wednesday&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Thursday&quot;</span>, <span class="string">&quot;Friday&quot;</span>, <span class="string">&quot;Saturday&quot;</span>, <span class="string">&quot;Sunday&quot;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">getDayName</span><span class="params">(<span class="type">int</span> day)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (day &gt;= <span class="number">1</span> &amp;&amp; day &lt;= <span class="number">7</span>) ? DAYS[day] : DAYS[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 圈复杂度：2</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="各语言复杂度检测工具"><a href="#各语言复杂度检测工具" class="headerlink" title="各语言复杂度检测工具"></a>各语言复杂度检测工具</h2><h3 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Checkstyle</span></span><br><span class="line">java -jar checkstyle.jar -c /google_checks.xml MyClass.java</span><br><span class="line"></span><br><span class="line"><span class="comment"># SonarQube（推荐）</span></span><br><span class="line"><span class="comment"># 配置 sonar.coverage.exclusions 和复杂度阈值</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 radon</span></span><br><span class="line">pip install radon</span><br><span class="line"></span><br><span class="line"><span class="comment"># 分析复杂度</span></span><br><span class="line">radon cc -a -s myproject/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出示例</span></span><br><span class="line"><span class="comment"># mymodule.py</span></span><br><span class="line"><span class="comment">#     M 123:4 MyClass.my_method - B (7)</span></span><br><span class="line"><span class="comment">#     F 45:0 complex_function - C (12)</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="JavaScript-TypeScript"><a href="#JavaScript-TypeScript" class="headerlink" title="JavaScript&#x2F;TypeScript"></a>JavaScript&#x2F;TypeScript</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ESLint 配置</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;rules&quot;</span>: &#123;</span><br><span class="line">    <span class="string">&quot;complexity&quot;</span>: [<span class="string">&quot;error&quot;</span>, 10]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行检查</span></span><br><span class="line">npx eslint src/</span><br></pre></td></tr></table></figure>
+
+<h3 id="Go"><a href="#Go" class="headerlink" title="Go"></a>Go</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装 gocyclo</span></span><br><span class="line">go install github.com/fzipp/gocyclo/cmd/gocyclo@latest</span><br><span class="line"></span><br><span class="line"><span class="comment"># 分析</span></span><br><span class="line">gocyclo -over 10 ./...</span><br></pre></td></tr></table></figure>
+
+<h2 id="CI-CD-集成"><a href="#CI-CD-集成" class="headerlink" title="CI&#x2F;CD 集成"></a>CI&#x2F;CD 集成</h2><h3 id="GitHub-Actions-示例"><a href="#GitHub-Actions-示例" class="headerlink" title="GitHub Actions 示例"></a>GitHub Actions 示例</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">Code</span> <span class="string">Quality</span> <span class="string">Check</span></span><br><span class="line"></span><br><span class="line"><span class="attr">on:</span> [<span class="string">push</span>, <span class="string">pull_request</span>]</span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">complexity:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">uses:</span> <span class="string">actions/checkout@v3</span></span><br><span class="line">      </span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Set</span> <span class="string">up</span> <span class="string">Python</span></span><br><span class="line">        <span class="attr">uses:</span> <span class="string">actions/setup-python@v4</span></span><br><span class="line">        <span class="attr">with:</span></span><br><span class="line">          <span class="attr">python-version:</span> <span class="string">&#x27;3.10&#x27;</span></span><br><span class="line">      </span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Install</span> <span class="string">dependencies</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">pip</span> <span class="string">install</span> <span class="string">radon</span></span><br><span class="line">      </span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Check</span> <span class="string">complexity</span></span><br><span class="line">        <span class="attr">run:</span> <span class="string">|</span></span><br><span class="line"><span class="string">          radon cc -a -s --min=B . || true</span></span><br><span class="line"><span class="string">          # 如果有复杂度超过15的函数，构建失败</span></span><br><span class="line"><span class="string">          if radon cc -a -s --min=C . | grep -q &quot;C\|D\|E\|F&quot;; then</span></span><br><span class="line"><span class="string">            echo &quot;Complexity check failed!&quot;</span></span><br><span class="line"><span class="string">            exit 1</span></span><br><span class="line"><span class="string">          fi</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="SonarQube-质量门禁"><a href="#SonarQube-质量门禁" class="headerlink" title="SonarQube 质量门禁"></a>SonarQube 质量门禁</h3><figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># sonar-project.properties</span></span><br><span class="line"><span class="attr">sonar.coverage.exclusions</span>=<span class="string">**/test/**</span></span><br><span class="line"><span class="attr">sonar.cpd.exclusions</span>=<span class="string">**/generated/**</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># 复杂度阈值</span></span><br><span class="line"><span class="attr">sonar.java.coveragePlugin</span>=<span class="string">jacoco</span></span><br><span class="line"><span class="attr">sonar.coverage.jacoco.xmlReportPaths</span>=<span class="string">target/site/jacoco/jacoco.xml</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="圈复杂度的局限性"><a href="#圈复杂度的局限性" class="headerlink" title="圈复杂度的局限性"></a>圈复杂度的局限性</h2><p>虽然圈复杂度是重要指标，但也存在局限：</p>
+<ol>
+<li><strong>不衡量数据复杂度</strong>：复杂的数据结构操作可能圈复杂度不高，但理解困难</li>
+<li><strong>不衡量嵌套深度</strong>：多层嵌套和扁平条件复杂度相同</li>
+<li><strong>不衡量代码行数</strong>：长方法可能圈复杂度不高</li>
+<li><strong>语言特性影响</strong>：函数式编程的复杂度计算可能不准确</li>
+</ol>
+<p><strong>建议</strong>：结合<strong>认知复杂度（Cognitive Complexity）</strong>一起使用，更全面地评估代码可读性。</p>
+<h2 id="最佳实践总结"><a href="#最佳实践总结" class="headerlink" title="最佳实践总结"></a>最佳实践总结</h2><ol>
+<li><strong>设定阈值</strong>：新代码圈复杂度控制在 10 以内，遗留代码逐步重构到 15 以内</li>
+<li><strong>持续监控</strong>：在 CI&#x2F;CD 中集成复杂度检查，防止复杂度退化</li>
+<li><strong>优先重构</strong>：优先重构复杂度最高的模块，收益最大</li>
+<li><strong>测试覆盖</strong>：高复杂度模块需要更充分的单元测试</li>
+<li><strong>代码审查</strong>：将圈复杂度作为代码审查的参考指标</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>圈复杂度是代码质量的”体温计”，它能帮助我们：</p>
+<ul>
+<li><strong>识别风险</strong>：快速定位需要关注的代码</li>
+<li><strong>指导重构</strong>：提供量化的重构目标</li>
+<li><strong>评估测试</strong>：确定测试用例的数量</li>
+<li><strong>持续改进</strong>：建立代码质量的度量标准</li>
+</ul>
+<p>记住，降低圈复杂度的最终目标是<strong>提高代码可读性和可维护性</strong>，而不是单纯追求数字。在实际项目中，要结合业务逻辑和团队情况，灵活运用各种重构技巧。</p>
+<hr>
+<p><strong>参考资料</strong>：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/document/1702388">McCabe, T.J. (1976). A Complexity Measure</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.baeldung.com/cs/cyclomatic-complexity">Baeldung - Cyclomatic Complexity</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.sonarqube.org/latest/user-guide/metrics/cognitive-complexity/">SonarQube Cognitive Complexity</a></li>
+</ul>
+
+<div class="article-footer fs14">
+    <section id="license">
+      <div class="header"><span>License</span></div>
+      <div class="body"><p>本文采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">署名-非商业性使用-相同方式共享 4.0 国际</a> 许可协议，转载请注明出处。</p>
+</div>
+    </section>
+    </div>
+</article>
+<div class="related-wrap" id="read-next"><section class="body"><div class="item" id="prev"></div><div class="item" id="next"><div class="note">Older</div><a href="/2026/03/29/%E3%80%90AI%E5%8D%8F%E8%AE%AE%E3%80%91MCP-Model-Context-Protocol-%E5%AE%8C%E5%85%A8%E6%8C%87%E5%8D%97/">【AI生成】【AI协议】MCP Model Context Protocol 完全指南</a></div></section></div>
+
+
+
+
+
+
+<footer class="page-footer footnote"><hr><div class="text"><p>本站由 <a href="/">Rong Zhao</a> 使用 <a target="_blank" rel="noopener" href="https://github.com/xaoxuu/hexo-theme-stellar/tree/1.29.1">Stellar 1.29.1</a> 主题创建。<br>本博客所有文章除特别声明外，均采用 <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> 许可协议，转载请注明出处。</p>
+</div></footer>
+<div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
+<div class="widgets">
+
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9C%88%E5%A4%8D%E6%9D%82%E5%BA%A6-Cyclomatic-Complexity-%E8%AF%A6%E8%A7%A3%E4%B8%8E%E5%AE%9E%E8%B7%B5"><span class="toc-text">圈复杂度 Cyclomatic Complexity 详解与实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%9C%88%E5%A4%8D%E6%9D%82%E5%BA%A6%EF%BC%9F"><span class="toc-text">什么是圈复杂度？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E7%AD%89%E7%BA%A7%E5%8F%82%E8%80%83"><span class="toc-text">复杂度等级参考</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%88%E5%A4%8D%E6%9D%82%E5%BA%A6%E7%9A%84%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95"><span class="toc-text">圈复杂度的计算方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E5%9F%BA%E4%BA%8E%E8%8A%82%E7%82%B9%E5%92%8C%E8%BE%B9%E6%95%B0"><span class="toc-text">方法一：基于节点和边数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9A%E5%9F%BA%E4%BA%8E%E5%86%B3%E7%AD%96%E8%8A%82%E7%82%B9%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="toc-text">方法二：基于决策节点（推荐）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E7%A4%BA%E4%BE%8B"><span class="toc-text">计算示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%8D%E4%BD%8E%E5%9C%88%E5%A4%8D%E6%9D%82%E5%BA%A6%E7%9A%84%E5%AE%9E%E6%88%98%E6%8A%80%E5%B7%A7"><span class="toc-text">降低圈复杂度的实战技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BD%BF%E7%94%A8%E5%8D%AB%E8%AF%AD%E5%8F%A5%EF%BC%88Guard-Clauses%EF%BC%89"><span class="toc-text">1. 使用卫语句（Guard Clauses）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%8F%90%E5%8F%96%E6%96%B9%E6%B3%95%EF%BC%88Extract-Method%EF%BC%89"><span class="toc-text">2. 提取方法（Extract Method）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%BD%BF%E7%94%A8%E5%A4%9A%E6%80%81%E6%9B%BF%E4%BB%A3%E6%9D%A1%E4%BB%B6%E5%88%A4%E6%96%AD"><span class="toc-text">3. 使用多态替代条件判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E5%A4%84%E7%90%86%E7%AE%97%E6%B3%95%E9%80%89%E6%8B%A9"><span class="toc-text">4. 策略模式处理算法选择</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%BD%BF%E7%94%A8%E6%9F%A5%E6%89%BE%E8%A1%A8%E6%9B%BF%E4%BB%A3%E6%9D%A1%E4%BB%B6%E9%93%BE"><span class="toc-text">5. 使用查找表替代条件链</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%84%E8%AF%AD%E8%A8%80%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%A3%80%E6%B5%8B%E5%B7%A5%E5%85%B7"><span class="toc-text">各语言复杂度检测工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java"><span class="toc-text">Java</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Python"><span class="toc-text">Python</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JavaScript-TypeScript"><span class="toc-text">JavaScript&#x2F;TypeScript</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Go"><span class="toc-text">Go</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CI-CD-%E9%9B%86%E6%88%90"><span class="toc-text">CI&#x2F;CD 集成</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#GitHub-Actions-%E7%A4%BA%E4%BE%8B"><span class="toc-text">GitHub Actions 示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SonarQube-%E8%B4%A8%E9%87%8F%E9%97%A8%E7%A6%81"><span class="toc-text">SonarQube 质量门禁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%88%E5%A4%8D%E6%9D%82%E5%BA%A6%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="toc-text">圈复杂度的局限性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%80%BB%E7%BB%93"><span class="toc-text">最佳实践总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol></li></ol></div><div class="widget-footer">
+
+<a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>Scroll to Top</span></a></div></widget>
+</div></aside><div class='float-panel blur'>
+  <button type='button' style='display:none' class='laptop-only rightbar-toggle mobile' onclick='sidebar.rightbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg>
+  </button>
+  <button type='button' style='display:none' class='mobile-only leftbar-toggle mobile' onclick='sidebar.leftbar()'>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 11c0-3.771 0-5.657 1.172-6.828C4.343 3 6.229 3 10 3h4c3.771 0 5.657 0 6.828 1.172C22 5.343 22 7.229 22 11v2c0 3.771 0 5.657-1.172 6.828C19.657 21 17.771 21 14 21h-4c-3.771 0-5.657 0-6.828-1.172C2 18.657 2 16.771 2 13z"/><path id="sep" stroke-linecap="round" d="M5.5 10h6m-5 4h4m4.5 7V3"/></g></svg>
+  </button>
+</div>
+</div><div class="scripts">
+<script type="text/javascript">
+  const ctx = {
+    date_suffix: {
+      just: `Just`,
+      min: `minutes ago`,
+      hour: `hours ago`,
+      day: `days ago`,
+    },
+    root : `/`,
+  };
+
+  // required plugins (only load if needs)
+  if (`local_search`) {
+    ctx.search = {};
+    ctx.search.service = `local_search`;
+    if (ctx.search.service == 'local_search') {
+      let service_obj = Object.assign({}, `{"field":"all","path":"/search.json","content":true,"sort":"-date"}`);
+      ctx.search[ctx.search.service] = service_obj;
+    }
+  }
+  const def = {
+    avatar: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/avatar/round/3442075.svg`,
+    cover: `https://gcore.jsdelivr.net/gh/cdn-x/placeholder@1.0.12/cover/76b86c0226ffd.svg`,
+  };
+  const deps = {
+    jquery: `https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js`,
+    marked: `https://cdn.jsdelivr.net/npm/marked@13.0.1/lib/marked.umd.min.js`
+  }
+  
+
+</script>
+
+<script type="text/javascript">
+  const utils = {
+    // 懒加载 css https://github.com/filamentgroup/loadCSS
+    css: (href, before, media, attributes) => {
+      var doc = window.document;
+      var ss = doc.createElement("link");
+      var ref;
+      if (before) {
+        ref = before;
+      } else {
+        var refs = (doc.body || doc.getElementsByTagName("head")[0]).childNodes;
+        ref = refs[refs.length - 1];
+      }
+      var sheets = doc.styleSheets;
+      if (attributes) {
+        for (var attributeName in attributes) {
+          if (attributes.hasOwnProperty(attributeName)) {
+            ss.setAttribute(attributeName, attributes[attributeName]);
+          }
+        }
+      }
+      ss.rel = "stylesheet";
+      ss.href = href;
+      ss.media = "only x";
+      function ready(cb) {
+        if (doc.body) {
+          return cb();
+        }
+        setTimeout(function () {
+          ready(cb);
+        });
+      }
+      ready(function () {
+        ref.parentNode.insertBefore(ss, before ? ref : ref.nextSibling);
+      });
+      var onloadcssdefined = function (cb) {
+        var resolvedHref = ss.href;
+        var i = sheets.length;
+        while (i--) {
+          if (sheets[i].href === resolvedHref) {
+            return cb();
+          }
+        }
+        setTimeout(function () {
+          onloadcssdefined(cb);
+        });
+      };
+      function loadCB() {
+        if (ss.addEventListener) {
+          ss.removeEventListener("load", loadCB);
+        }
+        ss.media = media || "all";
+      }
+      if (ss.addEventListener) {
+        ss.addEventListener("load", loadCB);
+      }
+      ss.onloadcssdefined = onloadcssdefined;
+      onloadcssdefined(loadCB);
+      return ss;
+    },
+
+    js: (src, opt) => new Promise((resolve, reject) => {
+      var script = document.createElement('script');
+      if (src.startsWith('/')){
+        src = ctx.root + src.substring(1);
+      }
+      script.src = src;
+      if (opt) {
+        for (let key of Object.keys(opt)) {
+          script[key] = opt[key]
+        }
+      } else {
+        // 默认异步，如果需要同步，第二个参数传入 {} 即可
+        script.async = true
+      }
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    }),
+
+    jq: (fn) => {
+      if (typeof jQuery === 'undefined') {
+        utils.js(deps.jquery).then(fn)
+      } else {
+        fn()
+      }
+    },
+    
+    onLoading: (el) => {
+      if (el) {
+        $(el).append('<div class="loading-wrap"><svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" stroke-opacity=".3" d="M12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="1.3s" values="60;0"/></path><path stroke-dasharray="15" stroke-dashoffset="15" d="M12 3C16.9706 3 21 7.02944 21 12"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.3s" values="15;0"/><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></path></g></svg></div>');
+      }
+    },
+    onLoadSuccess: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap').remove();
+      }
+    },
+    onLoadFailure: (el) => {
+      if (el) {
+        $(el).find('.loading-wrap svg').remove();
+        $(el).find('.loading-wrap').append('<svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="60" stroke-dashoffset="60" d="M12 3L21 20H3L12 3Z"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.5s" values="60;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 10V14"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.6s" dur="0.2s" values="6;0"/></path></g><circle cx="12" cy="17" r="1" fill="currentColor" fill-opacity="0"><animate fill="freeze" attributeName="fill-opacity" begin="0.8s" dur="0.4s" values="0;1"/></circle></svg>');
+        $(el).find('.loading-wrap').addClass('error');
+      }
+    },
+    request: (el, url, callback, onFailure) => {
+      let retryTimes = 3;
+      utils.onLoading(el);
+      function req() {
+        return new Promise((resolve, reject) => {
+          let status = 0; // 0 等待 1 完成 2 超时
+          let timer = setTimeout(() => {
+            if (status === 0) {
+              status = 2;
+              timer = null;
+              reject('请求超时');
+              if (retryTimes == 0) {
+                onFailure();
+              }
+            }
+          }, 5000);
+          fetch(url).then(function(response) {
+            if (status !== 2) {
+              clearTimeout(timer);
+              resolve(response);
+              timer = null;
+              status = 1;
+            }
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error('Network response was not ok.');
+          }).then(function(data) {
+            retryTimes = 0;
+            utils.onLoadSuccess(el);
+            callback(data);
+          }).catch(function(error) {
+            if (retryTimes > 0) {
+              retryTimes -= 1;
+              setTimeout(() => {
+                req();
+              }, 5000);
+            } else {
+              utils.onLoadFailure(el);
+              onFailure();
+            }
+          });
+        });
+      }
+      req();
+    },
+  };
+</script>
+
+<script>
+  const sidebar = {
+    leftbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    rightbar: () => {
+      if (l_body) {
+        l_body.toggleAttribute('rightbar');
+        l_body.removeAttribute('leftbar');
+      }
+    },
+    dismiss: () => {
+      if (l_body) {
+        l_body.removeAttribute('leftbar');
+        l_body.removeAttribute('rightbar');
+      }
+    },
+    toggleTOC: () => {
+      document.querySelector('#data-toc').classList.toggle('collapse');
+    }
+  }
+</script>
+<script type="text/javascript">
+  (() => {
+    const tagSwitchers = document.querySelectorAll('.tag-subtree.parent-tag > a > .tag-switcher-wrapper')
+    for (const tagSwitcher of tagSwitchers) {
+      tagSwitcher.addEventListener('click', (e) => {
+        const parent = e.target.closest('.tag-subtree.parent-tag')
+        parent.classList.toggle('expanded')
+        e.preventDefault()
+      })
+    }
+
+    // Get active tag from query string, then activate it.
+    const urlParams = new URLSearchParams(window.location.search)
+    const activeTag = urlParams.get('tag')
+    if (activeTag) {
+      let tag = document.querySelector(`.tag-subtree[data-tag="${activeTag}"]`)
+      if (tag) {
+        tag.querySelector('a').classList.add('active')
+        
+        while (tag) {
+          tag.classList.add('expanded')
+          tag = tag.parentElement.closest('.tag-subtree.parent-tag')
+        }
+      }
+    }
+  })()
+</script>
+
+
+<!-- required -->
+<script src="/js/main.js?v=1.29.1" defer></script>
+
+<script type="text/javascript">
+  const applyTheme = (theme) => {
+    if (theme === 'auto') {
+      document.documentElement.removeAttribute('data-theme')
+    } else {
+      document.documentElement.setAttribute('data-theme', theme)
+    }
+
+    applyThemeToGiscus(theme)
+  }
+
+  const applyThemeToGiscus = (theme) => {
+    theme = theme === 'auto' ? 'preferred_color_scheme' : theme
+
+    const cmt = document.getElementById('giscus')
+    if (cmt) {
+      // This works before giscus load.
+      cmt.setAttribute('data-theme', theme)
+    }
+
+    const iframe = document.querySelector('#comments > section.giscus > iframe')
+    if (iframe) {
+      // This works after giscus loaded.
+      const src = iframe.src
+      const newSrc = src.replace(/theme=[\w]+/, `theme=${theme}`)
+      iframe.src = newSrc
+    }
+  }
+
+  const switchTheme = () => {
+    // light -> dark -> auto -> light -> ...
+    const currentTheme = document.documentElement.getAttribute('data-theme')
+    let newTheme;
+    switch (currentTheme) {
+      case 'light':
+        newTheme = 'dark'
+        break
+      case 'dark':
+        newTheme = 'auto'
+        break
+      default:
+        newTheme = 'light'
+    }
+    applyTheme(newTheme)
+    window.localStorage.setItem('Stellar.theme', newTheme)
+
+    const messages = {
+      light: `Switched to Light Mode`,
+      dark: `Switched to Dark Mode`,
+      auto: `Switched to Auto Mode`,
+    }
+    hud?.toast?.(messages[newTheme])
+  }
+
+  (() => {
+    // Apply user's preferred theme, if any.
+    const theme = window.localStorage.getItem('Stellar.theme')
+    if (theme !== null) {
+      applyTheme(theme)
+    }
+  })()
+</script>
+
+
+<!-- optional -->
+
+
+
+<script defer>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.services = Object.assign({}, JSON.parse(`{"mdrender":{"js":"/js/services/mdrender.js"},"siteinfo":{"js":"/js/services/siteinfo.js","api":null},"ghinfo":{"js":"/js/services/ghinfo.js"},"sites":{"js":"/js/services/sites.js"},"friends":{"js":"/js/services/friends.js"},"timeline":{"js":"/js/services/timeline.js"},"fcircle":{"js":"/js/services/fcircle.js"},"weibo":{"js":"/js/services/weibo.js"},"memos":{"js":"/js/services/memos.js"}}`));
+    for (let id of Object.keys(ctx.services)) {
+      const js = ctx.services[id].js;
+      if (id == 'siteinfo') {
+        ctx.cardlinks = document.querySelectorAll('a.link-card[cardlink]');
+        if (ctx.cardlinks?.length > 0) {
+          utils.js(js, { defer: true }).then(function () {
+            setCardLink(ctx.cardlinks);
+          });
+        }
+      } else {
+        const els = document.getElementsByClassName(`ds-${id}`);
+        if (els?.length > 0) {
+          utils.jq(() => {
+            if (id == 'timeline' || 'memos' || 'marked') {
+              utils.js(deps.marked).then(function () {
+                utils.js(js, { defer: true });
+              });
+            } else {
+              utils.js(js, { defer: true });
+            }
+          });
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    ctx.search = {
+      path: `/search.json`,
+    }
+    utils.js('/js/search/local-search.js', { defer: true });
+  });
+</script><script>
+  window.FPConfig = {
+    delay: 0,
+    ignoreKeywords: [],
+    maxRPS: 5,
+    hoverDelay: 25
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/flying-pages@2/flying-pages.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
+<script>
+  // https://www.npmjs.com/package/vanilla-lazyload
+  // Set the options globally
+  // to make LazyLoad self-initialize
+  window.lazyLoadOptions = {
+    elements_selector: ".lazy",
+  };
+  // Listen to the initialization event
+  // and get the instance of LazyLoad
+  window.addEventListener(
+    "LazyLoad::Initialized",
+    function (event) {
+      window.lazyLoadInstance = event.detail.instance;
+    },
+    false
+  );
+  document.addEventListener('DOMContentLoaded', function () {
+    window.lazyLoadInstance?.update();
+  });
+</script><script>
+  ctx.fancybox = {
+    selector: `.timenode p>img`,
+    css: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css`,
+    js: `https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js`
+  };
+  var selector = '[data-fancybox]:not(.error)';
+  if (ctx.fancybox.selector) {
+    selector += `, ${ctx.fancybox.selector}`
+  }
+  var needFancybox = document.querySelectorAll(selector).length !== 0;
+  if (!needFancybox) {
+    const els = document.getElementsByClassName('ds-memos');
+    if (els != undefined && els.length > 0) {
+      needFancybox = true;
+    }
+  }
+  if (needFancybox) {
+    utils.css(ctx.fancybox.css);
+    utils.js(ctx.fancybox.js, { defer: true }).then(function () {
+      Fancybox.bind(selector, {
+        hideScrollbar: false,
+        Thumbs: {
+          autoStart: false,
+        },
+        caption: (fancybox, slide) => {
+          return slide.triggerEl.alt || slide.triggerEl.dataset.caption || null
+        }
+      });
+    })
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const swiper_api = document.getElementById('swiper-api');
+    if (swiper_api != undefined) {
+      utils.css(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.css`);
+      utils.js(`https://unpkg.com/swiper@10.3.1/swiper-bundle.min.js`, { defer: true }).then(function () {
+        const effect = swiper_api.getAttribute('effect') || '';
+        var swiper = new Swiper('.swiper#swiper-api', {
+          slidesPerView: 'auto',
+          spaceBetween: 8,
+          centeredSlides: true,
+          effect: effect,
+          rewind: true,
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+          },
+        });
+      })
+    }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    window.codeElements = document.querySelectorAll('.code');
+    if (window.codeElements.length > 0) {
+      ctx.copycode = {
+        default_text: `Copy`,
+        success_text: `Copied`,
+        toast: `复制成功`,
+      };
+      utils.js('/js/plugins/copycode.js');
+    }
+  });
+</script>
+
+
+<!-- inject -->
+
+</div></body></html>
