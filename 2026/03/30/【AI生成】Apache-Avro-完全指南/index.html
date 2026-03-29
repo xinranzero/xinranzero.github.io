@@ -28,7 +28,7 @@
 <meta property="og:description" content="Apache Avro 是一个语言无关的数据序列化系统，以其高效的二进制格式和强大的 Schema 进化能力，成为大数据处理和流式数据管道的首选格式。  概述Apache Avro™ 是一个数据序列化系统，由 Hadoop 之父 Doug Cutting 创建。它设计用于支持高效的数据交换，特别适合大数据处理场景（如 Hadoop、Kafka）。 为什么选择 Avro？ 紧凑高效：二进制格式，序">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2026-03-29T16:45:00.000Z">
-<meta property="article:modified_time" content="2026-03-29T16:46:59.706Z">
+<meta property="article:modified_time" content="2026-03-29T19:18:44.897Z">
 <meta property="article:author" content="Rong Zhao">
 <meta property="article:tag" content="Avro">
 <meta property="article:tag" content="数据序列化">
@@ -130,7 +130,7 @@
   <a class="cap breadcrumb" href="/notes/system-design">系统架构</a>
 
 </div>
-<div class="flex-row" id="post-meta"><span class="text created">Updated on: <time datetime="2026-03-29T16:46:59.706Z">2026-03-30</time></span><span class="sep updated"></span><span class="text updated">Posted on: <time datetime="2026-03-29T16:45:00.000Z">2026-03-30</time></span></div></div></div>
+<div class="flex-row" id="post-meta"><span class="text created">Updated on: <time datetime="2026-03-29T19:18:44.897Z">2026-03-30</time></span><span class="sep updated"></span><span class="text updated">Posted on: <time datetime="2026-03-29T16:45:00.000Z">2026-03-30</time></span></div></div></div>
     
     <div class="bottom only-title">
       
@@ -151,6 +151,118 @@
 <li><strong>语言无关</strong>：支持 Java、C、C++、C#、Python、Ruby 等多种语言</li>
 <li><strong>动态类型</strong>：不需要代码生成即可读写数据</li>
 <li><strong>Schema 进化</strong>：支持前后兼容的模式变更</li>
+</ul>
+<h2 id="设计哲学与理念"><a href="#设计哲学与理念" class="headerlink" title="设计哲学与理念"></a>设计哲学与理念</h2><p>Apache Avro 的设计深受 Hadoop 生态系统需求的影响，由 Hadoop 之父 Doug Cutting 主导设计。其核心理念可以概括为：**”Schema 是数据的灵魂，进化是系统的常态”**。</p>
+<h3 id="核心设计原则"><a href="#核心设计原则" class="headerlink" title="核心设计原则"></a>核心设计原则</h3><h4 id="1-Schema-与数据分离但共存"><a href="#1-Schema-与数据分离但共存" class="headerlink" title="1. Schema 与数据分离但共存"></a>1. Schema 与数据分离但共存</h4><p><strong>设计思想</strong>：Avro 将 Schema 从数据中分离出来，但又确保 Schema 始终与数据一起存储或传输。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">传统方式：数据 + 字段标签 = 冗余、低效</span><br><span class="line">Avro 方式：数据 + Schema 引用 = 紧凑、高效</span><br></pre></td></tr></table></figure>
+
+<p><strong>哲学内涵</strong>：</p>
+<ul>
+<li><strong>自描述性</strong>：数据文件携带 Schema，无需外部文档即可理解</li>
+<li><strong>向后兼容</strong>：旧数据可以用新 Schema 读取，反之亦然</li>
+<li><strong>语言无关</strong>：Schema 是数据的通用语言</li>
+</ul>
+<h4 id="2-动态类型优先"><a href="#2-动态类型优先" class="headerlink" title="2. 动态类型优先"></a>2. 动态类型优先</h4><p><strong>设计思想</strong>：Avro 不强制要求代码生成，支持动态读写。</p>
+<p><strong>哲学内涵</strong>：</p>
+<ul>
+<li><strong>灵活性优先</strong>：脚本语言（Python、Ruby）可以无缝使用</li>
+<li><strong>快速迭代</strong>：开发阶段无需编译，直接解析 Schema</li>
+<li><strong>元编程友好</strong>：运行时构建和处理数据结构</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 动态读取，无需预生成 Java 类</span></span><br><span class="line"><span class="type">Schema</span> <span class="variable">schema</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Schema</span>.Parser().parse(<span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;user.avsc&quot;</span>));</span><br><span class="line"><span class="type">GenericRecord</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GenericData</span>.Record(schema);</span><br><span class="line">user.put(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;张三&quot;</span>);</span><br><span class="line">user.put(<span class="string">&quot;age&quot;</span>, <span class="number">25</span>);</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-Schema-进化是头等公民"><a href="#3-Schema-进化是头等公民" class="headerlink" title="3. Schema 进化是头等公民"></a>3. Schema 进化是头等公民</h4><p><strong>设计思想</strong>：数据格式必然随时间变化，系统必须优雅地处理这种变化。</p>
+<p><strong>哲学内涵</strong>：</p>
+<ul>
+<li><strong>默认值的智慧</strong>：新字段必须有默认值，保证兼容性</li>
+<li><strong>Union 的灵活性</strong>：用 Union 类型表达”可能有也可能没有”</li>
+<li><strong>解析器的责任</strong>：读取方负责适配不同版本的 Schema</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Writer Schema (写入时)     Reader Schema (读取时)</span><br><span class="line">┌─────────────────┐        ┌─────────────────┐</span><br><span class="line">│ name: string    │        │ name: string    │</span><br><span class="line">│ age: int        │   -&gt;   │ age: int        │</span><br><span class="line">└─────────────────┘        │ email: string?  │  &lt;- 新增，使用默认值 null</span><br><span class="line">                           └─────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-紧凑性高于可读性"><a href="#4-紧凑性高于可读性" class="headerlink" title="4. 紧凑性高于可读性"></a>4. 紧凑性高于可读性</h4><p><strong>设计思想</strong>：在生产环境中，数据体积和传输效率比人类可读性更重要。</p>
+<p><strong>哲学内涵</strong>：</p>
+<ul>
+<li><strong>二进制优先</strong>：牺牲可读性换取性能</li>
+<li><strong>零开销序列化</strong>：不存储字段名，只存储值</li>
+<li><strong>压缩友好</strong>：二进制数据更容易压缩</li>
+</ul>
+<h4 id="5-生态系统集成"><a href="#5-生态系统集成" class="headerlink" title="5. 生态系统集成"></a>5. 生态系统集成</h4><p><strong>设计思想</strong>：数据格式不是孤立的，必须与存储、计算、传输系统深度集成。</p>
+<p><strong>哲学内涵</strong>：</p>
+<ul>
+<li><strong>Hadoop 原生</strong>：为分布式计算设计，支持分片和并行处理</li>
+<li><strong>Kafka 友好</strong>：Schema Registry 成为事实标准</li>
+<li><strong>语言中立</strong>：不偏向任何特定编程语言</li>
+</ul>
+<h3 id="与其他方案的设计哲学对比"><a href="#与其他方案的设计哲学对比" class="headerlink" title="与其他方案的设计哲学对比"></a>与其他方案的设计哲学对比</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Avro</th>
+<th>Protobuf</th>
+<th>Thrift</th>
+<th>JSON</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>核心关注</strong></td>
+<td>数据 + Schema 进化</td>
+<td>性能 + 类型安全</td>
+<td>RPC + 多语言</td>
+<td>可读性 + 简单</td>
+</tr>
+<tr>
+<td><strong>Schema 位置</strong></td>
+<td>数据内嵌&#x2F;外置</td>
+<td>外置（代码生成）</td>
+<td>外置（代码生成）</td>
+<td>无 Schema</td>
+</tr>
+<tr>
+<td><strong>类型系统</strong></td>
+<td>动态为主</td>
+<td>静态为主</td>
+<td>静态为主</td>
+<td>动态</td>
+</tr>
+<tr>
+<td><strong>兼容性思维</strong></td>
+<td>解析器适配</td>
+<td>严格匹配</td>
+<td>严格匹配</td>
+<td>无约束</td>
+</tr>
+<tr>
+<td><strong>设计出发点</strong></td>
+<td>大数据处理</td>
+<td>服务通信</td>
+<td>服务通信</td>
+<td>数据交换</td>
+</tr>
+</tbody></table>
+<h3 id="为什么-Avro-选择了这些设计？"><a href="#为什么-Avro-选择了这些设计？" class="headerlink" title="为什么 Avro 选择了这些设计？"></a>为什么 Avro 选择了这些设计？</h3><h4 id="大数据场景的特殊需求"><a href="#大数据场景的特殊需求" class="headerlink" title="大数据场景的特殊需求"></a>大数据场景的特殊需求</h4><ol>
+<li><strong>数据湖场景</strong>：存储 PB 级数据，Schema 必须随数据保存，否则无法解读</li>
+<li><strong>流式处理</strong>：Kafka 消息需要 Schema 进化能力，避免停机升级</li>
+<li><strong>多语言团队</strong>：数据工程师用 Python，平台工程师用 Java，需要通用格式</li>
+<li><strong>长期存储</strong>：5 年前的数据，今天仍要能读取，Schema 可能已变更多次</li>
+</ol>
+<h4 id="工程权衡的智慧"><a href="#工程权衡的智慧" class="headerlink" title="工程权衡的智慧"></a>工程权衡的智慧</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Protobuf 的选择：性能 &gt; 灵活性</span><br><span class="line">- 代码生成带来类型安全</span><br><span class="line">- 但失去了动态性</span><br><span class="line"></span><br><span class="line">Avro 的选择：灵活性 + 进化能力 &gt; 极致性能</span><br><span class="line">- 稍慢的性能换取 Schema 自由</span><br><span class="line">- 动态类型支持多语言脚本</span><br></pre></td></tr></table></figure>
+
+<h3 id="设计哲学在实践中的体现"><a href="#设计哲学在实践中的体现" class="headerlink" title="设计哲学在实践中的体现"></a>设计哲学在实践中的体现</h3><h4 id="Schema-Registry-架构"><a href="#Schema-Registry-架构" class="headerlink" title="Schema Registry 架构"></a>Schema Registry 架构</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────┐     ┌─────────────────┐     ┌─────────────┐</span><br><span class="line">│   Producer  │ --&gt; │ Schema Registry │ &lt;-- │  Consumer   │</span><br><span class="line">│  (Writer)   │     │   (Schema 仓库)  │     │  (Reader)   │</span><br><span class="line">└─────────────┘     └─────────────────┘     └─────────────┘</span><br><span class="line">        │                   │                      │</span><br><span class="line">        │              存储所有版本 Schema          │</span><br><span class="line">        └────────────── 获取 Schema ID ────────────┘</span><br></pre></td></tr></table></figure>
+
+<p><strong>体现的设计哲学</strong>：</p>
+<ul>
+<li>Schema 是独立的实体，需要集中管理</li>
+<li>版本控制是数据治理的核心</li>
+<li>兼容性检查自动化</li>
+</ul>
+<h4 id="数据文件格式"><a href="#数据文件格式" class="headerlink" title="数据文件格式"></a>数据文件格式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[Magic Number] [Schema Length] [Schema JSON] [Sync Marker] [Data Blocks...]</span><br></pre></td></tr></table></figure>
+
+<p><strong>体现的设计哲学</strong>：</p>
+<ul>
+<li>文件自包含，不依赖外部元数据</li>
+<li>分块存储支持并行处理</li>
+<li>Sync Marker 支持快速定位</li>
 </ul>
 <h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><h3 id="Schema（模式）"><a href="#Schema（模式）" class="headerlink" title="Schema（模式）"></a>Schema（模式）</h3><p><strong>Schema 是 Avro 的基石</strong>。它使用 JSON 格式定义数据结构，具有以下特点：</p>
 <ul>
@@ -287,59 +399,217 @@
 <li><strong>命名规范</strong>：<code>subject-name-v1.avsc</code></li>
 <li><strong>兼容性检查</strong>：部署前验证 Schema 兼容性</li>
 </ol>
-<h2 id="与其他序列化方案对比"><a href="#与其他序列化方案对比" class="headerlink" title="与其他序列化方案对比"></a>与其他序列化方案对比</h2><table>
+<h2 id="与主流序列化方案深度对比"><a href="#与主流序列化方案深度对比" class="headerlink" title="与主流序列化方案深度对比"></a>与主流序列化方案深度对比</h2><h3 id="市场主流产品概览"><a href="#市场主流产品概览" class="headerlink" title="市场主流产品概览"></a>市场主流产品概览</h3><p>在大数据时代，数据序列化方案百花齐放。除了 Avro，市场上还有 Google 的 <strong>Protocol Buffers</strong>、Facebook 的 <strong>Apache Thrift</strong>、以及轻量级的 <strong>MessagePack</strong> 和 <strong>JSON</strong>。每个方案都有其设计哲学和适用场景。</p>
+<h3 id="核心特性对比表"><a href="#核心特性对比表" class="headerlink" title="核心特性对比表"></a>核心特性对比表</h3><table>
 <thead>
 <tr>
 <th>特性</th>
 <th>Avro</th>
 <th>Protobuf</th>
-<th>JSON</th>
 <th>Thrift</th>
+<th>MessagePack</th>
+<th>JSON</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>二进制格式</td>
+<td><strong>二进制格式</strong></td>
 <td>✓</td>
 <td>✓</td>
-<td>✗</td>
 <td>✓</td>
-</tr>
-<tr>
-<td>Schema 进化</td>
-<td>✓</td>
-<td>✓</td>
-<td>✗</td>
-<td>✓</td>
-</tr>
-<tr>
-<td>动态类型</td>
-<td>✓</td>
-<td>✗</td>
 <td>✓</td>
 <td>✗</td>
 </tr>
 <tr>
-<td>自描述</td>
-<td>✓</td>
-<td>✗</td>
-<td>✓</td>
-<td>✗</td>
-</tr>
-<tr>
-<td>RPC 支持</td>
-<td>✓</td>
-<td>✓</td>
-<td>✗</td>
-<td>✓</td>
-</tr>
-<tr>
-<td>大数据生态</td>
+<td><strong>Schema 进化</strong></td>
 <td>✓✓</td>
 <td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✗</td>
+</tr>
+<tr>
+<td><strong>动态类型</strong></td>
+<td>✓</td>
+<td>✗</td>
 <td>✗</td>
 <td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>自描述</strong></td>
+<td>✓</td>
+<td>✗</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>RPC 支持</strong></td>
+<td>✓</td>
+<td>✓</td>
+<td>✓✓</td>
+<td>✗</td>
+<td>✗</td>
+</tr>
+<tr>
+<td><strong>大数据生态</strong></td>
+<td>✓✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+<td>✗</td>
+</tr>
+<tr>
+<td><strong>序列化速度</strong></td>
+<td>快</td>
+<td>很快</td>
+<td>很快</td>
+<td>很快</td>
+<td>慢</td>
+</tr>
+<tr>
+<td><strong>数据体积</strong></td>
+<td>小</td>
+<td>很小</td>
+<td>很小</td>
+<td>小</td>
+<td>大</td>
+</tr>
+<tr>
+<td><strong>Schema 传输</strong></td>
+<td>内嵌&#x2F;外置</td>
+<td>外置</td>
+<td>外置</td>
+<td>无</td>
+<td>无</td>
+</tr>
+<tr>
+<td><strong>语言支持</strong></td>
+<td>丰富</td>
+<td>很丰富</td>
+<td>很丰富</td>
+<td>丰富</td>
+<td>全平台</td>
 </tr>
 </tbody></table>
+<h3 id="详细对比分析"><a href="#详细对比分析" class="headerlink" title="详细对比分析"></a>详细对比分析</h3><h4 id="1-Avro-vs-Protocol-Buffers"><a href="#1-Avro-vs-Protocol-Buffers" class="headerlink" title="1. Avro vs Protocol Buffers"></a>1. Avro vs Protocol Buffers</h4><p><strong>Protobuf 的优势：</strong></p>
+<ul>
+<li>序列化&#x2F;反序列化速度更快（通常快 20-30%）</li>
+<li>生成的数据体积更小</li>
+<li>Google 背书，生态成熟，gRPC 原生支持</li>
+<li>代码生成更加成熟，类型安全</li>
+</ul>
+<p><strong>Avro 的优势：</strong></p>
+<ul>
+<li><strong>Schema 随数据携带</strong>：数据文件自包含 Schema，无需外部依赖</li>
+<li><strong>动态类型支持</strong>：无需代码生成即可读写数据，适合脚本语言</li>
+<li><strong>Schema 进化更灵活</strong>：Union 类型让字段变更更自然</li>
+<li><strong>大数据生态原生支持</strong>：Hadoop、Spark、Kafka 首选格式</li>
+</ul>
+<p><strong>适用场景选择：</strong></p>
+<ul>
+<li>选择 <strong>Protobuf</strong>：微服务通信、移动端 SDK、对性能要求极高的场景</li>
+<li>选择 <strong>Avro</strong>：大数据处理、数据湖、流式数据管道、需要 Schema 进化的场景</li>
+</ul>
+<h4 id="2-Avro-vs-Apache-Thrift"><a href="#2-Avro-vs-Apache-Thrift" class="headerlink" title="2. Avro vs Apache Thrift"></a>2. Avro vs Apache Thrift</h4><p><strong>Thrift 的优势：</strong></p>
+<ul>
+<li>RPC 框架更加完善，原生支持多种传输协议</li>
+<li>序列化性能优秀</li>
+<li>Facebook 大规模验证</li>
+<li>支持同步和异步调用</li>
+</ul>
+<p><strong>Avro 的优势：</strong></p>
+<ul>
+<li>Schema 设计更简洁直观</li>
+<li>与 Hadoop 生态无缝集成</li>
+<li>动态解析能力更强</li>
+<li>Schema Registry 生态更成熟</li>
+</ul>
+<p><strong>适用场景选择：</strong></p>
+<ul>
+<li>选择 <strong>Thrift</strong>：需要完整 RPC 框架、多语言服务调用</li>
+<li>选择 <strong>Avro</strong>：数据存储、消息队列、批处理作业</li>
+</ul>
+<h4 id="3-Avro-vs-JSON"><a href="#3-Avro-vs-JSON" class="headerlink" title="3. Avro vs JSON"></a>3. Avro vs JSON</h4><p><strong>JSON 的优势：</strong></p>
+<ul>
+<li>人类可读，调试方便</li>
+<li>无需 Schema，灵活自由</li>
+<li>全平台原生支持</li>
+<li>Web API 的事实标准</li>
+</ul>
+<p><strong>Avro 的优势：</strong></p>
+<ul>
+<li>二进制格式，体积小 5-10 倍</li>
+<li>序列化速度快 10-100 倍</li>
+<li>强类型约束，减少运行时错误</li>
+<li>Schema 约束保证数据质量</li>
+</ul>
+<p><strong>适用场景选择：</strong></p>
+<ul>
+<li>选择 <strong>JSON</strong>：Web API、配置文件、调试开发、人机交互</li>
+<li>选择 <strong>Avro</strong>：数据存储、内部系统通信、大数据处理</li>
+</ul>
+<h4 id="4-Avro-vs-MessagePack"><a href="#4-Avro-vs-MessagePack" class="headerlink" title="4. Avro vs MessagePack"></a>4. Avro vs MessagePack</h4><p><strong>MessagePack 的优势：</strong></p>
+<ul>
+<li>极致的序列化速度</li>
+<li>极小的数据体积</li>
+<li>实现简单，库体积小</li>
+<li>无需 Schema，即插即用</li>
+</ul>
+<p><strong>Avro 的优势：</strong></p>
+<ul>
+<li>Schema 约束保证数据一致性</li>
+<li>支持 Schema 进化</li>
+<li>大数据生态集成</li>
+<li>自描述，便于数据交换</li>
+</ul>
+<p><strong>适用场景选择：</strong></p>
+<ul>
+<li>选择 <strong>MessagePack</strong>：游戏、实时通信、嵌入式系统、缓存</li>
+<li>选择 <strong>Avro</strong>：数据仓库、日志收集、数据管道</li>
+</ul>
+<h3 id="性能基准测试参考"><a href="#性能基准测试参考" class="headerlink" title="性能基准测试参考"></a>性能基准测试参考</h3><p>基于典型数据结构的序列化性能（仅供参考）：</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>序列化时间</th>
+<th>数据大小</th>
+<th>反序列化时间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Avro</td>
+<td>1.0x</td>
+<td>1.0x</td>
+<td>1.0x</td>
+</tr>
+<tr>
+<td>Protobuf</td>
+<td>0.7x</td>
+<td>0.8x</td>
+<td>0.6x</td>
+</tr>
+<tr>
+<td>Thrift</td>
+<td>0.8x</td>
+<td>0.85x</td>
+<td>0.7x</td>
+</tr>
+<tr>
+<td>MessagePack</td>
+<td>0.5x</td>
+<td>0.9x</td>
+<td>0.5x</td>
+</tr>
+<tr>
+<td>JSON</td>
+<td>5.0x</td>
+<td>3.0x</td>
+<td>4.0x</td>
+</tr>
+</tbody></table>
+<p><em>注：数值越小表示性能越好，以 Avro 为基准 1.0x</em></p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Apache Avro 是一个功能强大、性能优异的数据序列化系统，特别适合以下场景：</p>
 <ul>
 <li><strong>大数据处理</strong>：与 Hadoop 生态无缝集成</li>
@@ -391,7 +661,7 @@
 <div class="main-mask" onclick="sidebar.dismiss()"></div></div><aside class="l_right">
 <div class="widgets">
 
-<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-Avro%EF%BC%9F"><span class="toc-text">为什么选择 Avro？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="toc-text">核心概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Schema%EF%BC%88%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="toc-text">Schema（模式）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Schema-%E7%A4%BA%E4%BE%8B"><span class="toc-text">Schema 示例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-text">数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B"><span class="toc-text">基本类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E7%B1%BB%E5%9E%8B"><span class="toc-text">复杂类型</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95"><span class="toc-text">基础用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-text">Java 环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Maven-%E4%BE%9D%E8%B5%96"><span class="toc-text">Maven 依赖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E6%8F%92%E4%BB%B6"><span class="toc-text">代码生成插件</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89-Schema"><span class="toc-text">定义 Schema</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%8E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">序列化与反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">二进制序列化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">二进制反序列化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JSON-%E6%A0%BC%E5%BC%8F%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">JSON 格式序列化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-SchemaBuilder-%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA-Schema"><span class="toc-text">使用 SchemaBuilder 动态创建 Schema</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">使用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%EF%BC%88Hadoop%EF%BC%89"><span class="toc-text">1. 大数据处理（Hadoop）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%EF%BC%88Kafka%EF%BC%89"><span class="toc-text">2. 消息队列（Kafka）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8"><span class="toc-text">3. 数据存储</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-RPC-%E9%80%9A%E4%BF%A1"><span class="toc-text">4. RPC 通信</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Schema-%E8%BF%9B%E5%8C%96"><span class="toc-text">Schema 进化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%BC%E5%AE%B9%E6%80%A7%E8%A7%84%E5%88%99"><span class="toc-text">兼容性规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Schema-%E8%BF%9B%E5%8C%96%E7%A4%BA%E4%BE%8B"><span class="toc-text">Schema 进化示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96%E6%97%B6%E7%9A%84-Schema-%E8%A7%A3%E6%9E%90"><span class="toc-text">读取时的 Schema 解析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-text">最佳实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Schema-%E8%AE%BE%E8%AE%A1%E5%BB%BA%E8%AE%AE"><span class="toc-text">Schema 设计建议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="toc-text">性能优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86"><span class="toc-text">版本管理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8E%E5%85%B6%E4%BB%96%E5%BA%8F%E5%88%97%E5%8C%96%E6%96%B9%E6%A1%88%E5%AF%B9%E6%AF%94"><span class="toc-text">与其他序列化方案对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BE%E8%A7%A3%E8%AF%B4%E6%98%8E"><span class="toc-text">图解说明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Avro-%E6%95%B0%E6%8D%AE%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%81%E7%A8%8B"><span class="toc-text">Avro 数据序列化流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Schema-%E8%BF%9B%E5%8C%96%E6%9C%BA%E5%88%B6"><span class="toc-text">Schema 进化机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%86%E9%A2%91%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90"><span class="toc-text">视频学习资源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#YouTube-%E6%95%99%E7%A8%8B"><span class="toc-text">YouTube 教程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Bilibili-%E6%95%99%E7%A8%8B"><span class="toc-text">Bilibili 教程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol></div><div class="widget-footer">
+<widget class="widget-wrapper toc" id="data-toc" collapse="false"><div class="widget-header dis-select"><span class="name">On This Page</span><a class="cap-action" onclick="sidebar.toggleTOC()" ><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6h11m-11 6h11m-11 6h11M4 6h1v4m-1 0h2m0 8H4c0-1 2-2 2-3s-1-1.5-2-1"/></svg></a></div><div class="widget-body"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-Avro%EF%BC%9F"><span class="toc-text">为什么选择 Avro？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E5%93%B2%E5%AD%A6%E4%B8%8E%E7%90%86%E5%BF%B5"><span class="toc-text">设计哲学与理念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="toc-text">核心设计原则</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Schema-%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%88%86%E7%A6%BB%E4%BD%86%E5%85%B1%E5%AD%98"><span class="toc-text">1. Schema 与数据分离但共存</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%8A%A8%E6%80%81%E7%B1%BB%E5%9E%8B%E4%BC%98%E5%85%88"><span class="toc-text">2. 动态类型优先</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Schema-%E8%BF%9B%E5%8C%96%E6%98%AF%E5%A4%B4%E7%AD%89%E5%85%AC%E6%B0%91"><span class="toc-text">3. Schema 进化是头等公民</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E7%B4%A7%E5%87%91%E6%80%A7%E9%AB%98%E4%BA%8E%E5%8F%AF%E8%AF%BB%E6%80%A7"><span class="toc-text">4. 紧凑性高于可读性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F%E9%9B%86%E6%88%90"><span class="toc-text">5. 生态系统集成</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8E%E5%85%B6%E4%BB%96%E6%96%B9%E6%A1%88%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%93%B2%E5%AD%A6%E5%AF%B9%E6%AF%94"><span class="toc-text">与其他方案的设计哲学对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-Avro-%E9%80%89%E6%8B%A9%E4%BA%86%E8%BF%99%E4%BA%9B%E8%AE%BE%E8%AE%A1%EF%BC%9F"><span class="toc-text">为什么 Avro 选择了这些设计？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%9C%BA%E6%99%AF%E7%9A%84%E7%89%B9%E6%AE%8A%E9%9C%80%E6%B1%82"><span class="toc-text">大数据场景的特殊需求</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B7%A5%E7%A8%8B%E6%9D%83%E8%A1%A1%E7%9A%84%E6%99%BA%E6%85%A7"><span class="toc-text">工程权衡的智慧</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E5%93%B2%E5%AD%A6%E5%9C%A8%E5%AE%9E%E8%B7%B5%E4%B8%AD%E7%9A%84%E4%BD%93%E7%8E%B0"><span class="toc-text">设计哲学在实践中的体现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Schema-Registry-%E6%9E%B6%E6%9E%84"><span class="toc-text">Schema Registry 架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="toc-text">数据文件格式</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="toc-text">核心概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Schema%EF%BC%88%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="toc-text">Schema（模式）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Schema-%E7%A4%BA%E4%BE%8B"><span class="toc-text">Schema 示例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-text">数据类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B"><span class="toc-text">基本类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E7%B1%BB%E5%9E%8B"><span class="toc-text">复杂类型</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E7%94%A8%E6%B3%95"><span class="toc-text">基础用法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Java-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-text">Java 环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Maven-%E4%BE%9D%E8%B5%96"><span class="toc-text">Maven 依赖</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E6%8F%92%E4%BB%B6"><span class="toc-text">代码生成插件</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89-Schema"><span class="toc-text">定义 Schema</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E4%B8%8E%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">序列化与反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">二进制序列化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">二进制反序列化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JSON-%E6%A0%BC%E5%BC%8F%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-text">JSON 格式序列化</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-SchemaBuilder-%E5%8A%A8%E6%80%81%E5%88%9B%E5%BB%BA-Schema"><span class="toc-text">使用 SchemaBuilder 动态创建 Schema</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-text">使用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%A7%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%EF%BC%88Hadoop%EF%BC%89"><span class="toc-text">1. 大数据处理（Hadoop）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%EF%BC%88Kafka%EF%BC%89"><span class="toc-text">2. 消息队列（Kafka）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8"><span class="toc-text">3. 数据存储</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-RPC-%E9%80%9A%E4%BF%A1"><span class="toc-text">4. RPC 通信</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Schema-%E8%BF%9B%E5%8C%96"><span class="toc-text">Schema 进化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%BC%E5%AE%B9%E6%80%A7%E8%A7%84%E5%88%99"><span class="toc-text">兼容性规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Schema-%E8%BF%9B%E5%8C%96%E7%A4%BA%E4%BE%8B"><span class="toc-text">Schema 进化示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96%E6%97%B6%E7%9A%84-Schema-%E8%A7%A3%E6%9E%90"><span class="toc-text">读取时的 Schema 解析</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-text">最佳实践</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Schema-%E8%AE%BE%E8%AE%A1%E5%BB%BA%E8%AE%AE"><span class="toc-text">Schema 设计建议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="toc-text">性能优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86"><span class="toc-text">版本管理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%8E%E4%B8%BB%E6%B5%81%E5%BA%8F%E5%88%97%E5%8C%96%E6%96%B9%E6%A1%88%E6%B7%B1%E5%BA%A6%E5%AF%B9%E6%AF%94"><span class="toc-text">与主流序列化方案深度对比</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%82%E5%9C%BA%E4%B8%BB%E6%B5%81%E4%BA%A7%E5%93%81%E6%A6%82%E8%A7%88"><span class="toc-text">市场主流产品概览</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E7%89%B9%E6%80%A7%E5%AF%B9%E6%AF%94%E8%A1%A8"><span class="toc-text">核心特性对比表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%A6%E7%BB%86%E5%AF%B9%E6%AF%94%E5%88%86%E6%9E%90"><span class="toc-text">详细对比分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Avro-vs-Protocol-Buffers"><span class="toc-text">1. Avro vs Protocol Buffers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Avro-vs-Apache-Thrift"><span class="toc-text">2. Avro vs Apache Thrift</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Avro-vs-JSON"><span class="toc-text">3. Avro vs JSON</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-Avro-vs-MessagePack"><span class="toc-text">4. Avro vs MessagePack</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95%E5%8F%82%E8%80%83"><span class="toc-text">性能基准测试参考</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BE%E8%A7%A3%E8%AF%B4%E6%98%8E"><span class="toc-text">图解说明</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Avro-%E6%95%B0%E6%8D%AE%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%81%E7%A8%8B"><span class="toc-text">Avro 数据序列化流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Schema-%E8%BF%9B%E5%8C%96%E6%9C%BA%E5%88%B6"><span class="toc-text">Schema 进化机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%86%E9%A2%91%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90"><span class="toc-text">视频学习资源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#YouTube-%E6%95%99%E7%A8%8B"><span class="toc-text">YouTube 教程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Bilibili-%E6%95%99%E7%A8%8B"><span class="toc-text">Bilibili 教程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-text">参考资料</span></a></li></ol></div><div class="widget-footer">
 
 <a class="top" onclick="util.scrollTop()"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2c4.714 0 7.071 0 8.535 1.464C22 4.93 22 7.286 22 12c0 4.714 0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"/><path stroke-linecap="round" stroke-linejoin="round" d="m9 15.5l3-3l3 3m-6-4l3-3l3 3"/></g></svg><span>Scroll to Top</span></a></div></widget>
 </div></aside><div class='float-panel blur'>
